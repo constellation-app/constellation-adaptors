@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.views.mapview.adaptors;
+package au.gov.asd.tac.constellation.views.mapview.adaptors.providers;
 
 import au.gov.asd.tac.constellation.views.mapview.providers.MapProvider;
 import de.fhpotsdam.unfolding.core.Coordinate;
@@ -21,23 +21,28 @@ import org.openide.util.lookup.ServiceProvider;
 import processing.core.PImage;
 
 /**
- * OpenStreetMap map.
- * 
+ * Stamen map.
+ *
  * @author cygnus_x-1
  */
-@ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 2)
-public class OpenStreetMapProvider extends MapProvider {
+@ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 1)
+public class StamanMapProvider extends MapProvider {
     
+    private static final String LAYER_TONER = "toner";
+    private static final String LAYER_TONER_BACKGROUND = "toner-background";
+    private static final String LAYER_TONER_LITE = "toner-lite";
+    private static final String LAYER_WATERCOLOR = "watercolor";
+
     @Override
     public String getName() {
-        return "OpenStreetMap";
+        return "Stamen Maps";
     }
 
     @Override
     public int zoomLevels() {
-        return 20;
+        return 16;
     }
-
+    
     @Override
     public PImage getTile(Coordinate coordinate) {
         return null;
@@ -45,10 +50,9 @@ public class OpenStreetMapProvider extends MapProvider {
 
     @Override
     public String[] getTileUrls(Coordinate coordinate) {
-        // TODO: supply a special user agent string or this will be blocked
         final String url = String.format(
-                "https://tile.openstreetmap.org/%s.png", 
-                getZoomString(coordinate));
+                "http://tile.stamen.com/%s/%s.png",
+                LAYER_TONER, getZoomString(coordinate));
         return new String[]{url};
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.views.mapview.adaptors;
+package au.gov.asd.tac.constellation.views.mapview.adaptors.providers;
 
 import au.gov.asd.tac.constellation.views.mapview.providers.EsriMapProvider;
 import au.gov.asd.tac.constellation.views.mapview.providers.MapProvider;

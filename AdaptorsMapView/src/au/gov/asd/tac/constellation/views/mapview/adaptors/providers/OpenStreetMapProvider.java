@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.views.mapview.adaptors;
+package au.gov.asd.tac.constellation.views.mapview.adaptors.providers;
 
 import au.gov.asd.tac.constellation.views.mapview.providers.MapProvider;
 import de.fhpotsdam.unfolding.core.Coordinate;
@@ -21,36 +21,21 @@ import org.openide.util.lookup.ServiceProvider;
 import processing.core.PImage;
 
 /**
- * Google Maps map.
+ * OpenStreetMap map.
  * 
  * @author cygnus_x-1
  */
-@ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 4)
-public class GoogleMapProvider extends MapProvider {
-    
-    private static final String LAYER_ROADS_ONLY = "h";
-    private static final String LAYER_STREETMAP = "m";
-    private static final String LAYER_STREETMAP_TERRAIN = "p";
-    private static final String LAYER_STREETMAP_ALT = "r";
-    private static final String LAYER_SATELLITE_ONLY = "s";
-    private static final String LAYER_TERRAIN_ONLY = "t";
-    private static final String LAYER_HYBRID = "y";
+@ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 2)
+public class OpenStreetMapProvider extends MapProvider {
     
     @Override
     public String getName() {
-        return "Google Maps";
+        return "OpenStreetMap";
     }
 
     @Override
     public int zoomLevels() {
         return 20;
-    }
-    
-    @Override
-    public String getZoomString(final Coordinate coordinate) {
-        return "x=" + (int) coordinate.column
-                + "&y=" + (int) coordinate.row
-                + "&z=" + (int) coordinate.zoom;
     }
 
     @Override
@@ -60,10 +45,10 @@ public class GoogleMapProvider extends MapProvider {
 
     @Override
     public String[] getTileUrls(Coordinate coordinate) {
-        // TODO: supply an api key or this will be blocked
+        // TODO: supply a special user agent string or this will be blocked
         final String url = String.format(
-                "http://mt.google.com/vt/lyrs=%s&%s", 
-                LAYER_STREETMAP, getZoomString(coordinate));
+                "https://tile.openstreetmap.org/%s.png", 
+                getZoomString(coordinate));
         return new String[]{url};
     }
 }
