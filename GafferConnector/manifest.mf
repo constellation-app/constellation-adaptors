@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: uk.gov.gchq.gaffer.graph.connector
+OpenIDE-Module-Localizing-Bundle: uk/gov/gchq/gaffer/graph/connector/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
