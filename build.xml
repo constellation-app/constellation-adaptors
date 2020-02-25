@@ -47,7 +47,7 @@
     <target name="-download-ivy" unless="ivy.skip.download" depends="-check-ivy">
         <mkdir dir="${ivy.jar.dir}"/>
         <echo message="installing ivy..."/>
-        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+        <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
@@ -58,14 +58,8 @@
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
     
-    <target name="-download-unfolding-maps" >
+    <target name="download-dependencies" depends="-load-ivy-tasks" description="Download dependent libraries.">
         <mkdir dir="${ivy.lib.dir}"/>
-        <echo message="installing unfolding-maps..."/>
-        <get src="https://github.com/constellation-app/third-party-dependencies/raw/master/unfolding-master-20171010.jar"
-             dest="${ivy.lib.dir}" usetimestamp="true"/>
-    </target>
-		
-    <target name="download-dependencies" depends="-load-ivy-tasks,-download-unfolding-maps" description="Download dependent libraries.">
         <ivy:resolve/>
         <ivy:retrieve/>
 
@@ -138,12 +132,14 @@
                  preservelastmodified="true"
                  eol="crlf" />
         <zip destfile="${dist.dir}/${dist.filename.windows}.zip">
+            <!--
+            Using pre-built executable files that come with the Constellation icon
             <zipfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
+            -->
+            <zipfileset dir="${basedir}/distribution/" filemode="755" prefix="${app.name}/"/>
             <zipfileset dir="${build.launcher.dir}/etc/" prefix="${app.name}/etc"/>
             <zipfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
             <zipfileset dir="${temp.dir.rest}" prefix="${app.name}"/>
-            
-            <zipfileset dir="${basedir}/shortcuts/" prefix="${app.name}/"/>
             <zipfileset dir="${basedir}/${jre.filename.windows}/" prefix="${app.name}/jre"/>
             <!-- Yes, the doubled app.name is a bit ugly, but better than the alternative; cf. #66441: -->
             <zipfileset dir="${cluster}" prefix="${app.name}/${app.name}">
@@ -179,7 +175,11 @@
                  preservelastmodified="true"
                  eol="lf" />
         <tar destfile="${dist.dir}/${dist.filename.linux}.tar">
-            <tarfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
+            <!--
+            Using pre-built executable files that come with the Constellation icon
+            <zipfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>
+            -->
+            <zipfileset dir="${basedir}/distribution/" filemode="755" prefix="${app.name}/"/>
             <tarfileset dir="${build.launcher.dir}/etc/" prefix="${app.name}/etc"/>
             <tarfileset dir="${temp.dir.nbexec}" filemode="755" prefix="${app.name}"/>
             <tarfileset dir="${temp.dir.rest}" prefix="${app.name}"/>

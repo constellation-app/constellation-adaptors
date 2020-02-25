@@ -1,4 +1,4 @@
-== 2019-03-01 Map View Update - New Maps
+== 2020-02-25 Map View Update - New Maps
 <p>Several new map services have been made available to the Map View, including:</p>
 <ul>
 <li>ArcGIS Online</li>
