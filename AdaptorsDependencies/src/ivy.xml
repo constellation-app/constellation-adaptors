@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-    <info organisation="au.gov.asd.tac" module="tac-utilities" revision="working"/>
-    <dependencies>
+    <info organisation="au.gov.asd.tac" module="third-party-dependencies"/>
+    
+    <configurations defaultconfmapping="*->default,master">
+        <conf name="compile" description="Compile-time dependencies" visibility="public"/>
+        <conf name="runtime" description="Runtime dependencies" visibility="public" extends="compile"/>
+        <conf name="test" description="Test dependencies" visibility="public" extends="runtime"/>
+        <conf name="provided" description="Provided dependencies" visibility="public"/>
+    </configurations>
 
-        <exclude type="src" ext="jar"/>
-        <exclude type="source" ext="jar"/>
-        <exclude type="sources" ext="jar"/>
-        <exclude type="javadoc" ext="jar"/>
-        <exclude type="license" ext="txt"/>
-
+    <dependencies defaultconf="runtime">
+        <exclude type="source" ext="jar" conf="*"/>
+        <exclude type="javadoc" ext="jar" conf="*"/>
+        <exclude type="license" ext="txt" conf="*"/>
     </dependencies>
 </ivy-module>
