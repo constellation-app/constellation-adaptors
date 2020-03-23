@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+    <info organisation="au.gov.asd.tac" module="tac-utilities" revision="working"/>
+    <dependencies>
+        <dependency org="uk.gov.gchq.gaffer" name="graph" rev="1.11.0" ></dependency>
+        <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.11.0" ></dependency>
+        
+        
+        <exclude type="src" ext="jar"/>
+        <exclude type="source" ext="jar"/>
+        <exclude type="sources" ext="jar"/>
+        <exclude type="javadoc" ext="jar"/>
+        <exclude type="license" ext="txt"/>
+    </dependencies>
+</ivy-module>
