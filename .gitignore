@@ -10,6 +10,8 @@
 *.pyc
 makefile
 
+.v
+
 build
 dist
 endorsed
@@ -18,4 +20,4 @@ endorsed
 */.jacocoverage/
 jacoco*
 
-*/release/modules/ext
+AdaptorsDependencies/release/modules/ext

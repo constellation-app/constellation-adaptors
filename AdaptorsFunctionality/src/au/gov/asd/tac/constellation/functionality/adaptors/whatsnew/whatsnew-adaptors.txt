@@ -1,0 +1,10 @@
+== 2020-02-25 Map View Update - New Maps
+<p>Several new map services have been made available to the Map View, including:</p>
+<ul>
+<li>ArcGIS Online</li>
+<li>Bing Maps</li>
+<li>Google Maps</li>
+<li>Open Street Maps</li>
+<li>Open Topo Maps</li>
+<li>Stamen Maps</li>
+</ul>

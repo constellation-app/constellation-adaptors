@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+    <info organisation="au.gov.asd.tac" module="third-party-dependencies"/>
+    
+    
+        
+        
+    <configurations defaultconfmapping="*->default,master">
+        <conf name="compile" description="Compile-time dependencies" visibility="public"/>
+        <conf name="runtime" description="Runtime dependencies" visibility="public" extends="compile"/>
+        <conf name="test" description="Test dependencies" visibility="public" extends="runtime"/>
+        <conf name="provided" description="Provided dependencies" visibility="public"/>
+    </configurations>
+
+    <dependencies defaultconf="runtime">
+        <dependency org="uk.gov.gchq.gaffer" name="graph" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.11.0" />
+        
+        <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="store" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="hdfs-library" rev="1.11.0" />
+        
+        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.8.2">
+            <artifact name="koryphe" type="pom" ext="pom"/>
+        </dependency>
+<!-- https://mvnrepository.com/artifact/uk.gov.gchq.koryphe/core -->
+<dependency org="uk.gov.gchq.koryphe" name="core" rev="1.8.2"/>
+
+<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+<dependency org="com.google.guava" name="guava" rev="28.2-jre"/>
+
+        
+        <exclude type="source" ext="jar" conf="*"/>
+        <exclude type="javadoc" ext="jar" conf="*"/>
+        <exclude type="license" ext="txt" conf="*"/>
+    </dependencies>
+</ivy-module>
