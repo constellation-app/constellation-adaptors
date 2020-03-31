@@ -28,6 +28,7 @@ import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentIds;
 import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
+import uk.gov.gchq.gaffer.data.element.Properties;
 import uk.gov.gchq.gaffer.operation.impl.export.set.ExportToSet;
 import uk.gov.gchq.gaffer.operation.impl.output.ToEntitySeeds;
 import uk.gov.gchq.gaffer.operation.impl.output.ToVertices;
@@ -77,15 +78,9 @@ public class GafferSimpleQuery {
      * @param recordStore The record store to load the results into
      */
     public void queryForTwoHop(String url, List<String> queryIds, RecordStore recordStore) {
-        GetAdjacentIds adj = new GetAdjacentIds.Builder().input(queryIds).build();
-        GetAdjacentIds adj2 = new GetAdjacentIds.Builder().build();
-        GetElements elms = new GetElements.Builder().build();
         OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder()
-                .first(adj)
-                .then(new ExportToSet<>())
-                .then(new ToVertices.Builder().edgeVertices(ToVertices.EdgeVertices.DESTINATION).build())
-                .then(new ToEntitySeeds())
-                .then(adj2).then(elms)
+                .first(new GetAdjacentIds.Builder().input(queryIds).build())
+                .then(new GetElements.Builder().build())
                 .build();
         fetchResults(url, opChain, recordStore);
     }
@@ -107,10 +102,12 @@ public class GafferSimpleQuery {
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getSource());
             recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, e.getDestination());
             recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, e.getDirectedType());
+            
         } else if (element instanceof Entity) {
             Entity e = (Entity) element;
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getVertex());
             recordStore.set(GraphRecordStoreUtilities.SOURCE + "COUNT", e.getProperty("count"));
+            e.getProperties().keySet().forEach(key -> recordStore.set(GraphRecordStoreUtilities.SOURCE + key.toUpperCase(),  e.getProperties().get(key)));
         }
     }
 
