@@ -17,6 +17,7 @@ package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
 
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.io.IOException;
 import java.util.List;
 import org.openide.util.Exceptions;
@@ -27,11 +28,6 @@ import uk.gov.gchq.gaffer.data.element.Entity;
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentIds;
 import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import uk.gov.gchq.gaffer.data.element.Properties;
-import uk.gov.gchq.gaffer.operation.impl.export.set.ExportToSet;
-import uk.gov.gchq.gaffer.operation.impl.output.ToEntitySeeds;
-import uk.gov.gchq.gaffer.operation.impl.output.ToVertices;
 
 /**
  *

@@ -51,7 +51,7 @@ public class GafferConnector {
     public List<Element> sendQueryToGaffer(String url, OperationChain opChain) throws SerialisationException, IOException, InterruptedException {
         var data = new String(JSONSerialiser.serialise(opChain, true, new String[0]));
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url+"/rest/v2/graph/operations/execute"))
+                .uri(URI.create(url + "/rest/v2/graph/operations/execute"))
                 .POST(HttpRequest.BodyPublishers.ofString(data)) // this is the default
                 .header("Content-Type", "application/json")
                 .build();
