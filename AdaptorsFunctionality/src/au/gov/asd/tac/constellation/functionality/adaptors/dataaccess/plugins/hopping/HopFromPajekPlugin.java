@@ -153,34 +153,40 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
                         }
                         else {
                             if (processNodes) {
-                                // Read node data
-                                final String nodeId = line.split("\"")[0].trim();
-                                final String nodeLabel = line.split("\"")[1].trim();
+                                try {
+                                    // Read node data
+                                    final String nodeId = line.split("\"")[0].trim();
+                                    final String nodeLabel = line.split("\"")[1].trim();
 
-                                // Collect IDs that match query labels
-                                if (labels.contains(nodeLabel)) {
-                                    ids.add(nodeId);
+                                    // Collect IDs that match query labels
+                                    if (labels.contains(nodeLabel)) {
+                                        ids.add(nodeId);
+                                    }
+                                } catch (ArrayIndexOutOfBoundsException ex) {
                                 }
                             }
                             else if (processEdges) {
-                                // Read edge data
-                                String[] fields = line.split("\\s+");
-                                final String srcId = fields[1];
-                                final String dstId = fields[2];
-                                final String weight = fields[3];
+                                try {
+                                    // Read edge data
+                                    String[] fields = line.split("\\s+");
+                                    final String srcId = fields[1];
+                                    final String dstId = fields[2];
+                                    final String weight = fields[3];
 
-                                // Hop if direction matches criteria
-                                if (incoming && ids.contains(dstId)) {
-                                    result.add();
-                                    result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                                    result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
-                                    result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
-                                }
-                                if (outgoing && ids.contains(srcId)) {
-                                    result.add();
-                                    result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                                    result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
-                                    result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                                    // Hop if direction matches criteria
+                                    if (incoming && ids.contains(dstId)) {
+                                        result.add();
+                                        result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                                        result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                                    }
+                                    if (outgoing && ids.contains(srcId)) {
+                                        result.add();
+                                        result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                                        result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                                    }
+                                } catch (ArrayIndexOutOfBoundsException ex) {
                                 }
                             }
                         }  

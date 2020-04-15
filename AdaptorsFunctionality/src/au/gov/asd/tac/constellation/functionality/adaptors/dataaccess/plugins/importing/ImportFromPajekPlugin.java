@@ -132,24 +132,30 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                 }
                 else {
                     if (processNodes) {
-                        // Read node data
-                        final String nodeId = line.split("\"")[0].trim();
-                        final String nodeLabel = line.split("\"")[1].trim();
-                        result.add();
-                        result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, nodeId);
-                        result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, nodeLabel);
+                        try {
+                            // Read node data
+                            final String nodeId = line.split("\"")[0].trim();
+                            final String nodeLabel = line.split("\"")[1].trim();
+                            result.add();
+                            result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, nodeId);
+                            result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, nodeLabel);
+                        } catch (ArrayIndexOutOfBoundsException ex) {
+                        }
                     }
                     else if (processEdges && getEdges) {
-                        // Read edge data
-                        String[] fields = line.split("\\s+");
-                        final String srcId = fields[1];
-                        final String dstId = fields[2];
-                        final String weight = fields[3];
-                        
-                        result.add();
-                        result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                        result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
-                        result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                        try {
+                            // Read edge data
+                            String[] fields = line.split("\\s+");
+                            final String srcId = fields[1];
+                            final String dstId = fields[2];
+                            final String weight = fields[3];
+
+                            result.add();
+                            result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                            result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                            result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                        }  catch (ArrayIndexOutOfBoundsException ex) {
+                        }
                     }
                 }  
             }
