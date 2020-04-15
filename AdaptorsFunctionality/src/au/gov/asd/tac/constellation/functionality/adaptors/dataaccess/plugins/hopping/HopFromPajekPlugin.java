@@ -132,7 +132,7 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
         boolean processNodes = false;
         boolean processEdges = false;
         
-        if (incoming | outgoing) {
+        if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
             final List<String> ids = new ArrayList<>();
 
@@ -170,13 +170,13 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
                                 final String weight = fields[3];
 
                                 // Hop if direction matches criteria
-                                if (incoming & ids.contains(dstId)) {
+                                if (incoming && ids.contains(dstId)) {
                                     result.add();
                                     result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
                                     result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
                                     result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                                 }
-                                if (outgoing & ids.contains(srcId)) {
+                                if (outgoing && ids.contains(srcId)) {
                                     result.add();
                                     result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
                                     result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);

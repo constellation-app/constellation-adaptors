@@ -139,7 +139,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                         result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, nodeId);
                         result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, nodeLabel);
                     }
-                    else if (processEdges & getEdges) {
+                    else if (processEdges && getEdges) {
                         // Read edge data
                         String[] fields = line.split("\\s+");
                         final String srcId = fields[1];
