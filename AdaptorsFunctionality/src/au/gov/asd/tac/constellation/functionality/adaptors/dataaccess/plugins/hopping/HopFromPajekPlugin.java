@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javafx.stage.FileChooser;
 import org.openide.util.NbBundle.Messages;
@@ -134,7 +135,7 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
         
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
-            final List<String> ids = new ArrayList<>();
+            final HashMap<String,String> ids = new HashMap<>();
 
             if (labels.isEmpty()) {
                 interaction.notify(PluginNotificationLevel.WARNING, "Please select nodes to query in Pajek file");
@@ -160,7 +161,7 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
 
                                     // Collect IDs that match query labels
                                     if (labels.contains(nodeLabel)) {
-                                        ids.add(nodeId);
+                                        ids.put(nodeId,nodeLabel);
                                     }
                                 } catch (ArrayIndexOutOfBoundsException ex) {
                                 }
@@ -174,15 +175,17 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
                                     final String weight = fields[3];
 
                                     // Hop if direction matches criteria
-                                    if (incoming && ids.contains(dstId)) {
+                                    if (incoming && ids.containsKey(dstId)) {
                                         result.add();
                                         result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                                        result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, ids.get(srcId));
                                         result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                                     }
-                                    if (outgoing && ids.contains(srcId)) {
+                                    if (outgoing && ids.containsKey(srcId)) {
                                         result.add();
                                         result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, ids.get(dstId));
                                         result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                                     }
