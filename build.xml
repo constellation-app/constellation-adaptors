@@ -20,7 +20,7 @@
     <property name="jre.url.linux" value="https://cdn.azul.com/zulu/bin/${jre.filename.linux}.tar.gz"/>
     <property name="jre.filename.macosx" value="zulu11.37.19-ca-fx-jre11.0.6-macosx_x64"/>
     <property name="jre.url.macosx" value="https://cdn.azul.com/zulu/bin/${jre.filename.macosx}.tar.gz"/>
-    <property name="dist.version" value="v2.0.0-rc.1"/>
+    <property name="dist.version" value="v2.0.0-beta"/>
     <property name="dist.filename.linux" value="constellation-linux-${dist.version}"/>
     <property name="dist.filename.windows" value="constellation-win-${dist.version}"/>
     <property name="dist.filename.macosx" value="constellation-macosx-${dist.version}"/>
@@ -259,7 +259,7 @@
         <!-- delete the harness folder which is only required for testing -->
         <delete dir="${temp.dir.rest}/harness"/>
         
-        <tar destfile="${dist.dir}/${dist.filename.linux}.tar">
+        <tar destfile="${dist.dir}/${dist.filename.macosx}.tar">
             <!-- Using pre-built executable files that come with the Constellation icon -->
             <!--<tarfileset dir="${build.launcher.dir}/bin/" filemode="755" prefix="${app.name}/bin"/>-->
             <tarfileset dir="${basedir}/distribution/" filemode="755" prefix="${app.name}" uid="${nobody}" gid="${nobody}">
@@ -280,8 +280,8 @@
                 <exclude name="config/Modules/*.xml_hidden"/>
             </tarfileset>
         </tar>
-        <gzip src="${dist.dir}/${jre.filename.macosx}.tar" destfile="${dist.dir}/${jre.filename.macosx}.tar.gz"/>
-        <delete file="${dist.dir}/${jre.filename.macosx}.tar"/>
+        <gzip src="${dist.dir}/${dist.filename.macosx}.tar" destfile="${dist.dir}/${dist.filename.macosx}.tar.gz"/>
+        <delete file="${dist.dir}/${dist.filename.macosx}.tar"/>
         <delete dir="${basedir}/${jre.filename.macosx}/"/>
     </target>
     
