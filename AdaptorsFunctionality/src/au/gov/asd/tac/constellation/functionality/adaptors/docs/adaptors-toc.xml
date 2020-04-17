@@ -11,6 +11,9 @@
                 <tocitem text="Hop From Pajek File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromPajekPlugin"/>
                 <tocitem text="Hop From GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromGraphMLPlugin"/>
             </tocitem>
+            <tocitem text="Enrichment" mergetype="javax.help.SortMerge">
+                <tocitem text="Enrich From GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment.EnrichFromGraphMLPlugin"/>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

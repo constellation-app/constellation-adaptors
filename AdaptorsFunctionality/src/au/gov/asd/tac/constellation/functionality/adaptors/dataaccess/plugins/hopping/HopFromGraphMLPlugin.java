@@ -15,6 +15,7 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.h
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GraphMLUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;

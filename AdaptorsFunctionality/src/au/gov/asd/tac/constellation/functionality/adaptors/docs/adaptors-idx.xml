@@ -5,4 +5,5 @@
     <indexitem text="Hop from Pajek File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromPajekPlugin"/>
     <indexitem text="Import from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromGraphMLPlugin"/>
     <indexitem text="Hop from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromGraphMLPlugin"/>
+    <indexitem text="Enrich from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment.EnrichFromGraphMLPlugin"/>
 </index>
