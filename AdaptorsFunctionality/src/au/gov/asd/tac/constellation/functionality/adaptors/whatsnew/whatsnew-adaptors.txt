@@ -4,7 +4,7 @@ In the Data Access View there are 2 Pajek plugins that can be used to import and
 then hop from the graph using a Pajek file.
 </p>
 
-== 2020-02-25 Map View Update z- New Maps
+== 2020-02-25 Map View Update - New Maps
 <p>Several new map services have been made available to the Map View, including:</p>
 <ul>
 <li>ArcGIS Online</li>
