@@ -39,7 +39,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javafx.stage.FileChooser;
@@ -121,7 +120,7 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
         final RecordStore result = new GraphRecordStore();
 
-        interaction.setProgress(0, 0, "Importing...", true);
+        interaction.setProgress(0, 0, "Hopping...", true);
         /**
          * Initialize variables
          */
@@ -178,16 +177,24 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
                                     if (incoming && ids.containsKey(dstId)) {
                                         result.add();
                                         result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                                        result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, ids.get(srcId));
+                                        result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, ids.get(srcId));
+                                        result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
+                                        result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
                                         result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                                        result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                                     }
                                     if (outgoing && ids.containsKey(srcId)) {
                                         result.add();
                                         result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                                        result.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, ids.get(dstId));
+                                        result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, ids.get(dstId));
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
                                         result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                                        result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                                        result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                                     }
                                 } catch (ArrayIndexOutOfBoundsException ex) {
                                 }
