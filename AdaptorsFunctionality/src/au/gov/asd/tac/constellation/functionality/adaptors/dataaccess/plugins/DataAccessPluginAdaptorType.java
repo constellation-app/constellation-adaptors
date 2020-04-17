@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins;
 
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginType;
@@ -28,12 +28,13 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = DataAccessPluginType.class)
 public class DataAccessPluginAdaptorType extends DataAccessPluginCoreType {
 
-    public static final String FAVOURITES = "Favourites";
     public static final String HOP = "Hop";
+    public static final String ENRICHMENT = "Enrichment";
 
     @Override
     public List<PositionalDataAccessPluginType> getPluginTypeList() {
         final ArrayList<PositionalDataAccessPluginType> pluginTypeList = new ArrayList<>();
+        pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(ENRICHMENT, 1400));
         pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(HOP, 1500));
 
         return pluginTypeList;

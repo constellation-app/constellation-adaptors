@@ -3,4 +3,7 @@
 <map version="2.0">
     <mapID target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromPajekPlugin" url="import-from-pajek-file.html"/>
     <mapID target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromPajekPlugin" url="hop-from-pajek-file.html"/>
+    <mapID target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromGraphMLPlugin" url="import-from-graphml-file.html"/>
+    <mapID target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromGraphMLPlugin" url="hop-from-graphml-file.html"/>
+    <mapID target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment.EnrichFromGraphMLPlugin" url="enrich-from-graphml-file.html"/>
 </map>

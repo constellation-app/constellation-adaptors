@@ -138,7 +138,9 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                             final String nodeLabel = line.split("\"")[1].trim();
                             result.add();
                             result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, nodeId);
-                            result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, nodeLabel);
+                            result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, nodeLabel);
+                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
+                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
                         } catch (ArrayIndexOutOfBoundsException ex) {
                         }
                     }
@@ -152,8 +154,11 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
                             result.add();
                             result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
+                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
                             result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
+                            result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
                             result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
+                            result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                         }  catch (ArrayIndexOutOfBoundsException ex) {
                         }
                     }
