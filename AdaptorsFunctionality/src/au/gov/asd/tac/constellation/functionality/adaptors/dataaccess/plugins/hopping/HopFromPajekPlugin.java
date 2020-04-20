@@ -202,7 +202,7 @@ public class HopFromPajekPlugin extends RecordStoreQueryPlugin implements DataAc
                             }
                         }  
                     }
-                    interaction.setProgress(1, 0, "Completed successfully - imported " + result.size() + " entities.", true);
+                    interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
                 } catch (FileNotFoundException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
                 } catch (IOException ex) {
