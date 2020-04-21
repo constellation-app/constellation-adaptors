@@ -6,4 +6,7 @@
     <indexitem text="Import from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromGraphMLPlugin"/>
     <indexitem text="Hop from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromGraphMLPlugin"/>
     <indexitem text="Enrich from GraphML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment.EnrichFromGraphMLPlugin"/>
+    <indexitem text="Import from GML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromGMLPlugin"/>
+    <indexitem text="Hop from GML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping.HopFromGMLPlugin"/>
+    <indexitem text="Enrich from GML File" target="au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment.EnrichFromGMLPlugin"/>
 </index>

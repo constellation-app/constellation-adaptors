@@ -325,7 +325,7 @@ public class HopFromGraphMLPlugin extends RecordStoreQueryPlugin implements Data
         result.add(edgeRecords);
         result.add(nodeRecords);
         
-        interaction.setProgress(1, 0, "Completed successfully - imported " + result.size() + " entities.", true);
+        interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }
 }

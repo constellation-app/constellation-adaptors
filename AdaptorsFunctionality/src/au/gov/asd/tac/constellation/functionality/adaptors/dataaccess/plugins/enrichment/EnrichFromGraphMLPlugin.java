@@ -30,8 +30,6 @@ import au.gov.asd.tac.constellation.plugins.PluginNotificationLevel;
 import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
 import au.gov.asd.tac.constellation.utilities.xml.XmlUtilities;
@@ -42,7 +40,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import javafx.stage.FileChooser;
 import javax.xml.transform.TransformerException;
@@ -65,7 +62,7 @@ import org.w3c.dom.NodeList;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"HOP"})
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"ENRICH"})
 @Messages("EnrichFromGraphMLPlugin=Enrich From GraphML File")
 public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
@@ -84,7 +81,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorType.ENRICHMENT;
+        return DataAccessPluginAdaptorType.ENRICH;
     }
 
     @Override
@@ -217,7 +214,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final RecordStore result = new GraphRecordStore();
         result.add(nodeRecords);
         
-        interaction.setProgress(1, 0, "Completed successfully - imported " + result.size() + " entities.", true);
+        interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }
 }

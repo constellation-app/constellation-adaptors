@@ -29,12 +29,12 @@ import org.openide.util.lookup.ServiceProvider;
 public class DataAccessPluginAdaptorType extends DataAccessPluginCoreType {
 
     public static final String HOP = "Hop";
-    public static final String ENRICHMENT = "Enrichment";
+    public static final String ENRICH = "Enrich";
 
     @Override
     public List<PositionalDataAccessPluginType> getPluginTypeList() {
         final ArrayList<PositionalDataAccessPluginType> pluginTypeList = new ArrayList<>();
-        pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(ENRICHMENT, 1400));
+        pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(ENRICH, 1400));
         pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(HOP, 1500));
 
         return pluginTypeList;

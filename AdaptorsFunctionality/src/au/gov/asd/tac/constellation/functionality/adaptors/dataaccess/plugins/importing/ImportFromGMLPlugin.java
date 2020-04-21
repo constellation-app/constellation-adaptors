@@ -46,7 +46,7 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
 /**
- * Read graph data from a Pajek .net file and add it to a graph.
+ * Read graph data from a GML file and add it to a graph.
  *
  * @author canis_majoris
  */
@@ -54,14 +54,16 @@ import org.openide.util.lookup.ServiceProviders;
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
-@Messages("ImportFromPajekPlugin=Import From Pajek File")
-public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+@Messages("ImportFromGMLPlugin=Import From GML File")
+public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
     // plugin parameters
-    public static final String FILE_PARAMETER_ID = PluginParameter.buildId(ImportFromPajekPlugin.class, "file");
-    public static final String EDGE_PARAMETER_ID = PluginParameter.buildId(ImportFromPajekPlugin.class, "edge");
-    public static final String VERTEX_HEADER = "*V";
-    public static final String EDGE_HEADER = "*E";
+    public static final String FILE_PARAMETER_ID = PluginParameter.buildId(ImportFromGMLPlugin.class, "file");
+    public static final String EDGE_PARAMETER_ID = PluginParameter.buildId(ImportFromGMLPlugin.class, "edge");
+    public static final String NODE_TAG = "node";
+    public static final String EDGE_TAG = "edge";
+    public static final String START_TAG = "[";
+    public static final String END_TAG = "]";
 
     @Override
     public String getType() {
@@ -75,7 +77,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
     @Override
     public String getDescription() {
-        return "Select a Pajek File and Import it into your graph";
+        return "Select a GML File and import it into your graph";
     }
 
     @Override
@@ -83,12 +85,12 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         final PluginParameters params = new PluginParameters();
 
         /**
-         * The Pajek file to read from
+         * The GML file to read from
          */
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
-        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("PAJEK files", "*.net"));
+        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GML files", "*.gml"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
-        file.setName("Pajek File");
+        file.setName("GML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
         
@@ -97,7 +99,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
          */
         final PluginParameter<BooleanParameterValue> edge = BooleanParameterType.build(EDGE_PARAMETER_ID);
         edge.setName("Retrieve Transactions");
-        edge.setDescription("Retrieve Transactions from Pajek File");
+        edge.setDescription("Retrieve Transactions from GML File");
         edge.setBooleanValue(true);
         params.addParameter(edge);
         
@@ -106,7 +108,8 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
     @Override
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
-        final RecordStore result = new GraphRecordStore();
+        final RecordStore nodeRecords = new GraphRecordStore();
+        final RecordStore edgeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Importing...", true);
         /**
@@ -116,55 +119,67 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         final boolean getEdges = parameters.getParameters().get(EDGE_PARAMETER_ID).getBooleanValue();
         BufferedReader in = null;
         String line;
-        boolean processNodes = false;
-        boolean processEdges = false;
+        boolean node = false;
+        boolean edge = false;
         
         try {
             // Open file and loop through lines
             in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
             while ((line = in.readLine()) != null) {
-                if (line.startsWith(VERTEX_HEADER)) {
-                    processNodes = true;
+                line = line.trim();
+                if (line.startsWith(NODE_TAG)) {
+                    node = true;
+                    nodeRecords.add();
+                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);                    
                 }
-                else if (line.startsWith(EDGE_HEADER)) {
-                    processNodes = false;
-                    processEdges = true;
+                else if (line.startsWith(EDGE_TAG)) {
+                    edge = true;
+                    if (getEdges) {
+                        edgeRecords.add();
+                        edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
+                    }
+                }
+                else if (line.startsWith(START_TAG)) {
+                    //do nothing
+                }
+                else if (line.startsWith(END_TAG)) {
+                    node = false;
+                    edge = false;
                 }
                 else {
-                    if (processNodes) {
+                    if (node) {
                         try {
                             // Read node data
-                            final String nodeId = line.split("\"")[0].trim();
-                            final String nodeLabel = line.split("\"")[1].trim();
-                            result.add();
-                            result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, nodeId);
-                            result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, nodeLabel);
-                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
-                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
+                            final String key = line.split(" ")[0].trim();
+                            final String value = line.split(" ")[1].trim().replace("\"", "");
+                            if (key.equals("id")) {
+                                nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
+                            }
+                            else {
+                                nodeRecords.set(GraphRecordStoreUtilities.SOURCE + key, value);
+                            }
                         } catch (ArrayIndexOutOfBoundsException ex) {
                         }
                     }
-                    else if (processEdges && getEdges) {
+                    else if (getEdges && edge) {
                         try {
-                            // Read edge data
-                            String[] fields = line.split("\\s+");
-                            final String srcId = fields[1];
-                            final String dstId = fields[2];
-                            final String weight = fields[3];
-
-                            result.add();
-                            result.set(GraphRecordStoreUtilities.SOURCE + GraphRecordStoreUtilities.ID, srcId);
-                            result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                            result.set(GraphRecordStoreUtilities.DESTINATION + GraphRecordStoreUtilities.ID, dstId);
-                            result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                            result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
-                            result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
+                            final String key = line.split(" ")[0].trim();
+                            final String value = line.split(" ")[1].trim().replace("\"", "");
+                            if (key.equals("source")) {
+                                edgeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
+                            }
+                            else if (key.equals("target")) {
+                                edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, value);
+                            }
+                            else {
+                                edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + key, value);
+                            }
                         }  catch (ArrayIndexOutOfBoundsException ex) {
                         }
                     }
                 }  
             }
-            interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
+            
         } catch (FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
         } catch (IOException ex) {
@@ -178,7 +193,13 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                 } 
             }
         }
-
+        
+        final RecordStore result = new GraphRecordStore();
+        result.add(nodeRecords);
+        result.add(edgeRecords);
+        result.add(nodeRecords);
+        
+        interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }
 }
