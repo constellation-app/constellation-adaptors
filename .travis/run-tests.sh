@@ -3,6 +3,11 @@ set -euo pipefail
 
 source .travis/functions.sh
 
+title "Clone Constellation"
+
+cd ..
+git clone https://github.com/constellation-app/constellation.git
+
 title "Run Core Build"
 
 ant \
@@ -12,7 +17,17 @@ ant \
   -Dupdate.dependencies=true \
   -Dbuild.compiler.debug=true update-dependencies-clean-build
 
-title "Run Core Unit Testing"
+title "Build Constellation Adaptors"
+
+cd -
+ant \
+  -Dnbplatform.active.dir="${NETBEANS_HOME}" \
+  -Dnbplatform.default.netbeans.dest.dir="${NETBEANS_HOME}" \
+  -Dnbplatform.default.harness.dir="${NETBEANS_HOME}"/harness \
+  -Dupdate.dependencies=true \
+  -Dbuild.compiler.debug=true update-dependencies-clean-build
+
+title "Run Constellation Adaptors Unit Testing"
 
 ant \
   -Dnbplatform.active.dir="${NETBEANS_HOME}" \
