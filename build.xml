@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Constellation Adaptors" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project name="Constellation Adaptors" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <description>Builds the Constellation Adaptors module suite</description>
     
     <import file="nbproject/build-impl.xml"/>
