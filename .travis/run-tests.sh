@@ -7,8 +7,6 @@ cd ..
 
 title "Run Core Build"
 
-pwd
-ls -l
 cd constellation
 ant \
   -Dnbplatform.active.dir="${NETBEANS_HOME}" \

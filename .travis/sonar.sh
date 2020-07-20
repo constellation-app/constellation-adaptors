@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+pwd
+ls -l
 source .travis/functions.sh
 
 title "Run Sonar Scanning"

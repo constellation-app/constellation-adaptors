@@ -22,9 +22,7 @@ jobs:
       - git clone https://github.com/constellation-app/constellation.git ${TRAVIS_BUILD_DIR}/../constellation
     script:
       - docker pull "${RUNNER_IMAGE}"
-      - ls -l ../*
       - docker run --mount "type=bind,source=${TRAVIS_BUILD_DIR}/..,target=${TRAVIS_BUILD_DIR}/.." --mount "type=bind,source=${HOME}/.ivy2/cache,target=/root/.ivy2/cache" --workdir "${TRAVIS_BUILD_DIR}/.." "${RUNNER_IMAGE}" ./constellation-adaptors/.travis/run-tests.sh
-      - ls -l ../*
       - .travis/sonar.sh
     addons:
       sonarcloud:
