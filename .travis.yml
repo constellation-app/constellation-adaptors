@@ -19,7 +19,12 @@ jobs:
     services:
       - docker
     before_install:
-      - git clone https://github.com/constellation-app/constellation.git ${TRAVIS_BUILD_DIR}
+      - pwd
+      - ls -l
+      - git clone https://github.com/constellation-app/constellation.git
+    after_install:
+      - pwd
+      - ls -l
     script:
       - docker pull "${RUNNER_IMAGE}"
       - docker run --mount "type=bind,source=${TRAVIS_BUILD_DIR},target=${TRAVIS_BUILD_DIR}" --mount "type=bind,source=${HOME}/.ivy2/cache,target=/root/.ivy2/cache" --workdir "${TRAVIS_BUILD_DIR}" "${RUNNER_IMAGE}" .travis/run-tests.sh
