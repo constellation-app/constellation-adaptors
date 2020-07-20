@@ -24,7 +24,7 @@ jobs:
       - ls -l ../*
     script:
       - docker pull "${RUNNER_IMAGE}"
-      - docker run --mount "type=bind,source=${TRAVIS_BUILD_DIR},target=${TRAVIS_BUILD_DIR}" --mount "type=bind,source=${HOME}/.ivy2/cache,target=/root/.ivy2/cache" --workdir "${TRAVIS_BUILD_DIR}" "${RUNNER_IMAGE}" .travis/run-tests.sh
+      - docker run --mount "type=bind,source=/home/travis/build/constellation-app,target=/home/travis/build/constellation-app" --mount "type=bind,source=${HOME}/.ivy2/cache,target=/root/.ivy2/cache" --workdir "/home/travis/build/constellation-app" "${RUNNER_IMAGE}" .travis/run-tests.sh
       - .travis/sonar.sh
     addons:
       sonarcloud:
