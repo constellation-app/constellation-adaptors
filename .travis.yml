@@ -19,7 +19,7 @@ jobs:
     services:
       - docker
     before_install:
-      - git clone https://github.com/constellation-app/constellation.git /home/travis/build/constellation-app/constellation
+      - git clone https://github.com/constellation-app/constellation.git ${TRAVIS_BUILD_DIR}/../constellation
     script:
       - docker pull "${RUNNER_IMAGE}"
       - ls -l ../*

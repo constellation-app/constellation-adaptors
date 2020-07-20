@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+cd constellation-adaptors
 source .travis/functions.sh
+cd ..
 
 title "Run Core Build"
 
