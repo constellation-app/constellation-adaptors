@@ -1,10 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
+cd constellation-adaptors
 source .travis/functions.sh
+cd ..
 
 title "Run Core Build"
 
+cd constellation
+ant \
+  -Dnbplatform.active.dir="${NETBEANS_HOME}" \
+  -Dnbplatform.default.netbeans.dest.dir="${NETBEANS_HOME}" \
+  -Dnbplatform.default.harness.dir="${NETBEANS_HOME}"/harness \
+  -Dupdate.dependencies=true \
+  -Dbuild.compiler.debug=true update-dependencies-clean-build
+
+cd ../constellation-adaptors
 ant \
   -Dnbplatform.active.dir="${NETBEANS_HOME}" \
   -Dnbplatform.default.netbeans.dest.dir="${NETBEANS_HOME}" \
