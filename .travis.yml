@@ -27,7 +27,7 @@ jobs:
     addons:
       sonarcloud:
         organization: "constellation-app"
-        token: $SONAR_TOKEN
+        token: $SONAR_TOKEN2
 
 notifications:
   webhooks:
