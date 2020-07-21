@@ -6,6 +6,9 @@ source .travis/functions.sh
 
 title "Run Sonar Scanning"
 
+echo "TRAVIS_PULL_REQUEST" "${TRAVIS_PULL_REQUEST}"
+echo "TRAVIS_PULL_REQUEST_SLUG" "${TRAVIS_PULL_REQUEST_SLUG}"
+
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
   if [ "${TRAVIS_PULL_REQUEST_SLUG}" != "constellation-app/constellation-adaptors" ]; then
     echo "skipping running sonar-scanner"
