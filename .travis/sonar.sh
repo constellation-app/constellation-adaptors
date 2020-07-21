@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 pwd
-ls -l
+ls -la
 source .travis/functions.sh
 
 title "Run Sonar Scanning"
@@ -18,6 +18,7 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
       -Dsonar.pullrequest.base="${TRAVIS_BRANCH}"
   fi
 else
+  echo "in else"
   sonar-scanner \
     -Dsonar.login="${SONAR_TOKEN}" \
     -Dsonar.branch.name="${TRAVIS_BRANCH}"
