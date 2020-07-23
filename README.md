@@ -12,10 +12,26 @@ purpose of this module suite is to hold a collection of Constellation
 "Adaptors" that can be used to connect to specific data sources, providers 
 for maps, adaptors for systems like elastic search, Data Access Plugins etc.
 
-<!--
 # List of Adaptors
-Uncomment this section when adding the first module.
--->
+
+## Adaptors Functionality
+
+A collection of Data Access View plugins that you can use to import, enrich and 
+hop using a GraphML or Pajek file formats.
+
+## Adaptors Map View
+
+A collection of Map View providers including ArcGIS, Bing, GoogleMap, 
+OpenStreetMap and Staman which use publically available APIs.
+
+## Adaptors Dependencies
+
+Used to hold 3rd party libraries required by a adaptors. Presently no additional 
+dependencies exist.
+
+## Contributing to Constellation Adaptors
+
+For more information please see the [contributing guide](https://github.com/constellation-app/constellation/blob/master/CONTRIBUTING.md).
 
 ## More Information
 This repository should follow everything mentioned in the Constellation 
