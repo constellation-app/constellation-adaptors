@@ -18,9 +18,13 @@ package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
+
+
+//import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.io.IOException;
 import java.util.List;
 import org.openide.util.Exceptions;
+
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
@@ -47,7 +51,6 @@ public class GafferSimpleQuery {
      */
     public void queryForDetails(String url, List<String> queryIds, RecordStore recordStore) {
         //This query is not quite right yet so is not yet enabled.
-
         GetElements elms = new GetElements.Builder().input(queryIds).build();
         OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
         fetchResults(url, opChain, recordStore);

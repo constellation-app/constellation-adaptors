@@ -21,11 +21,13 @@
                 <package>com.clearspring.analytics.util</package>
                 <package>com.fasterxml.jackson.annotation</package>
                 <package>com.fasterxml.jackson.core</package>
+                <package>com.fasterxml.jackson.core.async</package>
                 <package>com.fasterxml.jackson.core.base</package>
                 <package>com.fasterxml.jackson.core.filter</package>
                 <package>com.fasterxml.jackson.core.format</package>
                 <package>com.fasterxml.jackson.core.io</package>
                 <package>com.fasterxml.jackson.core.json</package>
+                <package>com.fasterxml.jackson.core.json.async</package>
                 <package>com.fasterxml.jackson.core.sym</package>
                 <package>com.fasterxml.jackson.core.type</package>
                 <package>com.fasterxml.jackson.core.util</package>
@@ -971,9 +973,6 @@
                 <package>org.apache.jasper.tagplugins.jstl.core</package>
                 <package>org.apache.jasper.util</package>
                 <package>org.apache.jasper.xmlparser</package>
-                <package>org.apache.jute</package>
-                <package>org.apache.jute.compiler</package>
-                <package>org.apache.jute.compiler.generated</package>
                 <package>org.apache.log4j</package>
                 <package>org.apache.log4j.chainsaw</package>
                 <package>org.apache.log4j.config</package>
@@ -995,13 +994,6 @@
                 <package>org.apache.log4j.spi</package>
                 <package>org.apache.log4j.varia</package>
                 <package>org.apache.log4j.xml</package>
-                <package>org.apache.thrift</package>
-                <package>org.apache.thrift.async</package>
-                <package>org.apache.thrift.meta_data</package>
-                <package>org.apache.thrift.protocol</package>
-                <package>org.apache.thrift.scheme</package>
-                <package>org.apache.thrift.server</package>
-                <package>org.apache.thrift.transport</package>
                 <package>org.apache.velocity</package>
                 <package>org.apache.velocity.anakia</package>
                 <package>org.apache.velocity.app</package>
@@ -1027,22 +1019,6 @@
                 <package>org.apache.velocity.texen.util</package>
                 <package>org.apache.velocity.util</package>
                 <package>org.apache.velocity.util.introspection</package>
-                <package>org.apache.zookeeper</package>
-                <package>org.apache.zookeeper.client</package>
-                <package>org.apache.zookeeper.common</package>
-                <package>org.apache.zookeeper.data</package>
-                <package>org.apache.zookeeper.jmx</package>
-                <package>org.apache.zookeeper.proto</package>
-                <package>org.apache.zookeeper.server</package>
-                <package>org.apache.zookeeper.server.auth</package>
-                <package>org.apache.zookeeper.server.persistence</package>
-                <package>org.apache.zookeeper.server.quorum</package>
-                <package>org.apache.zookeeper.server.quorum.flexible</package>
-                <package>org.apache.zookeeper.server.upgrade</package>
-                <package>org.apache.zookeeper.server.util</package>
-                <package>org.apache.zookeeper.txn</package>
-                <package>org.apache.zookeeper.version</package>
-                <package>org.apache.zookeeper.version.util</package>
                 <package>org.codehaus.jackson</package>
                 <package>org.codehaus.jackson.annotate</package>
                 <package>org.codehaus.jackson.format</package>
@@ -1160,10 +1136,6 @@
                 <package>uk.gov.gchq.gaffer.accumulostore.retriever</package>
                 <package>uk.gov.gchq.gaffer.accumulostore.retriever.impl</package>
                 <package>uk.gov.gchq.gaffer.accumulostore.utils</package>
-                <package>uk.gov.gchq.gaffer.cache</package>
-                <package>uk.gov.gchq.gaffer.cache.exception</package>
-                <package>uk.gov.gchq.gaffer.cache.impl</package>
-                <package>uk.gov.gchq.gaffer.cache.util</package>
                 <package>uk.gov.gchq.gaffer.commonutil</package>
                 <package>uk.gov.gchq.gaffer.commonutil.elementvisibilityutil</package>
                 <package>uk.gov.gchq.gaffer.commonutil.elementvisibilityutil.exception</package>
@@ -1171,8 +1143,6 @@
                 <package>uk.gov.gchq.gaffer.commonutil.iterable</package>
                 <package>uk.gov.gchq.gaffer.commonutil.pair</package>
                 <package>uk.gov.gchq.gaffer.commonutil.stream</package>
-                <package>uk.gov.gchq.gaffer.core.exception</package>
-                <package>uk.gov.gchq.gaffer.core.exception.serialisation</package>
                 <package>uk.gov.gchq.gaffer.data</package>
                 <package>uk.gov.gchq.gaffer.data.element</package>
                 <package>uk.gov.gchq.gaffer.data.element.comparison</package>
@@ -1286,9 +1256,6 @@
                 <package>uk.gov.gchq.gaffer.store.schema</package>
                 <package>uk.gov.gchq.gaffer.store.serialiser</package>
                 <package>uk.gov.gchq.gaffer.store.util</package>
-                <package>uk.gov.gchq.gaffer.types</package>
-                <package>uk.gov.gchq.gaffer.types.binaryoperator</package>
-                <package>uk.gov.gchq.gaffer.types.function</package>
                 <package>uk.gov.gchq.gaffer.user</package>
                 <package>uk.gov.gchq.koryphe</package>
                 <package>uk.gov.gchq.koryphe.adapted</package>
@@ -1319,8 +1286,8 @@
                 <binary-origin>release/modules/ext/hadoop-mapreduce-client-common-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hdfs-library-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hdfs-library-1.11.0.jar</binary-origin>
+                <runtime-relative-path>ext/common-util-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/common-util-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/htrace-core-3.1.0-incubating.jar</runtime-relative-path>
@@ -1339,32 +1306,12 @@
                 <binary-origin>release/modules/ext/jasper-compiler-5.5.23.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-databind-2.6.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-databind-2.6.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/xz-1.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/xz-1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/accumulo-store-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-store-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/cache-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cache-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/sketches-library-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-library-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/commons-compress-1.4.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-compress-1.4.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/accumulo-fate-1.8.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-fate-1.8.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/activation-1.1.1.jar</runtime-relative-path>
@@ -1383,8 +1330,8 @@
                 <binary-origin>release/modules/ext/jackson-core-asl-1.9.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/serialisation-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/serialisation-1.11.0.jar</binary-origin>
+                <runtime-relative-path>ext/data-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/data-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jsch-0.1.42.jar</runtime-relative-path>
@@ -1401,6 +1348,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/commons-logging-1.1.3.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-logging-1.1.3.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/core-1.10.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/core-1.10.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-el-1.0.jar</runtime-relative-path>
@@ -1423,20 +1374,12 @@
                 <binary-origin>release/modules/ext/reflections-0.9.10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-annotations-2.6.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-annotations-2.6.5.jar</binary-origin>
+                <runtime-relative-path>ext/accumulo-start-1.9.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/accumulo-start-1.9.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-codec-1.6.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-codec-1.6.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/store-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/store-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/type-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/type-1.11.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jline-2.11.jar</runtime-relative-path>
@@ -1455,10 +1398,6 @@
                 <binary-origin>release/modules/ext/jersey-guice-1.9.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-2.6.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-2.6.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/curator-client-2.6.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/curator-client-2.6.0.jar</binary-origin>
             </class-path-extension>
@@ -1467,8 +1406,12 @@
                 <binary-origin>release/modules/ext/sketches-core-0.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/common-util-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/common-util-1.11.0.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-core-2.9.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-2.9.6.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/accumulo-fate-1.9.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/accumulo-fate-1.9.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jetty-util-6.1.26.jar</runtime-relative-path>
@@ -1487,12 +1430,12 @@
                 <binary-origin>release/modules/ext/commons-io-2.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-shuffle-2.6.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-shuffle-2.6.5.jar</binary-origin>
+                <runtime-relative-path>ext/store-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/store-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/exception-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/exception-1.11.0.jar</binary-origin>
+                <runtime-relative-path>ext/hadoop-mapreduce-client-shuffle-2.6.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hadoop-mapreduce-client-shuffle-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-lang3-3.3.2.jar</runtime-relative-path>
@@ -1507,6 +1450,10 @@
                 <binary-origin>release/modules/ext/httpcore-4.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/jackson-annotations-2.9.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-annotations-2.9.6.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/api-util-1.0.0-M20.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/api-util-1.0.0-M20.jar</binary-origin>
             </class-path-extension>
@@ -1515,12 +1462,12 @@
                 <binary-origin>release/modules/ext/jasper-runtime-5.5.23.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/accumulo-start-1.8.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-start-1.8.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jcommander-1.48.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jcommander-1.48.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/accumulo-core-1.9.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/accumulo-core-1.9.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jackson-jaxrs-1.9.13.jar</runtime-relative-path>
@@ -1537,6 +1484,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/commons-httpclient-3.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-httpclient-3.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-databind-2.9.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-databind-2.9.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/javax.inject-1.jar</runtime-relative-path>
@@ -1591,6 +1542,10 @@
                 <binary-origin>release/modules/ext/jackson-xc-1.9.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/hdfs-library-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hdfs-library-1.12.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jets3t-0.9.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jets3t-0.9.0.jar</binary-origin>
             </class-path-extension>
@@ -1615,14 +1570,6 @@
                 <binary-origin>release/modules/ext/api-asn1-api-1.0.0-M20.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/libthrift-0.9.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/libthrift-0.9.3.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/operation-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/operation-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/velocity-1.7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/velocity-1.7.jar</binary-origin>
             </class-path-extension>
@@ -1643,12 +1590,12 @@
                 <binary-origin>release/modules/ext/commons-net-3.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/httpclient-4.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/httpclient-4.4.jar</binary-origin>
+                <runtime-relative-path>ext/graph-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/graph-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/zookeeper-3.4.6.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/zookeeper-3.4.6.jar</binary-origin>
+                <runtime-relative-path>ext/httpclient-4.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/httpclient-4.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/paranamer-2.6.jar</runtime-relative-path>
@@ -1659,8 +1606,16 @@
                 <binary-origin>release/modules/ext/commons-vfs2-2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/guava-28.2-jre.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/guava-28.2-jre.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/stream-2.7.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/stream-2.7.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/serialisation-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/serialisation-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/protobuf-java-2.5.0.jar</runtime-relative-path>
@@ -1695,8 +1650,8 @@
                 <binary-origin>release/modules/ext/hadoop-mapreduce-client-jobclient-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/graph-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/graph-1.11.0.jar</binary-origin>
+                <runtime-relative-path>ext/operation-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/operation-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jettison-1.1.jar</runtime-relative-path>
@@ -1715,12 +1670,20 @@
                 <binary-origin>release/modules/ext/jcip-annotations-1.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/accumulo-store-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/accumulo-store-1.12.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jsp-api-2.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jsp-api-2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/javassist-3.19.0-GA.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/javassist-3.19.0-GA.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/sketches-library-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-library-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-beanutils-core-1.8.0.jar</runtime-relative-path>
@@ -1735,10 +1698,6 @@
                 <binary-origin>release/modules/ext/hadoop-common-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/data-1.11.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/data-1.11.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/htrace-core-3.0.4.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/htrace-core-3.0.4.jar</binary-origin>
             </class-path-extension>
@@ -1747,24 +1706,8 @@
                 <binary-origin>release/modules/ext/snappy-java-1.1.2.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/accumulo-core-1.8.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-core-1.8.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/hadoop-auth-2.6.5.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/hadoop-auth-2.6.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-auth-2.6.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-auth-2.6.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/core-1.8.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/core-1.8.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/guava-28.2-jre.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guava-28.2-jre.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

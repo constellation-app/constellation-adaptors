@@ -18,16 +18,17 @@ package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
+import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
+
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import au.gov.asd.tac.constellations.dataaccess.adaptors.DataAccessPluginAdaptorsType;
@@ -39,23 +40,20 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
 /**
- *  
+ *
  * @author GCHQDeveloper601
  */
 @ServiceProviders({
-    @ServiceProvider(service = DataAccessPlugin.class),
-    @ServiceProvider(service = Plugin.class)
+    @ServiceProvider(service = DataAccessPlugin.class),@ServiceProvider(service = Plugin.class)
 })
 @Messages("SimpleGafferProviderPlugin=Gaffer Simple Query Options")
 public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    private static final String GAFFER_URL_LOCATION_PARAMETER_ID
-            = PluginParameter.buildId(SimpleGafferProviderPlugin.class, "URL");
-    private static final String GAFFER_QUERY_TYPE_PARAMETER_ID
-            = PluginParameter.buildId(SimpleGafferProviderPlugin.class, "QUERY_TYPE");
+    private static final String GAFFER_URL_LOCATION_PARAMETER_ID = PluginParameter.buildId(SimpleGafferProviderPlugin.class, "URL");
+    private static final String GAFFER_QUERY_TYPE_PARAMETER_ID = PluginParameter.buildId(SimpleGafferProviderPlugin.class, "QUERY_TYPE");
 
     private static final String DEFAULT_GAFFER_URL = "http://localhost:8080";
-    
+
     public SimpleGafferProviderPlugin() {
 
     }
@@ -73,24 +71,23 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
-        
-        final PluginParameter<StringParameterValue> gafferUrlLocation
-                = StringParameterType.build(GAFFER_URL_LOCATION_PARAMETER_ID);
+
+        final PluginParameter<StringParameterValue> gafferUrlLocation = StringParameterType.build(GAFFER_URL_LOCATION_PARAMETER_ID);
         gafferUrlLocation.setName("URL");
         gafferUrlLocation.setDescription("URL for the Gaffer instance to connect to");
         gafferUrlLocation.setStringValue(DEFAULT_GAFFER_URL);
-        
+
         final PluginParameter queryOptions = SingleChoiceParameterType.build(GAFFER_QUERY_TYPE_PARAMETER_ID);
         queryOptions.setName("Queries");
         queryOptions.setDescription("The simple queries you can make with your Gaffer instance");
         //Add all GafferSimpleQueryTypes to perform the query
-        SingleChoiceParameterType.setOptions(queryOptions,GafferSimpleQueryTypes.stream().map((GafferSimpleQueryTypes e)-> e.getLabel()).collect(Collectors.toList()));
-        
+        SingleChoiceParameterType.setOptions(queryOptions, GafferSimpleQueryTypes.stream().map((GafferSimpleQueryTypes e) -> e.getLabel()).collect(Collectors.toList()));
+
         params.addParameter(gafferUrlLocation);
         params.addParameter(queryOptions);
-        
+
         return params;
-    }
+    }    
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -98,11 +95,11 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         final String url = parameters.getStringValue(GAFFER_URL_LOCATION_PARAMETER_ID);
         final ParameterValue queryToRun = parameters.getSingleChoice(GAFFER_QUERY_TYPE_PARAMETER_ID);
         //Get the GafferSimpleQueryTypes to get the method to execute
-        final GafferSimpleQueryTypes gafferSimpleQueryType = GafferSimpleQueryTypes.valueOfLabel((String)queryToRun.getObjectValue());
+        final GafferSimpleQueryTypes gafferSimpleQueryType = GafferSimpleQueryTypes.valueOfLabel((String) queryToRun.getObjectValue());
         final List<String> queryIds = new ArrayList<>();
         while (query.next()) {
-            queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE
-                    + VisualConcept.VertexAttribute.IDENTIFIER));
+            queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER  ));
+                    //+ VisualConcept.VertexAttribute.IDENTIFIER));
         }
         final RecordStore results = new GraphRecordStore();
         gafferSimpleQueryType.performQuery(url, queryIds, results);

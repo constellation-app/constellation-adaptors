@@ -11,21 +11,25 @@
     
     <dependencies defaultconf="runtime">
         <!-- GAFFER Dependencies -->
-        <dependency org="uk.gov.gchq.gaffer" name="graph" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.11.0" />
+        <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.9.6"/> 
+        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.9.6"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.9.6"/>
+        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="1.12.0"/>
+        <dependency org="uk.gov.gchq.gaffer" name="graph" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.12.0" />
         
-        <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="store" rev="1.11.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="hdfs-library" rev="1.11.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="store" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="hdfs-library" rev="1.12.0" />
         
-        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.8.2">
+        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.10.0">
             <artifact name="koryphe" type="pom" ext="pom"/>
         </dependency>
 
-        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.8.2"/>
+        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>
 
         <dependency org="com.google.guava" name="guava" rev="28.2-jre"/>
         <!-- GAFFER Dependencies end -->
