@@ -74,12 +74,12 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
 
         final PluginParameter<StringParameterValue> gafferUrlLocation = StringParameterType.build(GAFFER_URL_LOCATION_PARAMETER_ID);
         gafferUrlLocation.setName("URL");
-        gafferUrlLocation.setDescription("URL for the Gaffer instance to connect to");
+        gafferUrlLocation.setDescription("Gaffer instance Url");
         gafferUrlLocation.setStringValue(DEFAULT_GAFFER_URL);
 
         final PluginParameter queryOptions = SingleChoiceParameterType.build(GAFFER_QUERY_TYPE_PARAMETER_ID);
         queryOptions.setName("Queries");
-        queryOptions.setDescription("The simple queries you can make with your Gaffer instance");
+        queryOptions.setDescription("Simple query type");
         //Add all GafferSimpleQueryTypes to perform the query
         SingleChoiceParameterType.setOptions(queryOptions, GafferSimpleQueryTypes.stream().map((GafferSimpleQueryTypes e) -> e.getLabel()).collect(Collectors.toList()));
 
@@ -99,10 +99,10 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         final List<String> queryIds = new ArrayList<>();
         while (query.next()) {
             queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER  ));
-                    //+ VisualConcept.VertexAttribute.IDENTIFIER));
         }
         final RecordStore results = new GraphRecordStore();
-        gafferSimpleQueryType.performQuery(url, queryIds, results);
+        gafferSimpleQueryType.setUrl(url);
+        gafferSimpleQueryType.performQuery(queryIds, results);
         return results;
     }
 }

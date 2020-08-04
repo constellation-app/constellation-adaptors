@@ -30,16 +30,17 @@ public enum GafferSimpleQueryTypes {
 
     GetOneHop("Get One Hop") {
         @Override
-        public void performQuery(String url, List<String> queryIds, RecordStore recordStore) {
-            gafferSimpleQuery.queryForOneHop(url, queryIds, recordStore);
+        public void performQuery(List<String> queryIds, RecordStore recordStore) {
+            gafferSimpleQuery.queryForOneHop( queryIds, recordStore);
         }
     }, GetTwoHop("Get Two Hop") {
         @Override
-        public void performQuery(String url, List<String> queryIds, RecordStore recordStore) {
-            gafferSimpleQuery.queryForTwoHop(url, queryIds, recordStore);
+        public void performQuery(List<String> queryIds, RecordStore recordStore) {
+            gafferSimpleQuery.queryForTwoHop(queryIds, recordStore);
         }
     };
-    private static final GafferSimpleQuery gafferSimpleQuery = new GafferSimpleQuery();
+    
+    private static GafferSimpleQuery gafferSimpleQuery = new GafferSimpleQuery();
     private static final Map<String, GafferSimpleQueryTypes> BY_LABEL = new HashMap<>();
     
     static {
@@ -50,7 +51,7 @@ public enum GafferSimpleQueryTypes {
     
     final private String label;
 
-    public String getLabel() {
+    String getLabel() {
         return this.label;
     }
 
@@ -58,13 +59,17 @@ public enum GafferSimpleQueryTypes {
         this.label = label;
     }
 
-    public static Stream<GafferSimpleQueryTypes> stream() {
+    static Stream<GafferSimpleQueryTypes> stream() {
         return Stream.of(GafferSimpleQueryTypes.values());
     }
 
-   public static GafferSimpleQueryTypes valueOfLabel(String label) {
+    static GafferSimpleQueryTypes valueOfLabel(String label) {
         return BY_LABEL.get(label);
     }
     
-    public abstract void performQuery(String url, List<String> queryIds, RecordStore recordStore);
+    abstract void performQuery(List<String> queryIds, RecordStore recordStore);
+
+    void setUrl(String url) {
+        gafferSimpleQuery.setUrl(url);
+    }
 }
