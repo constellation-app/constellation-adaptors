@@ -1,0 +1,46 @@
+before_cache:
+  - find "${HOME}"/.ivy2/cache -name "ivydata-*.properties" -print -delete
+cache:
+  directories:
+    - ${HOME}/.ivy2/cache
+
+env:
+  - RUNNER_IMAGE="constellationapplication/netbeans-runner:12"
+
+# Disable shallow clone for SCM SonarCloud analysis
+git:
+  depth: false
+
+jobs:
+  include:
+  - stage: Build and Test
+    dist: bionic
+    language: java
+    services:
+      - docker
+    script:
+      - docker pull "${RUNNER_IMAGE}"
+      - docker run --mount "type=bind,source=${TRAVIS_BUILD_DIR},target=${TRAVIS_BUILD_DIR}" --mount "type=bind,source=${HOME}/.ivy2/cache,target=/root/.ivy2/cache" --workdir "${TRAVIS_BUILD_DIR}" "${RUNNER_IMAGE}" .travis/run-tests.sh
+      - .travis/sonar.sh
+    addons:
+      sonarcloud:
+        organization: "constellation-app"
+        token: $SONAR_TOKEN
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "bhWaqH2/RzTbtChHsET3gUrD5HCUQ19XNdE4JouwEnR2inaGQjQG1d47m3rd9pkr5+QGOgRR5F7WmIGvUKaCirFaT1aQQQBc2mdty+yMYEAyhck7OJ7FjuJL3kYic743EWflvXPjP1qP6Fy6iz504OVzZMITKrNGLovW2p+hrHW8hTONXqTpNZKujqvPtR/p3Us6hraU2mKYr19egJD0S/rj6n2kxrB0ZSp6xW0rRl5T9Yuic0Q95vsnZ+jpGg1ykLQ36qw2wmoc4mT7RMRoi/OM4X3FYVylX2xwVo/YixiqFZgXy90tBs/VZt1KICE1GImhBG8a2GU/qGZm3mstkq2+fsmGm9aj+TJz6cY+sDdr72+B1D9qaZIG+2Iq7DsX4btG+vyzO/h7PTCJDb1Jvqp1VsM4PJ0fy/eB6+Xrr4HrHWjaMQLh7scAT3qJyoqDmFREWKU0XtkI+A975l8ioLQ/AxaIoGGNxJ+2mnbGORKQhNkK04ylF67w2uBrTek7kqtTB8thKAo+RKXQq1RFcZ4rdHNMzJEI9Fbr4FMCi6GX1UffG0PtAToykzV+pz2st5bNPfs1TLJoWWjiMJzuNZosmACDFeqhcfQvJoqlaG1CqhG2wP9k+DNARBnnak1oGqnxqZqN06+fdpngCxvv7fs5OjTWGcKzRAzHOf3w0Xk="
+  file: 'dist/constellation.zip'
+  on:
+    repo: constellation-app/constellation-adaptors
+    branch: master
+    tags: true
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/82ac70bdb3f9e144d859
+    on_success: change
+    on_failure: always
+    on_start: never
