@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterClass;
@@ -34,6 +35,12 @@ import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser;
 import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.DEFAULT_SERIALISER_CLASS_NAME;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
+
+import static org.mockito.Mockito.*;
+import org.openide.util.Exceptions;
+import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
+import uk.gov.gchq.gaffer.operation.OperationChain;
+import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 
 /**
  *
@@ -71,12 +78,51 @@ public class GafferSimpleQueryNGTest {
         GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
 
         final RecordStore recordStore = new GraphRecordStore();
-        List<Element> elements = null;
-
-        elements = fetchElementsFromFile("resources/exampleGafferResponse.json");
-
+        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
         elements.forEach(e -> simpleQuery.addResultsToRecordStore(e, recordStore));
         assertEquals(recordStore.size(), 3);
+    }
+    
+    @Test
+    public void testQueryForOneHop(){
+        final RecordStore recordStore = new GraphRecordStore();
+        GafferConnector connMock = mock(GafferConnector.class);
+        GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
+        
+        List<String> queryIds = Arrays.asList("M4");
+        var opChain =simpleQuery.buildOneHopChain(queryIds);
+        
+        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
+        try {
+            when(connMock.sendQueryToGaffer(opChain)).thenReturn(elements);
+        } catch (IOException | InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        simpleQuery.setGafferConnectorService(connMock);
+        simpleQuery.fetchResults(opChain, recordStore);
+        assertEquals(recordStore.size(), 3);
+    }
+    
+    @Test
+    public void testQueryForTwoHop(){
+        final RecordStore recordStore = new GraphRecordStore();
+        GafferConnector connMock = mock(GafferConnector.class);
+        GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
+        
+        List<String> queryIds = Arrays.asList("M4");
+        var opChain =simpleQuery.buildTwoHopChain(queryIds);
+        
+        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseTwoHop.json");
+        try {
+            when(connMock.sendQueryToGaffer(opChain)).thenReturn(elements);
+        } catch (IOException | InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        simpleQuery.setGafferConnectorService(connMock);
+        simpleQuery.fetchResults(opChain, recordStore);
+        assertEquals(recordStore.size(), 4);
     }
 
     private List<Element> fetchElementsFromFile(String path) {
@@ -87,4 +133,6 @@ public class GafferSimpleQueryNGTest {
             return new ArrayList<>();
         }
     }
+    
+    
 }

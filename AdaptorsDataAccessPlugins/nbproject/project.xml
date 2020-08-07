@@ -67,6 +67,14 @@
                 <test-type>
                     <name>unit</name>
                     <test-dependency>
+                        <code-name-base>au.gov.asd.tac.constellation.dependencies.adaptors</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                    <test-dependency>
+                        <code-name-base>org.netbeans.libs.junit4</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                    <test-dependency>
                         <code-name-base>org.netbeans.libs.testng</code-name-base>
                         <compile-dependency/>
                     </test-dependency>

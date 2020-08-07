@@ -29,6 +29,7 @@ import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.DEFAULT_SERIAL
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 
+
 /**
  *
  * @author GCHQDeveloper601
@@ -39,17 +40,23 @@ public class GafferConnector {
     public static final String JSON_SERIALISER_MODULES = JSONSerialiser.JSON_SERIALISER_MODULES;
     public static final String STRICT_JSON = JSONSerialiser.STRICT_JSON;
 
-    private final String url;
+    private String url;
     
     private final HttpClient httpClient;
 
-    GafferConnector(String url) {
-        this.url = url;
-        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
+    GafferConnector(){
+               JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
         httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2) // this is the default
-                .build();
+                .build();  
     }
+    
+    GafferConnector(String url) {
+        this();
+        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
+        this.url = url;        
+    }
+    
 
     public List<Element> sendQueryToGaffer(OperationChain opChain) throws SerialisationException, IOException, InterruptedException {
         var data = new String(JSONSerialiser.serialise(opChain, true, new String[0]));
@@ -59,6 +66,7 @@ public class GafferConnector {
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
         return JSONSerialiser.deserialise(response.body().getBytes(), new TypeReference<List<Element>>() {
         });
 

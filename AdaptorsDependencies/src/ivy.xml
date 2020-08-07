@@ -19,7 +19,7 @@
         <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.12.0" />
-        
+        <dependency org="uk.gov.gchq.gaffer" name="type" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="store" rev="1.12.0" />
@@ -34,9 +34,18 @@
         <dependency org="com.google.guava" name="guava" rev="28.2-jre"/>
         <!-- GAFFER Dependencies end -->
         
+        <!--Test Dependancies -->
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency org="org.testng" name="testng" rev="7.3.0"  conf="test->default"/>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
+        
+
     
         <exclude type="source" ext="jar" conf="*"/>
         <exclude type="javadoc" ext="jar" conf="*"/>
         <exclude type="license" ext="txt" conf="*"/>
+    
+    
     </dependencies>
 </ivy-module>

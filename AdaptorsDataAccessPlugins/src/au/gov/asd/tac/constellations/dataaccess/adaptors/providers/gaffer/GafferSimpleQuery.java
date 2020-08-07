@@ -49,6 +49,10 @@ public class GafferSimpleQuery {
         connector=new GafferConnector(url);
     }
     
+    protected void setGafferConnectorService(GafferConnector gafferConnector){
+        connector=gafferConnector;
+    }
+    
     /**
      * This function will only return the details of the Elements being queries
      * without getting any hops
@@ -69,27 +73,23 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForOneHop(List<String> queryIds, RecordStore recordStore) {
-        GetElements elms = new GetElements.Builder().input(queryIds).build();
-        OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
+    public void queryForOneHop(List<String> queryIds, RecordStore recordStore) { 
+        var opChain =buildOneHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
 
     /**
-     * This function will return 1 hop from the seed being queried
+     * This function will return 2 hop from the seed being queried
      *
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
     public void queryForTwoHop(List<String> queryIds, RecordStore recordStore) {
-        OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder()
-                .first(new GetAdjacentIds.Builder().input(queryIds).build())
-                .then(new GetElements.Builder().build())
-                .build();
+        var opChain = buildTwoHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
 
-    private void fetchResults(OperationChain opChain, RecordStore recordStore) {
+    protected void fetchResults(OperationChain opChain, RecordStore recordStore) {
         try {
             List<Element> results = connector.sendQueryToGaffer(opChain);
             results.forEach(result -> addResultsToRecordStore(result, recordStore));
@@ -112,5 +112,17 @@ public class GafferSimpleQuery {
             e.getProperties().keySet().forEach(key -> recordStore.set(GraphRecordStoreUtilities.SOURCE + key.toUpperCase(), e.getProperties().get(key)));
         }
     }
+
+    protected OperationChain buildOneHopChain(List<String> queryIds) {
+        GetElements elms = new GetElements.Builder().input(queryIds).build();
+        return new OperationChain.Builder().first(elms).build();
+    }
+    
+    protected OperationChain buildTwoHopChain(List<String> queryIds) {
+            return new OperationChain.Builder()
+                .first(new GetAdjacentIds.Builder().input(queryIds).build())
+                .then(new GetElements.Builder().build())
+                .build();
+       }
 
 }
