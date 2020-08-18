@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
 
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-
 import java.io.IOException;
 import java.util.List;
 import org.openide.util.Exceptions;
-
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
@@ -32,27 +30,26 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetAdjacentIds;
 import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 
 /**
+ * Example Query for querying the Example Read Traffic Gaffer store
  *
  * @author GCHQDeveloper601
  */
 public class GafferSimpleQuery {
 
-    private String url;
-    private GafferConnector connector ;
+    private GafferConnector connector;
 
-    public GafferSimpleQuery (){
-    //NOOP
+    public GafferSimpleQuery() {
+        //NOOP
     }
-    
-    public void setUrl(String url){
-        this.url = url;
-        connector=new GafferConnector(url);
+
+    public void setUrl(final String url) {
+        connector = new GafferConnector(url);
     }
-    
-    protected void setGafferConnectorService(GafferConnector gafferConnector){
-        connector=gafferConnector;
+
+    protected void setGafferConnectorService(final GafferConnector gafferConnector) {
+        connector = gafferConnector;
     }
-    
+
     /**
      * This function will only return the details of the Elements being queries
      * without getting any hops
@@ -60,10 +57,10 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForDetails(List<String> queryIds, RecordStore recordStore) {
+    public void queryForDetails(final List<String> queryIds, final RecordStore recordStore) {
         //This query is not quite right yet so is not yet enabled.
-        GetElements elms = new GetElements.Builder().input(queryIds).build();
-        OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
+        final GetElements elms = new GetElements.Builder().input(queryIds).build();
+        final OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
         fetchResults(opChain, recordStore);
     }
 
@@ -73,8 +70,8 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForOneHop(List<String> queryIds, RecordStore recordStore) { 
-        var opChain =buildOneHopChain(queryIds);
+    public void queryForOneHop(final List<String> queryIds, final RecordStore recordStore) {
+        final OperationChain opChain = buildOneHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
 
@@ -84,45 +81,45 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForTwoHop(List<String> queryIds, RecordStore recordStore) {
-        var opChain = buildTwoHopChain(queryIds);
+    public void queryForTwoHop(final List<String> queryIds, final RecordStore recordStore) {
+        final OperationChain opChain = buildTwoHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
 
-    protected void fetchResults(OperationChain opChain, RecordStore recordStore) {
+    protected void fetchResults(final OperationChain opChain, final RecordStore recordStore) {
         try {
-            List<Element> results = connector.sendQueryToGaffer(opChain);
+            final List<Element> results = connector.sendQueryToGaffer(opChain);
             results.forEach(result -> addResultsToRecordStore(result, recordStore));
-        } catch (IOException | InterruptedException ex) {
+        } catch (final IOException | InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    public void addResultsToRecordStore(Element element, RecordStore recordStore) {
+    public void addResultsToRecordStore(final Element element, final RecordStore recordStore) {
         recordStore.add();
         if (element instanceof Edge) {
-            Edge e = (Edge) element;
+            final Edge e = (Edge) element;
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getSource());
             recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, e.getDestination());
             recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, e.getDirectedType());
         } else if (element instanceof Entity) {
-            Entity e = (Entity) element;
+            final Entity e = (Entity) element;
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getVertex());
             recordStore.set(GraphRecordStoreUtilities.SOURCE + "COUNT", e.getProperty("count"));
             e.getProperties().keySet().forEach(key -> recordStore.set(GraphRecordStoreUtilities.SOURCE + key.toUpperCase(), e.getProperties().get(key)));
         }
     }
 
-    protected OperationChain buildOneHopChain(List<String> queryIds) {
-        GetElements elms = new GetElements.Builder().input(queryIds).build();
+    protected OperationChain buildOneHopChain(final List<String> queryIds) {
+        final GetElements elms = new GetElements.Builder().input(queryIds).build();
         return new OperationChain.Builder().first(elms).build();
     }
-    
-    protected OperationChain buildTwoHopChain(List<String> queryIds) {
-            return new OperationChain.Builder()
+
+    protected OperationChain buildTwoHopChain(final List<String> queryIds) {
+        return new OperationChain.Builder()
                 .first(new GetAdjacentIds.Builder().input(queryIds).build())
                 .then(new GetElements.Builder().build())
                 .build();
-       }
+    }
 
 }

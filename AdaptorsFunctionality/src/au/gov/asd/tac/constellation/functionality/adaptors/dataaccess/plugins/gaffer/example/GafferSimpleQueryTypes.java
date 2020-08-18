@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
 
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import java.util.HashMap;
@@ -22,40 +22,41 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
+ * Helper class to generate the queries to send to Gaffer for the example Road
+ * Traffic Data Source
  *
  * @author GCHQDeveloper601
  */
 public enum GafferSimpleQueryTypes {
 
-
     GetOneHop("Get One Hop") {
         @Override
-        public void performQuery(List<String> queryIds, RecordStore recordStore) {
-            gafferSimpleQuery.queryForOneHop( queryIds, recordStore);
+        public void performQuery(final List<String> queryIds, final RecordStore recordStore) {
+            gafferSimpleQuery.queryForOneHop(queryIds, recordStore);
         }
     }, GetTwoHop("Get Two Hop") {
         @Override
-        public void performQuery(List<String> queryIds, RecordStore recordStore) {
+        public void performQuery(final List<String> queryIds, final RecordStore recordStore) {
             gafferSimpleQuery.queryForTwoHop(queryIds, recordStore);
         }
     };
-    
+
     private static GafferSimpleQuery gafferSimpleQuery = new GafferSimpleQuery();
     private static final Map<String, GafferSimpleQueryTypes> BY_LABEL = new HashMap<>();
-    
+
     static {
-        for(GafferSimpleQueryTypes value :values()){
+        for (GafferSimpleQueryTypes value : values()) {
             BY_LABEL.put(value.label, value);
         }
     }
-    
+
     final private String label;
 
     String getLabel() {
         return this.label;
     }
 
-    GafferSimpleQueryTypes(String label) {
+    GafferSimpleQueryTypes(final String label) {
         this.label = label;
     }
 
@@ -63,13 +64,13 @@ public enum GafferSimpleQueryTypes {
         return Stream.of(GafferSimpleQueryTypes.values());
     }
 
-    static GafferSimpleQueryTypes valueOfLabel(String label) {
+    static GafferSimpleQueryTypes valueOfLabel(final String label) {
         return BY_LABEL.get(label);
     }
-    
-    abstract void performQuery(List<String> queryIds, RecordStore recordStore);
 
-    void setUrl(String url) {
+    abstract void performQuery(final List<String> queryIds, final RecordStore recordStore);
+
+    void setUrl(final String url) {
         gafferSimpleQuery.setUrl(url);
     }
 }

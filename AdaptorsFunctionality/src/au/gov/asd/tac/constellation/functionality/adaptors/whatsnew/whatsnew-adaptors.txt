@@ -1,3 +1,10 @@
+== 2020-08-18 Example Gaffer Queries
+<p>
+ In the Data Access View there is 1 plugin that can be used to query a Gaffer
+ Instance running the Road Traffic Example. This is intended to show to you can 
+ write you own customer query to Gaffer from Constellation.
+</p>
+
 == 2020-04-20 Support for GraphML and GML files
 <p>
 In the Data Access View there are 6 plugins that can be used to import, enrich and

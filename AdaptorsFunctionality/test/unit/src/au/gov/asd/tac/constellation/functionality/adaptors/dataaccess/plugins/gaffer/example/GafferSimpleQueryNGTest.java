@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
 
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,6 +24,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static org.mockito.Mockito.*;
+import org.openide.util.Exceptions;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -34,13 +35,8 @@ import org.testng.annotations.Test;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser;
 import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.DEFAULT_SERIALISER_CLASS_NAME;
-import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
-
-import static org.mockito.Mockito.*;
-import org.openide.util.Exceptions;
-import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.operation.OperationChain;
-import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
+import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 
 /**
  *
@@ -48,12 +44,11 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
  */
 public class GafferSimpleQueryNGTest {
 
-    public GafferSimpleQueryNGTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
-        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
+        //JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
+        System.setProperty(JSONSerialiser.JSON_SERIALISER_MODULES, SketchesJsonModules.class.getName());
+        JSONSerialiser.update();
     }
 
     @AfterClass
@@ -62,6 +57,7 @@ public class GafferSimpleQueryNGTest {
 
     @BeforeMethod
     public void setUpMethod() {
+        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
     }
 
     @AfterMethod
@@ -71,68 +67,64 @@ public class GafferSimpleQueryNGTest {
     /**
      * Test of class ExtractFromContentPlugin.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testAddResultsToRecordStore() {
-        GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
-
+        final GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
         final RecordStore recordStore = new GraphRecordStore();
-        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
+        final List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
+
         elements.forEach(e -> simpleQuery.addResultsToRecordStore(e, recordStore));
+
         assertEquals(recordStore.size(), 3);
     }
-    
+
     @Test
-    public void testQueryForOneHop(){
+    public void testQueryForOneHop() {
         final RecordStore recordStore = new GraphRecordStore();
-        GafferConnector connMock = mock(GafferConnector.class);
-        GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
-        
-        List<String> queryIds = Arrays.asList("M4");
-        var opChain =simpleQuery.buildOneHopChain(queryIds);
-        
-        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
+        final GafferConnector connMock = mock(GafferConnector.class);
+        final GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
+
+        final List<String> queryIds = Arrays.asList("M4");
+        final OperationChain opChain = simpleQuery.buildOneHopChain(queryIds);
+
+        final List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseOneHop.json");
         try {
             when(connMock.sendQueryToGaffer(opChain)).thenReturn(elements);
-        } catch (IOException | InterruptedException ex) {
+        } catch (final IOException | InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
         simpleQuery.setGafferConnectorService(connMock);
         simpleQuery.fetchResults(opChain, recordStore);
         assertEquals(recordStore.size(), 3);
     }
-    
+
     @Test
-    public void testQueryForTwoHop(){
+    public void testQueryForTwoHop() {
         final RecordStore recordStore = new GraphRecordStore();
-        GafferConnector connMock = mock(GafferConnector.class);
-        GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
-        
-        List<String> queryIds = Arrays.asList("M4");
-        var opChain =simpleQuery.buildTwoHopChain(queryIds);
-        
-        List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseTwoHop.json");
+        final GafferConnector connMock = mock(GafferConnector.class);
+        final GafferSimpleQuery simpleQuery = new GafferSimpleQuery();
+
+        final List<String> queryIds = Arrays.asList("M4");
+        final OperationChain opChain = simpleQuery.buildTwoHopChain(queryIds);
+
+        final List<Element> elements = fetchElementsFromFile("resources/exampleGafferResponseTwoHop.json");
         try {
             when(connMock.sendQueryToGaffer(opChain)).thenReturn(elements);
-        } catch (IOException | InterruptedException ex) {
+        } catch (final IOException | InterruptedException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
         simpleQuery.setGafferConnectorService(connMock);
         simpleQuery.fetchResults(opChain, recordStore);
         assertEquals(recordStore.size(), 4);
     }
 
-    private List<Element> fetchElementsFromFile(String path) {
+    private List<Element> fetchElementsFromFile(final String path) {
         try {
-            return JSONSerialiser.deserialise(Files.readAllBytes(new File(getClass().getResource(path).toURI()).toPath()), new TypeReference<List<Element>>() {
-            });
-        } catch (IOException | URISyntaxException ex) {
+            return Arrays.asList(JSONSerialiser.getMapper().readValue(Files.readAllBytes(new File(getClass().getResource(path).toURI()).toPath()), Element[].class));
+        } catch (final IOException | URISyntaxException ex) {
             return new ArrayList<>();
         }
     }
-    
-    
+
 }

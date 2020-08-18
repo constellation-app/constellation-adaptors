@@ -7,6 +7,22 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>au.gov.asd.tac.constellation.dependencies</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>au.gov.asd.tac.constellation.dependencies.adaptors</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>au.gov.asd.tac.constellation.functionality</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -176,7 +192,28 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <test-dependencies>
+                <test-type>
+                    <name>unit</name>
+                    <test-dependency>
+                        <code-name-base>au.gov.asd.tac.constellation.dependencies.adaptors</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                    <test-dependency>
+                        <code-name-base>org.netbeans.libs.testng</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                </test-type>
+            </test-dependencies>
+            <public-packages>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities</package>
+                <package>au.gov.asd.tac.constellation.functionality.adaptors.whatsnew</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

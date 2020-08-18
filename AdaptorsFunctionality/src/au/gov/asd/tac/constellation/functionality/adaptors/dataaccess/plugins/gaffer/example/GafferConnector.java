@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.exception.SerialisationException;
@@ -29,8 +30,8 @@ import static uk.gov.gchq.gaffer.jsonserialisation.JSONSerialiser.DEFAULT_SERIAL
 import uk.gov.gchq.gaffer.operation.OperationChain;
 import uk.gov.gchq.gaffer.sketches.serialisation.json.SketchesJsonModules;
 
-
 /**
+ * Simple connector for sending queries to an Instance of Gaffer
  *
  * @author GCHQDeveloper601
  */
@@ -40,36 +41,34 @@ public class GafferConnector {
     public static final String JSON_SERIALISER_MODULES = JSONSerialiser.JSON_SERIALISER_MODULES;
     public static final String STRICT_JSON = JSONSerialiser.STRICT_JSON;
 
+    private static final String EXECUTE_ENDPOINT = "/rest/v2/graph/operations/execute";
+
     private String url;
-    
+
     private final HttpClient httpClient;
 
-    GafferConnector(){
-               JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
+    GafferConnector() {
+        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
         httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2) // this is the default
-                .build();  
+                .build();
     }
-    
-    GafferConnector(String url) {
+
+    GafferConnector(final String url) {
         this();
         JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
-        this.url = url;        
+        this.url = url;
     }
-    
 
-    public List<Element> sendQueryToGaffer(OperationChain opChain) throws SerialisationException, IOException, InterruptedException {
-        var data = new String(JSONSerialiser.serialise(opChain, true, new String[0]));
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url + "/rest/v2/graph/operations/execute"))
-                .POST(HttpRequest.BodyPublishers.ofString(data)) // this is the default
+    public List<Element> sendQueryToGaffer(final OperationChain opChain) throws SerialisationException, IOException, InterruptedException {
+        final byte[] data = JSONSerialiser.serialise(opChain, true, new String[0]);
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url + EXECUTE_ENDPOINT))
+                .POST(HttpRequest.BodyPublishers.ofByteArray(data)) // this is the default
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-        return JSONSerialiser.deserialise(response.body().getBytes(), new TypeReference<List<Element>>() {
-        });
-
+        return Arrays.asList(JSONSerialiser.deserialise(response.body().getBytes(), Element[].class));
     }
 
 }

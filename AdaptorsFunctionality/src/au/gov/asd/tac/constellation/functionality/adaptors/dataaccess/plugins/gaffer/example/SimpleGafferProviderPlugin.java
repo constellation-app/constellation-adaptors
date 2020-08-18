@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -28,10 +29,8 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
-
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import au.gov.asd.tac.constellations.dataaccess.adaptors.DataAccessPluginAdaptorsType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,11 +39,13 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
 /**
+ * Example plugin to connect to the example Gaffer Road TrafficData Source
  *
  * @author GCHQDeveloper601
  */
 @ServiceProviders({
-    @ServiceProvider(service = DataAccessPlugin.class),@ServiceProvider(service = Plugin.class)
+    @ServiceProvider(service = DataAccessPlugin.class),
+    @ServiceProvider(service = Plugin.class)
 })
 @Messages("SimpleGafferProviderPlugin=Gaffer Simple Query Options")
 public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
@@ -60,7 +61,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorsType.GAFFER_ROAD_EXAMPLE;
+        return DataAccessPluginAdaptorType.EXAMPLE;
     }
 
     @Override
@@ -87,10 +88,10 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         params.addParameter(queryOptions);
 
         return params;
-    }    
+    }
 
     @Override
-    protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
+    protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
         query.reset();
         final String url = parameters.getStringValue(GAFFER_URL_LOCATION_PARAMETER_ID);
         final ParameterValue queryToRun = parameters.getSingleChoice(GAFFER_QUERY_TYPE_PARAMETER_ID);
@@ -98,7 +99,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         final GafferSimpleQueryTypes gafferSimpleQueryType = GafferSimpleQueryTypes.valueOfLabel((String) queryToRun.getObjectValue());
         final List<String> queryIds = new ArrayList<>();
         while (query.next()) {
-            queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER  ));
+            queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
         }
         final RecordStore results = new GraphRecordStore();
         gafferSimpleQueryType.setUrl(url);
