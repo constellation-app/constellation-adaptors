@@ -30,7 +30,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import au.gov.asd.tac.constellations.dataaccess.adaptors.DataAccessPluginAdaptorsType;
+import au.gov.asd.tac.constellations.dataaccess.adaptors.DataAccessPluginAdaptorType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorsType.EXAMPLE;
+        return DataAccessPluginAdaptorType.EXAMPLE;
     }
 
     @Override
