@@ -30,14 +30,12 @@ public class DataAccessPluginAdaptorType extends DataAccessPluginCoreType {
 
     public static final String HOP = "Hop";
     public static final String ENRICH = "Enrich";
-    public static final String EXAMPLE = "Example";
 
     @Override
     public List<PositionalDataAccessPluginType> getPluginTypeList() {
         final ArrayList<PositionalDataAccessPluginType> pluginTypeList = new ArrayList<>();
         pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(ENRICH, 1400));
         pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(HOP, 1500));
-        pluginTypeList.add(new DataAccessPluginType.PositionalDataAccessPluginType(EXAMPLE, 2500));
         return pluginTypeList;
     }
 }

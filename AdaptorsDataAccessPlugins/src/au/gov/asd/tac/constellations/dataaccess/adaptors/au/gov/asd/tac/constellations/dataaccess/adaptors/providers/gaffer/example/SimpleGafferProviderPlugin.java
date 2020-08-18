@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
+package au.gov.asd.tac.constellations.dataaccess.adaptors.au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer.example;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -31,6 +30,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import au.gov.asd.tac.constellations.dataaccess.adaptors.DataAccessPluginAdaptorsType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorType.EXAMPLE;
+        return DataAccessPluginAdaptorsType.EXAMPLE;
     }
 
     @Override

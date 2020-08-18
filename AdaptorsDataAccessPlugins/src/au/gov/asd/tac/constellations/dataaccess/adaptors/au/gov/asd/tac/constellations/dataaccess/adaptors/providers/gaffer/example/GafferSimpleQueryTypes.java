@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
+package au.gov.asd.tac.constellations.dataaccess.adaptors.au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer.example;
 
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import java.util.HashMap;

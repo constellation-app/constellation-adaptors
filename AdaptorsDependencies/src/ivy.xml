@@ -32,13 +32,10 @@
         <!-- GAFFER Dependencies end -->
         
         <!--Test Dependancies -->
-        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
-        <!--<dependency org="org.testng" name="testng" rev="7.3.0"  conf="test->default"/>-->
+        
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
         <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
-        
-
-    
+  
         <exclude type="source" ext="jar" conf="*"/>
         <exclude type="javadoc" ext="jar" conf="*"/>
         <exclude type="license" ext="txt" conf="*"/>

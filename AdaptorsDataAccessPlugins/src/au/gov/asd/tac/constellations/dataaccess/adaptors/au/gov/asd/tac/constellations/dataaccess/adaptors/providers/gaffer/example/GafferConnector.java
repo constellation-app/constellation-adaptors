@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.gaffer.example;
+package au.gov.asd.tac.constellations.dataaccess.adaptors.au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer.example;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import uk.gov.gchq.gaffer.data.element.Element;
