@@ -123,27 +123,20 @@ public class ImportEntitiesFromGDELTPlugin extends RecordStoreQueryPlugin implem
         /**
          * Initialize variables
          */
-        RecordStore results = null;
         final LocalDate localDate = parameters.getLocalDateValue(LOCAL_DATE_PARAMETER_ID);
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
         if (localDate != null) {            
             try {
-                results = GDELTImportingUtilities.retrieveEntities(localDate, options, limit);
+                final RecordStore results = GDELTImportingUtilities.retrieveEntities(localDate, options, limit);
+                interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
+                return results;
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
 
-        if (results != null) {
-            interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
-            return results;
-        }
-        else {
-            interaction.setProgress(1, 0, "Something went wrong - added 0 entities.", true);
-            return new GraphRecordStore();
-
-        }
+        return new GraphRecordStore();
     }
 }

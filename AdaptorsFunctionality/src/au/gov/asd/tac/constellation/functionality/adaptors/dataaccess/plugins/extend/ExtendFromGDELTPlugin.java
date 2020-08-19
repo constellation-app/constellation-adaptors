@@ -1,4 +1,4 @@
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.extend;
 
 /*
  * Copyright 2010-2019 Australian Signals Directorate
@@ -15,7 +15,6 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.h
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTHoppingUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -33,6 +32,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.LocalDateParameterT
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
+import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -53,15 +53,18 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"HOP"})
-@Messages("HopFromGDELTPlugin=Hop From GDELT Knowledge Graph")
-public class HopFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "EXTEND"})
+@Messages("ExtendFromGDELTPlugin=Extend From GDELT Knowledge Graph")
+public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
     // plugin parameters
+    public static final String LOCAL_DATE_PARAMETER_ID = PluginParameter.buildId(ExtendFromGDELTPlugin.class, "local_date");
+    public static final String CHOICE_PARAMETER_ID = PluginParameter.buildId(ExtendFromGDELTPlugin.class, "choice");
+    public static final String LIMIT_PARAMETER_ID = PluginParameter.buildId(ExtendFromGDELTPlugin.class, "limit");
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorType.HOP;
+        return DataAccessPluginCoreType.EXTEND;
     }
 
     @Override
@@ -71,14 +74,9 @@ public class HopFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAc
 
     @Override
     public String getDescription() {
-        return "Chain on graph entities to import from GDELT";
+        return "Extend on selected graph entities to import from GDELT";
     }
     
-    public static final String LOCAL_DATE_PARAMETER_ID = PluginParameter.buildId(HopFromGDELTPlugin.class, "local_date");
-    public static final String CHOICE_PARAMETER_ID = PluginParameter.buildId(HopFromGDELTPlugin.class, "choice");
-    public static final String LIMIT_PARAMETER_ID = PluginParameter.buildId(HopFromGDELTPlugin.class, "limit");
-    
-
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
@@ -124,8 +122,7 @@ public class HopFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAc
 
     @Override
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
-        final RecordStore edgeRecords = new GraphRecordStore();
-
+        
         interaction.setProgress(0, 0, "Hopping...", true);
         /**
          * Initialize variables
@@ -136,24 +133,17 @@ public class HopFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAc
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
         
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL);
-        RecordStore results = null;
         
         if (localDate != null) {            
             try {
-                results = GDELTHoppingUtilities.hopRelationships(localDate, options, limit, labels);
+                final RecordStore results = GDELTHoppingUtilities.hopRelationships(localDate, options, limit, labels);
+                interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
+                return results;
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
-
-        if (results != null) {
-            interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
-            return results;
-        }
-        else {
-            interaction.setProgress(1, 0, "Something went wrong - added 0 entities.", true);
-            return new GraphRecordStore();
-
-        }
+        
+        return new GraphRecordStore();
     }
 }

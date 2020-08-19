@@ -15,7 +15,6 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.e
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -32,6 +31,7 @@ import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcep
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
+import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -52,7 +52,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"ENRICH"})
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "ENRICHMENT"})
 @Messages("EnrichFromGMLPlugin=Enrich From GML File")
 public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
@@ -65,7 +65,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorType.ENRICH;
+        return DataAccessPluginCoreType.ENRICHMENT;
     }
 
     @Override
