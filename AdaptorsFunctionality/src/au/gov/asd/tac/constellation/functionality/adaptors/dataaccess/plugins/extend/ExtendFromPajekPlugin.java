@@ -48,8 +48,9 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
 /**
- * Read graph data from a Pajek .net file and add it to a graph.
- * This plugin reads the existing selection on the graph and retrieves a one-hop neighbourhood of all adjacent nodes.
+ * Read graph data from a Pajek .net file and add it to a graph. This plugin
+ * reads the existing selection on the graph and retrieves a one-hop
+ * neighbourhood of all adjacent nodes.
  *
  * @author canis_majoris
  */
@@ -95,7 +96,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         file.setName("Pajek File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to hop on incoming transactions
          */
@@ -104,7 +105,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         in.setDescription("Returns nodes adjacent on Incoming Transactions");
         in.setBooleanValue(true);
         params.addParameter(in);
-        
+
         /**
          * A boolean option for whether to hop on outgoing transactions
          */
@@ -113,7 +114,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         out.setDescription("Returns nodes adjacent on Outgoing Transactions");
         out.setBooleanValue(true);
         params.addParameter(out);
-        
+
         return params;
     }
 
@@ -132,27 +133,24 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         String line;
         boolean processNodes = false;
         boolean processEdges = false;
-        
+
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
-            final HashMap<String,String> ids = new HashMap<>();
+            final HashMap<String, String> ids = new HashMap<>();
 
             if (labels.isEmpty()) {
                 interaction.notify(PluginNotificationLevel.WARNING, "Please select nodes to query in Pajek file");
-            }
-            else {
+            } else {
                 try {
                     // Open file and loop through lines
                     in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
                     while ((line = in.readLine()) != null) {
                         if (line.startsWith(VERTEX_HEADER)) {
                             processNodes = true;
-                        }
-                        else if (line.startsWith(EDGE_HEADER)) {
+                        } else if (line.startsWith(EDGE_HEADER)) {
                             processNodes = false;
                             processEdges = true;
-                        }
-                        else {
+                        } else {
                             if (processNodes) {
                                 try {
                                     // Read node data
@@ -161,15 +159,14 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
                                     // Collect IDs that match query labels
                                     if (labels.contains(nodeLabel)) {
-                                        ids.put(nodeId,nodeLabel);
+                                        ids.put(nodeId, nodeLabel);
                                     }
                                 } catch (ArrayIndexOutOfBoundsException ex) {
                                 }
-                            }
-                            else if (processEdges) {
+                            } else if (processEdges) {
                                 try {
                                     // Read edge data
-                                    String[] fields = line.split("\\s+");
+                                    final String[] fields = line.split("\\s+");
                                     final String srcId = fields[1];
                                     final String dstId = fields[2];
                                     final String weight = fields[3];
@@ -197,23 +194,23 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                                         result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                                     }
-                                } catch (ArrayIndexOutOfBoundsException ex) {
+                                } catch (final ArrayIndexOutOfBoundsException ex) {
                                 }
                             }
-                        }  
+                        }
                     }
                     interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
-                } catch (FileNotFoundException ex) {
+                } catch (final FileNotFoundException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
-                        } catch (IOException ex) {
+                        } catch (final IOException ex) {
                             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                        } 
+                        }
                     }
                 }
             }

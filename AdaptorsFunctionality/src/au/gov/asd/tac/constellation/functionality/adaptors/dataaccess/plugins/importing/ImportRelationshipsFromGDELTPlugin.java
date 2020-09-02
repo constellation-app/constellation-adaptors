@@ -17,6 +17,7 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.i
  */
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTDateTime;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTImportingUtilities;
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTRelationshipTypes;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.plugins.Plugin;
@@ -27,15 +28,14 @@ import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.LocalDateParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
+import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Month;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,39 +68,19 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         return 500;
     }
     
-    public static final String LOCAL_DATE_PARAMETER_ID = PluginParameter.buildId(ImportRelationshipsFromGDELTPlugin.class, "local_date");
     public static final String CHOICE_PARAMETER_ID = PluginParameter.buildId(ImportRelationshipsFromGDELTPlugin.class, "choice");
     public static final String LIMIT_PARAMETER_ID = PluginParameter.buildId(ImportRelationshipsFromGDELTPlugin.class, "limit");
     
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
-
-        /**
-         * The date to read from
-         */
-        final PluginParameter<LocalDateParameterType.LocalDateParameterValue> date = LocalDateParameterType.build(LOCAL_DATE_PARAMETER_ID);
-        date.setName("Date");
-        date.setDescription("Pick a day to import");
-        date.setLocalDateValue(LocalDate.of(2020, Month.JANUARY, 1));
-        params.addParameter(date);
         
         final PluginParameter<MultiChoiceParameterValue> choices = MultiChoiceParameterType.build(CHOICE_PARAMETER_ID);
         choices.setName("Relationship Options");
         choices.setDescription("Choose which relationship types to be imported");
-        MultiChoiceParameterType.setOptions(choices, Arrays.asList(
-                "Person - Person", 
-                "Person - Organisation", 
-                "Person - Theme", 
-                "Person - Location",
-                "Person - Source", 
-                "Person - URL", 
-                "Organisation - Organisation", 
-                "Organisation - Theme", 
-                "Organisation - Source", 
-                "Organisation - URL"));
+        MultiChoiceParameterType.setOptions(choices, GDELTRelationshipTypes.getValues());
         final List<String> checked = new ArrayList<>();
-        checked.add("Person - Theme");
+        checked.add(GDELTRelationshipTypes.Person_Theme.toString());
         MultiChoiceParameterType.setChoices(choices, checked);
         params.addParameter(choices);
         
@@ -128,13 +108,16 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         /**
          * Initialize variables
          */
-        final LocalDate localDate = parameters.getLocalDateValue(LOCAL_DATE_PARAMETER_ID);
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
-        if (localDate != null) {            
+        
+        final ZonedDateTime[] startEnd = CoreGlobalParameters.DATETIME_RANGE_PARAMETER.getDateTimeRangeValue().getZonedStartEnd();
+        final ZonedDateTime end = startEnd[1];
+        
+        if (end != null) {            
             try {
-                final GDELTDateTime gdt = new GDELTDateTime(localDate);
+                final GDELTDateTime gdt = new GDELTDateTime(end);
                 final RecordStore results = GDELTImportingUtilities.retrieveRelationships(gdt, options, limit);
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;

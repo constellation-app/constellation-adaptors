@@ -1,22 +1,6 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
-import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
-import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
-import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.time.ZonedDateTime;
 
 /*
  * Copyright 2010-2020 Australian Signals Directorate
@@ -33,8 +17,10 @@ import java.util.zip.ZipInputStream;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- *
+ * This utility class assists formatting the GDELT timestamps for querying
+ * 
  * @author canis_majoris
  */
 public class GDELTDateTime {
@@ -52,10 +38,10 @@ public class GDELTDateTime {
     public final String url;
     public final String file;
     
-    public GDELTDateTime(LocalDate localDate) {
-        this.h = localDate.get(ChronoField.YEAR);
-        this.m = localDate.get(ChronoField.MONTH_OF_YEAR);
-        this.d = localDate.get(ChronoField.DAY_OF_MONTH);
+    public GDELTDateTime(ZonedDateTime date) {
+        this.h = date.getYear();
+        this.m = date.getMonthValue();
+        this.d = date.getDayOfMonth();
         
         this.day = String.format("%04d%02d%02d", h, m, d);
         this.dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);

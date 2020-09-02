@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -33,8 +31,11 @@ import java.util.zip.ZipInputStream;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- *
+ * This class contains utilities functions for importing entities and relationships
+ * from GDELT CSVs.
+ * 
  * @author canis_majoris
  */
 public class GDELTImportingUtilities {

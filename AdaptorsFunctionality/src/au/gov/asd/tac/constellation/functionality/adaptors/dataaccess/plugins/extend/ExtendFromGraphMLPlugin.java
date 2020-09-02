@@ -117,7 +117,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         file.setName("GraphML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to hop on incoming transactions
          */
@@ -126,7 +126,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         in.setDescription("Returns nodes adjacent on Incoming Transactions");
         in.setBooleanValue(true);
         params.addParameter(in);
-        
+
         /**
          * A boolean option for whether to hop on outgoing transactions
          */
@@ -135,7 +135,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         out.setDescription("Returns nodes adjacent on Outgoing Transactions");
         out.setBooleanValue(true);
         params.addParameter(out);
-        
+
         return params;
     }
 
@@ -151,14 +151,14 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean incoming = parameters.getParameters().get(INCOMING_PARAMETER_ID).getBooleanValue();
         final boolean outgoing = parameters.getParameters().get(OUTGOING_PARAMETER_ID).getBooleanValue();
-        
+
         InputStream in = null;
-        HashMap<String,String> nodeAttributes = new HashMap<>();
-        HashMap<String,String> transactionAttributes = new HashMap<>();
-        HashMap<String,String> defaultAttributes = new HashMap<>();
-        
+        final HashMap<String,String> nodeAttributes = new HashMap<>();
+        final HashMap<String,String> transactionAttributes = new HashMap<>();
+        final HashMap<String,String> defaultAttributes = new HashMap<>();
+
         boolean undirected = false;
-        
+
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
 
@@ -210,9 +210,9 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     /**
                      * Look for graphs
                      */
-                    NodeList graphs = documentElement.getElementsByTagName(GRAPH_TAG);
+                    final NodeList graphs = documentElement.getElementsByTagName(GRAPH_TAG);
                     for (int index = 0; index < graphs.getLength(); index++) {
-                       final Node graph = graphs.item(index); 
+                       final Node graph = graphs.item(index);
                        final NamedNodeMap graph_attributes = graph.getAttributes();
                        final String direction = graph_attributes.getNamedItem(DIRECTION_TAG).getNodeValue();
                        final HashSet<String> toComplete = new HashSet<>();
@@ -220,7 +220,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                            undirected = true;
                        }
                        if (graph.hasChildNodes()) {
-                            NodeList children = graph.getChildNodes();
+                            final NodeList children = graph.getChildNodes();
                             for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null) {
@@ -246,8 +246,8 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                     edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                                                     if (undirected) {
                                                         edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, false);
-                                                    }       
-                                                    for (String key : transactionAttributes.keySet()) { 
+                                                    }
+                                                    for (final String key : transactionAttributes.keySet()) {
                                                         if (defaultAttributes.containsKey(key)) {
                                                             final String value = defaultAttributes.get(key);
                                                             final String attr = transactionAttributes.get(key);
@@ -255,15 +255,15 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                             final String attr_type = attr.split(NAME_TYPE_DELIMITER)[1];
                                                             GraphMLUtilities.addAttribute(edgeRecords, GraphRecordStoreUtilities.TRANSACTION, attr_type, attr_name, value);
                                                         }
-                                                    }      
+                                                    }
                                                     if (childNode.hasChildNodes()) {
                                                         GraphMLUtilities.addAttributes(childNode, transactionAttributes, edgeRecords, GraphRecordStoreUtilities.TRANSACTION);
                                                     }
                                                 }
                                             break;
-                                        } 
+                                        }
                                         default:
-                                            break;     
+                                            break;
                                     }
                                 }
                             }
@@ -283,7 +283,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                 nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, id);
                                                 nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
                                                 nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                                                for (String key : nodeAttributes.keySet()) {
+                                                for (final String key : nodeAttributes.keySet()) {
                                                     if (defaultAttributes.containsKey(key)) {
                                                         final String value = defaultAttributes.get(key);
                                                         final String attr = nodeAttributes.get(key);
@@ -291,31 +291,31 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                         final String attr_type = attr.split(NAME_TYPE_DELIMITER)[1];
                                                         GraphMLUtilities.addAttribute(nodeRecords, GraphRecordStoreUtilities.SOURCE, attr_type, attr_name, value);
                                                     }
-                                                }       
+                                                }
                                                 if (childNode.hasChildNodes()) {
                                                     GraphMLUtilities.addAttributes(childNode, nodeAttributes, nodeRecords, GraphRecordStoreUtilities.SOURCE);
-                                                } 
+                                                }
                                             }
                                             break;
                                         }
                                         default:
-                                            break;     
+                                            break;
                                     }
                                 }
                             }
-                        }   
-                    }   
-                } catch (FileNotFoundException ex) {
+                        }
+                    }
+                } catch (final FileNotFoundException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-                } catch (TransformerException ex) {
+                } catch (final TransformerException ex) {
                     Exceptions.printStackTrace(ex);
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
-                        } catch (IOException ex) {
+                        } catch (final IOException ex) {
                             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                        } 
+                        }
                     }
                 }
             }
@@ -324,7 +324,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         result.add(nodeRecords);
         result.add(edgeRecords);
         result.add(nodeRecords);
-        
+
         interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }

@@ -132,7 +132,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         BufferedReader in = null;
         String line;
         boolean edge = false;
-        HashMap<String, String> edgeKV = new HashMap<>();
+        final HashMap<String, String> edgeKV = new HashMap<>();
         
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
@@ -144,7 +144,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                     line = line.trim();
                     if (line.startsWith(EDGE_TAG)) {
                         edge = true;
-                        edgeKV = new HashMap<>();
+                        edgeKV.clear();
                         edgeKV.put(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                     }
                     else if (line.startsWith(START_TAG)) {
@@ -156,7 +156,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                             (outgoing && labels.contains(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER))) {
                             edgeRecords.add();
                             edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
-                            for (String key : edgeKV.keySet()) {
+                            for (final String key : edgeKV.keySet()) {
                                 edgeRecords.set(key, edgeKV.get(key));
                             }
                         }
@@ -177,21 +177,21 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                                         edgeKV.put(GraphRecordStoreUtilities.TRANSACTION + key, value);
                                         break;
                                 }
-                            }  catch (ArrayIndexOutOfBoundsException ex) {
+                            }  catch (final ArrayIndexOutOfBoundsException ex) {
                             }
                         }
                     }  
                 }
 
-            } catch (FileNotFoundException ex) {
+            } catch (final FileNotFoundException ex) {
                 interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
             } finally {
                 if (in != null) {
                     try {
                         in.close();
-                    } catch (IOException ex) {
+                    } catch (final IOException ex) {
                         interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
                     } 
                 }
