@@ -15,6 +15,7 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.i
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTDateTime;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTImportingUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -133,7 +134,8 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
         if (localDate != null) {            
             try {
-                final RecordStore results = GDELTImportingUtilities.retrieveRelationships(localDate, options, limit);
+                final GDELTDateTime gdt = new GDELTDateTime(localDate);
+                final RecordStore results = GDELTImportingUtilities.retrieveRelationships(gdt, options, limit);
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
             } catch (IOException ex) {

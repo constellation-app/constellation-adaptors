@@ -15,7 +15,8 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.e
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTHoppingUtilities;
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTDateTime;
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GDELTExtendingUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -136,7 +137,8 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         
         if (localDate != null) {            
             try {
-                final RecordStore results = GDELTHoppingUtilities.hopRelationships(localDate, options, limit, labels);
+                final GDELTDateTime gdt = new GDELTDateTime(localDate);
+                final RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
             } catch (IOException ex) {

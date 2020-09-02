@@ -39,27 +39,16 @@ import java.util.zip.ZipInputStream;
  */
 public class GDELTImportingUtilities {
     
-    private static final String HEADER = "http://data.gdeltproject.org/gkg/";
-    private static final String FOOTER = ".gkg.csv";
-    private static final String ZIPPER = ".zip";
-    
-    public static RecordStore retrieveEntities(LocalDate localDate, List<String> options, int limit) throws MalformedURLException, IOException {
+    public static RecordStore retrieveEntities(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
         
-        final int h = localDate.get(ChronoField.YEAR);
-        final int m = localDate.get(ChronoField.MONTH_OF_YEAR);
-        final int d = localDate.get(ChronoField.DAY_OF_MONTH);
-        
-        final String day = String.format("%04d%02d%02d", h, m, d);
-        final String dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);
-        String url = HEADER + day + FOOTER + ZIPPER;
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
-            zis = new ZipInputStream(new URL(url).openStream());
+            zis = new ZipInputStream(new URL(gdt.url).openStream());
             
-            ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(day + FOOTER)) {
-                results = readEntities(limit, dt, options, ze, zis);
+            final ZipEntry ze = zis.getNextEntry();
+            if (ze.getName().equals(gdt.file)) {
+                results = readEntities(limit, gdt.dt, options, ze, zis);
             }
             
         } finally {
@@ -71,23 +60,16 @@ public class GDELTImportingUtilities {
         return results;
     }
     
-    public static RecordStore retrieveRelationships(LocalDate localDate, List<String> options, int limit) throws MalformedURLException, IOException {
+    public static RecordStore retrieveRelationships(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
         
-        final int h = localDate.get(ChronoField.YEAR);
-        final int m = localDate.get(ChronoField.MONTH_OF_YEAR);
-        final int d = localDate.get(ChronoField.DAY_OF_MONTH);
-        
-        final String day = String.format("%04d%02d%02d", h, m, d);
-        final String dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);
-        String url = HEADER + day + FOOTER + ZIPPER;
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
-            zis = new ZipInputStream(new URL(url).openStream());
+            zis = new ZipInputStream(new URL(gdt.url).openStream());
             
-            ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(day + FOOTER)) {
-                results = readRelationships(limit, dt, options, ze, zis);
+            final ZipEntry ze = zis.getNextEntry();
+            if (ze.getName().equals(gdt.file)) {
+                results = readRelationships(limit, gdt.dt, options, ze, zis);
             }
             
         } finally {

@@ -37,29 +37,18 @@ import java.util.zip.ZipInputStream;
  *
  * @author canis_majoris
  */
-public class GDELTHoppingUtilities {
+public class GDELTExtendingUtilities {
     
-    private static final String HEADER = "http://data.gdeltproject.org/gkg/";
-    private static final String FOOTER = ".gkg.csv";
-    private static final String ZIPPER = ".zip";
-    
-    public static RecordStore hopRelationships(LocalDate localDate, List<String> options, int limit, List<String> labels) throws MalformedURLException, IOException {
-        
-        final int h = localDate.get(ChronoField.YEAR);
-        final int m = localDate.get(ChronoField.MONTH_OF_YEAR);
-        final int d = localDate.get(ChronoField.DAY_OF_MONTH);
-        
-        final String day = String.format("%04d%02d%02d", h, m, d);
-        final String dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);
-        String url = HEADER + day + FOOTER + ZIPPER;
+    public static RecordStore hopRelationships(GDELTDateTime gdt, List<String> options, int limit, List<String> labels) throws MalformedURLException, IOException {
+
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
-            zis = new ZipInputStream(new URL(url).openStream());
+            zis = new ZipInputStream(new URL(gdt.url).openStream());
             
-            ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(day + FOOTER)) {
-                results = readRelationshipsToHop(limit, dt, options, ze, zis, labels);
+            final ZipEntry ze = zis.getNextEntry();
+            if (ze.getName().equals(gdt.file)) {
+                results = readRelationshipsToHop(limit, gdt.dt, options, ze, zis, labels);
             }
             
         } finally {
@@ -96,7 +85,7 @@ public class GDELTHoppingUtilities {
                 final String tone = fields[7]; // 6 semi-colon delimited
                 final String cameoEventIds = fields[8]; // semi-colon delimited
                 
-                for (String label : labels) {
+                for (final String label : labels) {
                     final String identifier = label.split("<")[0];
                     final String type = label.split("<")[1].split(">")[0];
                     
