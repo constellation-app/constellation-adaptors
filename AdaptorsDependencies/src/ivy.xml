@@ -12,7 +12,9 @@
     <dependencies defaultconf="runtime">
         <dependency org="org.eclipse.rdf4j" name="rdf4j-storage" rev="3.4.0" />
         <dependency org="org.eclipse.rdf4j" name="rdf4j-repository-sail" rev="3.4.0" />
-        <dependency org="org.eclipse.rdf4j" name="rdf4j-sail-memory" rev="3.4.0" />
+        <dependency org="org.eclipse.rdf4j" name="rdf4j-sail-memory" rev="3.4.0" />        
+        <dependency org="org.eclipse.rdf4j" name="rdf4j-tools-federation" rev="3.4.0"/>
+
         
         <!--<dependency org="org.eclipse.rdf4j" name="rdf4j-client" rev="3.4.0" />-->
         <!-- TODO, remove the unwanted jars -->

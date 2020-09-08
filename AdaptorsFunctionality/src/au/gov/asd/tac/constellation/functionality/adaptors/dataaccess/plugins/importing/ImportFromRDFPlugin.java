@@ -26,25 +26,13 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.eclipse.rdf4j.RDF4JException;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.TupleQuery;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParseException;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 /**
  *
@@ -63,41 +51,70 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 //        String repositoryID = "countries";
 //        Repository repo = new HTTPRepository(rdf4jServer, repositoryID);
 
-        Repository repo = new SailRepository(new MemoryStore());
+//        Repository repo = new SailRepository(new MemoryStore());
+//
+//        try {
+//            RepositoryConnection con = repo.getConnection();
+//            try {
+//                URL url = new URL("http://eulersharp.sourceforge.net/2003/03swap/countries");
+//                con.add(url, url.toString(), RDFFormat.TURTLE);
+//            } catch (MalformedURLException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } catch (RDFParseException | RepositoryException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } finally {
+//                con.close();
+//            }
+//        } catch (RDF4JException e) {
+//            // handle exception
+//        }
+//
+//        try (RepositoryConnection conn = repo.getConnection()) {
+//            String queryString = "SELECT ?x ?y WHERE { ?x ?p ?y } ";
+//            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
+//            try (TupleQueryResult result = tupleQuery.evaluate()) {
+//                while (result.hasNext()) {  // iterate over the result
+//                    BindingSet bindingSet = result.next();
+//                    Value valueOfX = bindingSet.getValue("x");
+//                    Value valueOfY = bindingSet.getValue("y");
+//
+//                    System.out.println(valueOfX.stringValue());
+//                    System.out.println(valueOfY.stringValue());
+//                }
+//            }
+//        }
+        //----------------------------------- Using SPARQLRepository
+//        Repository endpoint = new SPARQLRepository("http://dbpedia.org/sparql");
+//        try (RepositoryConnection conn = endpoint.getConnection()) {
+//            TupleQueryResult result = conn.prepareTupleQuery("SELECT * WHERE { ?s ?p ?o } LIMIT 10").evaluate();
+//            result.forEach(System.out::println);
+//        }
+        //---------------------------------------------------Using FedX
+        List<Endpoint> endpoints = new ArrayList<>();
+        endpoints.add(EndpointFactory.loadSPARQLEndpoint("dbpedia", "http://dbpedia.org/sparql"));
+        endpoints.add(EndpointFactory.loadSPARQLEndpoint("swdf", "http://data.semanticweb.org/sparql"));
 
-        try {
-            RepositoryConnection con = repo.getConnection();
-            try {
-                URL url = new URL("http://eulersharp.sourceforge.net/2003/03swap/countries");
-                con.add(url, url.toString(), RDFFormat.TURTLE);
-            } catch (MalformedURLException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (RDFParseException | RepositoryException ex) {
-                Exceptions.printStackTrace(ex);
-            } finally {
-                con.close();
+        Repository repo = FedXFactory.createFederation(endpoints);
+
+        String q = "PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n"
+                + "PREFIX dbpedia-owl: &lt;http://dbpedia.org/ontology/&gt;\n"
+                + "SELECT ?President ?Party WHERE {\n"
+                + "?President rdf:type dbpedia-owl:President .\n"
+                + "?President dbpedia-owl:party ?Party . }";
+
+        TupleQuery query = QueryManager.prepareTupleQuery(q);
+        try (TupleQueryResult res = query.evaluate()) {
+            while (res.hasNext()) {
+                System.out.println(res.next());
             }
-        } catch (RDF4JException e) {
-            // handle exception
         }
 
-        try (RepositoryConnection conn = repo.getConnection()) {
-            String queryString = "SELECT ?x ?y WHERE { ?x ?p ?y } ";
-            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
-            try (TupleQueryResult result = tupleQuery.evaluate()) {
-                while (result.hasNext()) {  // iterate over the result
-                    BindingSet bindingSet = result.next();
-                    Value valueOfX = bindingSet.getValue("x");
-                    Value valueOfY = bindingSet.getValue("y");
-
-                    System.out.println(valueOfX.stringValue());
-                    System.out.println(valueOfY.stringValue());
-                }
-            }
-        }
-
+        repo.shutDown();
+        System.out.println("Done.");
+        System.exit(0);
+//  //-----------------------------------
         return new GraphRecordStore();
     }
 
