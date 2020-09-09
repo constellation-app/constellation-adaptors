@@ -26,10 +26,10 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
@@ -86,34 +86,34 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 //            }
 //        }
         //----------------------------------- Using SPARQLRepository
-//        Repository endpoint = new SPARQLRepository("http://dbpedia.org/sparql");
-//        try (RepositoryConnection conn = endpoint.getConnection()) {
-//            TupleQueryResult result = conn.prepareTupleQuery("SELECT * WHERE { ?s ?p ?o } LIMIT 10").evaluate();
-//            result.forEach(System.out::println);
-//        }
-        //---------------------------------------------------Using FedX
-        List<Endpoint> endpoints = new ArrayList<>();
-        endpoints.add(EndpointFactory.loadSPARQLEndpoint("dbpedia", "http://dbpedia.org/sparql"));
-        endpoints.add(EndpointFactory.loadSPARQLEndpoint("swdf", "http://data.semanticweb.org/sparql"));
-
-        Repository repo = FedXFactory.createFederation(endpoints);
-
-        String q = "PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n"
-                + "PREFIX dbpedia-owl: &lt;http://dbpedia.org/ontology/&gt;\n"
-                + "SELECT ?President ?Party WHERE {\n"
-                + "?President rdf:type dbpedia-owl:President .\n"
-                + "?President dbpedia-owl:party ?Party . }";
-
-        TupleQuery query = QueryManager.prepareTupleQuery(q);
-        try (TupleQueryResult res = query.evaluate()) {
-            while (res.hasNext()) {
-                System.out.println(res.next());
-            }
+        Repository endpoint = new SPARQLRepository("http://dbpedia.org/sparql");
+        try (RepositoryConnection conn = endpoint.getConnection()) {
+            TupleQueryResult result = conn.prepareTupleQuery("SELECT * WHERE { ?s ?p ?o } LIMIT 10").evaluate();
+            result.forEach(System.out::println);
         }
-
-        repo.shutDown();
-        System.out.println("Done.");
-        System.exit(0);
+        //---------------------------------------------------Using FedX
+//        List<Endpoint> endpoints = new ArrayList<>();
+//        endpoints.add(EndpointFactory.loadSPARQLEndpoint("dbpedia", "http://dbpedia.org/sparql"));
+//        endpoints.add(EndpointFactory.loadSPARQLEndpoint("swdf", "http://data.semanticweb.org/sparql"));
+//
+//        Repository repo = FedXFactory.createFederation(endpoints);
+//
+//        String q = "PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n"
+//                + "PREFIX dbpedia-owl: &lt;http://dbpedia.org/ontology/&gt;\n"
+//                + "SELECT ?President ?Party WHERE {\n"
+//                + "?President rdf:type dbpedia-owl:President .\n"
+//                + "?President dbpedia-owl:party ?Party . }";
+//
+//        TupleQuery query = QueryManager.prepareTupleQuery(q);
+//        try (TupleQueryResult res = query.evaluate()) {
+//            while (res.hasNext()) {
+//                System.out.println(res.next());
+//            }
+//        }
+//
+//        repo.shutDown();
+//        System.out.println("Done.");
+//        System.exit(0);
 //  //-----------------------------------
         return new GraphRecordStore();
     }
