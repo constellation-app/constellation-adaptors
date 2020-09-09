@@ -15,6 +15,9 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.AbstractRDFMap;
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.EularsharpCountriesRDFMap;
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.RDFMapStorage;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -24,6 +27,7 @@ import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
+import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
@@ -31,8 +35,8 @@ import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryP
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Map;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQuery;
@@ -60,13 +64,10 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("ImportFromRDFPlugin=Import From RDF")
 public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    private static final Logger LOG = Logger.getLogger(ImportFromRDFPlugin.class.getName());
-
+    public static final String STRING_PARAMETER_ID = PluginParameter.buildId(ImportFromGraphMLPlugin.class, "string");
+    
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
-//        String rdf4jServer = "http://eulersharp.sourceforge.net/2003/03swap/";
-//        String repositoryID = "countries";
-//        Repository repo = new HTTPRepository(rdf4jServer, repositoryID);
 
         Repository repo = new SailRepository(new MemoryStore());
 
@@ -89,47 +90,67 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         }
         
         
-        HashMap<String, String> prefixes = new HashMap<>();
-        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
-        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
-        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
-        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
-        prefixes.put("dct", "http://purl.org/dc/terms/");
-        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
-        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
+        
+        AbstractRDFMap mapping = RDFMapStorage.getMap(EularsharpCountriesRDFMap.getInstance().getName());
+        Map<String, String> prefixes = mapping.getPrefixes();
         
         GraphRecordStore results = new GraphRecordStore();
         try (RepositoryConnection conn = repo.getConnection()) {
-            StringBuilder queryPrefix = new StringBuilder();
-//            TODO: Write something to automatically create the PREFIX part of the query based on the prefixes HashMap
+            // Create query string
+            StringBuilder prefixString = new StringBuilder();
+            prefixes.forEach( (String key, String value) -> {
+                prefixString.append("PREFIX ");
+                prefixString.append(key);
+                prefixString.append(": <");
+                prefixString.append(value);
+                prefixString.append("> ");
+                }
+            );
+            String selectString = "SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object}";
+            String queryString = prefixString + selectString;
             
-//            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Country WHERE { ?Subject foaf:name ?Country} "; // For specific Country query/results
-            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object} "; // Generic query
-            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
+            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString); //Prepare query 
+            
+            Map<String, String> predicateMap = mapping.getPredicateMap();
+            
             try (TupleQueryResult result = tupleQuery.evaluate()) {
+                ArrayList<String> nodeIdentifiers = new ArrayList<>();
                 while (result.hasNext()) {  // iterate over the result
                     BindingSet bindingSet = result.next();
-//                    String bigraph = bindingSet.getValue("Subject").stringValue().split(COUNTRY)[1].toString(); //Specific
-////                    Value valueOfPredicate = bindingSet.getValue("Predicate");//Specific
-//                    String country = bindingSet.getValue("Country").stringValue();//Specific
-
-//                    results.add();//Specific
-//                    results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, bigraph);//Specific
-//                    results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.COUNTRY);//Specific
-//                    results.set(GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY, country);//Specific
-                    String subject = bindingSet.getValue("Subject").toString(); //Generic
-                    String predicate = bindingSet.getValue("Predicate").toString();//Generic
+                    String subject = bindingSet.getValue("Subject").stringValue(); //Generic
+                    String predicate = bindingSet.getValue("Predicate").stringValue();//Generic
                     String object = bindingSet.getValue("Object").stringValue();//Generic
-                    //TODO: Automatically remove prefixes from source, predicate, object
-                    results.add();//Generic
-                    results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject);//Generic
-                    results.set(GraphRecordStoreUtilities.SOURCE + predicate, object);//Generic
+                    for ( String prefix : prefixes.values()) {
+                        subject = removePrefix(subject, prefix);
+                        object = removePrefix(object, prefix);
+                    }
+                    int index;
+                    if (nodeIdentifiers.contains(subject)){
+                        index = nodeIdentifiers.indexOf(subject);
+                    } else {
+                        nodeIdentifiers.add(subject);
+                        results.add();//Generic
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject);//Generic
+                        index = results.index();
+                        
+                    }
+                    String attribute = predicateMap.getOrDefault(predicate, GraphRecordStoreUtilities.SOURCE + predicate);
+                    results.set(index, attribute, object);//Generic
                 }
             }
         }
 
         return results;
+    }
+    
+    private String removePrefix(String value, String prefix) {
+        if (value.contentEquals(prefix)) {
+            return value;
+        } else if (value.contains(prefix)) {
+           return value.replaceFirst(prefix, "");
+        } else {
+        return value;
+        }
     }
 
     @Override
