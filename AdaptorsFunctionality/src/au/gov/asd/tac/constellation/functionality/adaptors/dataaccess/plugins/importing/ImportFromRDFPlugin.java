@@ -18,8 +18,6 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.i
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
@@ -31,22 +29,16 @@ import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import org.eclipse.rdf4j.RDF4JException;
-import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.TupleQuery;
-import org.eclipse.rdf4j.query.TupleQueryResult;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.query.GraphQueryResult;
+import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
@@ -63,38 +55,37 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("ImportFromRDFPlugin=Import From RDF")
 public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    private static final String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"; 
-    
+    private static final String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
 
-        Repository repo = new SailRepository(new MemoryStore());
-
-        try {
-            RepositoryConnection con = repo.getConnection();
-            try {
-                URL url = new URL("http://eulersharp.sourceforge.net/2003/03swap/countries");
-                con.add(url, url.toString(), RDFFormat.TURTLE);
-            } catch (MalformedURLException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } catch (RDFParseException | RepositoryException ex) {
-                Exceptions.printStackTrace(ex);
-            } finally {
-                con.close();
-            }
-        } catch (RDF4JException e) {
-            // handle exception
-        }
-        
+//        Repository repo = new SailRepository(new MemoryStore());
+//
+//        try {
+//            //RepositoryConnection con = repo.getConnection();
+//            try {
+//                URL Url = new URL("http://eulersharp.sourceforge.net/2003/03swap/countries");
+//                con.add(url, url.toString(), RDFFormat.TURTLE);
+//
+//            } catch (MalformedURLException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } catch (RDFParseException | RepositoryException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } finally {
+//                //con.close();
+//            }
+//        } catch (RDF4JException e) {
+//            // handle exception
+//        }
         //TODO Research RDF4J etc
         //TODO Research base predicates; RDFS standard and what they map to in consty
         //TODO Seperate queries to retrieve those
         //TODO Develop ontology for constellation -> mapping RDF stuff to existing constellation stuff (Allow for icons etc) <BASIC MAPPING>
         //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
         //TODO Add triples to constellation graph and update display; RDF view?
-        
         HashMap<String, String> prefixes = new HashMap<>();
         prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
         prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
@@ -104,66 +95,81 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
         prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
         prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
-        
+
         GraphRecordStore results = new GraphRecordStore();
-        try (RepositoryConnection conn = repo.getConnection()) {
-            // Create query string
-            StringBuilder prefixString = new StringBuilder();
-            prefixes.forEach( (String key, String value) -> {
-                prefixString.append("PREFIX ");
-                prefixString.append(key);
-                prefixString.append(": <");
-                prefixString.append(value);
-                prefixString.append("> ");
-                }
-            );
-            String selectString = "SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object}";
-            String queryString = prefixString + selectString;
+        //try (RepositoryConnection conn = repo.getConnection()) {
+        // Create query string
+        StringBuilder prefixString = new StringBuilder();
+        prefixes.forEach((String key, String value) -> {
+            prefixString.append("PREFIX ");
+            prefixString.append(key);
+            prefixString.append(": <");
+            prefixString.append(value);
+            prefixString.append("> ");
+        }
+        );
+        ///String selectString = "SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object}";
+        ///String queryString = prefixString + selectString;
+
 //            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Country WHERE { ?Subject foaf:name ?Country} "; // For specific Country query/results
 //            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object} "; // Generic query
-            
-            Map<String, String> predicateMap = new HashMap<>();
-            predicateMap.put(prefixes.get("foaf") + "name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
-            predicateMap.put(typePredicate, GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
-            
-            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
-            try (TupleQueryResult result = tupleQuery.evaluate()) {
-                ArrayList<String> nodeIdentifiers = new ArrayList<>();
-                while (result.hasNext()) {  // iterate over the result
-                    BindingSet bindingSet = result.next();
-                    String subject = bindingSet.getValue("Subject").stringValue(); //Generic
-                    String predicate = bindingSet.getValue("Predicate").stringValue();//Generic
-                    String object = bindingSet.getValue("Object").stringValue();//Generic
-                    for ( String prefix : prefixes.values()) {
+//        Map<String, String> predicateMap = new HashMap<>();
+//        predicateMap.put(prefixes.get("foaf") + "name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
+//        predicateMap.put(typePredicate, GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
+        ArrayList<String> nodeIdentifiers = new ArrayList<>();
+
+        try {
+            URL documentUrl = new URL("http://eulersharp.sourceforge.net/2003/03swap/countries");
+            //con.add(url, url.toString(), RDFFormat.TURTLE);
+            InputStream inputStream = documentUrl.openStream();
+            String baseURI = documentUrl.toString();
+            RDFFormat format = RDFFormat.TURTLE;
+            try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                while (res.hasNext()) {
+                    Statement st = res.next();
+                    Resource r = st.getContext();
+                    //String ss = r.stringValue();
+
+                    String subject = st.getSubject().stringValue();
+                    String predicate = st.getPredicate().getLocalName();
+                    String object = st.getObject().stringValue();
+
+                    for (String prefix : prefixes.values()) {
                         subject = removePrefix(subject, prefix);
                         object = removePrefix(object, prefix);
                     }
                     int index;
-                    if (nodeIdentifiers.contains(subject)){
+                    if (nodeIdentifiers.contains(subject)) {
                         index = nodeIdentifiers.indexOf(subject);
                     } else {
                         nodeIdentifiers.add(subject);
                         results.add();//Generic
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject);//Generic
                         index = results.index();
-                        
                     }
-                    String attribute = predicateMap.getOrDefault(predicate, GraphRecordStoreUtilities.SOURCE + predicate);
-                    results.set(index, attribute, object);//Generic
-                }
-            }
-        }
+                    // if the object exist in the graph, add it as a transaction. Otherwise as  a source attribute?
 
+                    results.set(index, GraphRecordStoreUtilities.SOURCE + predicate, object);//Generic
+                }
+
+            } catch (RDF4JException e) {
+                // handle unrecoverable error
+            } finally {
+                inputStream.close();
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         return results;
     }
-    
+
     private String removePrefix(String value, String prefix) {
         if (value.contentEquals(prefix)) {
             return value;
         } else if (value.contains(prefix)) {
-           return value.replaceFirst(prefix, "");
+            return value.replaceFirst(prefix, "");
         } else {
-        return value;
+            return value;
         }
     }
 
