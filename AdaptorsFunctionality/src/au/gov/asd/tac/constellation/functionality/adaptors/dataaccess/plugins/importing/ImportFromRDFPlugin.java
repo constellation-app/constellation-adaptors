@@ -15,19 +15,17 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.AbstractRDFMap;
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.EularsharpCountriesRDFMap;
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFMappings.RDFMapStorage;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
@@ -36,6 +34,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -64,7 +63,7 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("ImportFromRDFPlugin=Import From RDF")
 public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    public static final String STRING_PARAMETER_ID = PluginParameter.buildId(ImportFromGraphMLPlugin.class, "string");
+    private static final String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"; 
     
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -89,10 +88,22 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             // handle exception
         }
         
+        //TODO Research RDF4J etc
+        //TODO Research base predicates; RDFS standard and what they map to in consty
+        //TODO Seperate queries to retrieve those
+        //TODO Develop ontology for constellation -> mapping RDF stuff to existing constellation stuff (Allow for icons etc) <BASIC MAPPING>
+        //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
+        //TODO Add triples to constellation graph and update display; RDF view?
         
-        
-        AbstractRDFMap mapping = RDFMapStorage.getMap(EularsharpCountriesRDFMap.getInstance().getName());
-        Map<String, String> prefixes = mapping.getPrefixes();
+        HashMap<String, String> prefixes = new HashMap<>();
+        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
+        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
+        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
+        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
+        prefixes.put("dct", "http://purl.org/dc/terms/");
+        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
+        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
         
         GraphRecordStore results = new GraphRecordStore();
         try (RepositoryConnection conn = repo.getConnection()) {
@@ -108,11 +119,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             );
             String selectString = "SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object}";
             String queryString = prefixString + selectString;
+//            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Country WHERE { ?Subject foaf:name ?Country} "; // For specific Country query/results
+//            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object} "; // Generic query
             
-            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString); //Prepare query 
+            Map<String, String> predicateMap = new HashMap<>();
+            predicateMap.put(prefixes.get("foaf") + "name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
+            predicateMap.put(typePredicate, GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
             
-            Map<String, String> predicateMap = mapping.getPredicateMap();
-            
+            TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
             try (TupleQueryResult result = tupleQuery.evaluate()) {
                 ArrayList<String> nodeIdentifiers = new ArrayList<>();
                 while (result.hasNext()) {  // iterate over the result
