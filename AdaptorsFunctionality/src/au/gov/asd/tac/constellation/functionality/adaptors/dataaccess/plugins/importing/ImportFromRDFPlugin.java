@@ -18,6 +18,8 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.i
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
@@ -33,6 +35,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -113,9 +116,9 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
 //            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Country WHERE { ?Subject foaf:name ?Country} "; // For specific Country query/results
 //            String queryString = "PREFIX country: <" + COUNTRY + "> PREFIX foaf: <http://xmlns.com/foaf/0.1/> SELECT ?Subject ?Predicate ?Object WHERE { ?Subject ?Predicate ?Object} "; // Generic query
-//        Map<String, String> predicateMap = new HashMap<>();
-//        predicateMap.put(prefixes.get("foaf") + "name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
-//        predicateMap.put(typePredicate, GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
+        Map<String, String> predicateMap = new HashMap<>();
+        predicateMap.put("name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
+        predicateMap.put("type", GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
         ArrayList<String> nodeIdentifiers = new ArrayList<>();
 
         try {
@@ -149,7 +152,9 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     }
                     // if the object exist in the graph, add it as a transaction. Otherwise as  a source attribute?
 
-                    results.set(index, GraphRecordStoreUtilities.SOURCE + predicate, object);//Generic
+//                    /results.set(index, GraphRecordStoreUtilities.SOURCE + predicate, object);//Generic
+                    String attribute = predicateMap.getOrDefault(predicate, GraphRecordStoreUtilities.SOURCE + predicate);
+                    results.set(index, attribute, object);//Generic
                 }
 
             } catch (RDF4JException e) {
