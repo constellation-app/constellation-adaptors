@@ -107,12 +107,11 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //This map is
         // predicateMap.put("name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
 
-        predicateMap.put("name", GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexType.PERSON);
+        //predicateMap.put("name", AnalyticConcept.VertexType.PERSON.getName());
         predicateMap.put("type", GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
-        predicateMap.put("writer", GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexType.PERSON);
+        //predicateMap.put("writer", AnalyticConcept.VertexType.PERSON.toString());
 
         predicateMap.put("artist", AnalyticConcept.VertexType.PERSON.toString()); //May be in a seperate map?
-
         ArrayList<String> nodeIdentifiers = new ArrayList<>();
 
         try {
@@ -130,7 +129,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     String subjectName = st.getSubject().stringValue();
                     //String subType = getType(nodeTypeMap.get(st.getSubject())).getName();
                     //st.getSubject().getClass().getName()
-                    String subjectType = predicateMap.getOrDefault(subjectName.toLowerCase(), "Subject IRI"); // check??
+                    String subjectType = predicateMap.getOrDefault(subjectName.toLowerCase(), "TempType"); //  Need to resolve type properly
 
                     //String subRdfType = getResourceTypeShort(pm, nodeTypeMap.get(st.getSubject()));
                     String predicateName = st.getPredicate().getLocalName();
@@ -140,18 +139,20 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         subjectName = removePrefix(subjectName, prefix);
                     }
                     int index;
-                    results.add();//Generic
+                    boolean newTxNode;
 
                     if (nodeIdentifiers.contains(subjectName)) {
                         index = nodeIdentifiers.indexOf(subjectName);
+                        newTxNode = false;
                     } else {
                         nodeIdentifiers.add(subjectName);
-
+                        results.add();//Generic
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                         results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectType);
                         results.set(GraphRecordStoreUtilities.SOURCE + "RDFType", "subRdfType");//Add RDFViewerConcept.VertexAttribute.RDFTYPE
 
                         index = results.index();
+                        newTxNode = true;
 
                     }
 
@@ -164,7 +165,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         objectName = ((Literal) object).getLabel();
                         System.out.println("\"" + ((Literal) object).getLabel() + "\"");
                         String attribute = predicateMap.getOrDefault(predicateName, GraphRecordStoreUtilities.SOURCE + predicateName);
-                        results.set(attribute, objectName);
+                        results.set(index, attribute, objectName);
 
                     } else if (object instanceof IRI) {
                         // IRI object values are added as a destination node
@@ -173,8 +174,12 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
                         //String objType = predicateMap.getOrDefault(objectName, object.getClass().getName()); // check??
                         // String objRdfType = getResourceTypeShort(pm, nodeTypeMap.get(st.getObject().asResource()));
-                        String objectType = predicateMap.getOrDefault(objectName.toLowerCase(), "object IRI"); // check??"object IRI";
+                        String objectType = predicateMap.getOrDefault(objectName.toLowerCase(), "TempType"); // Need to resolve type properly
 
+                        // if the index already existed (= no new source is added), need to call results.add() here? How to link to the existing SOURCE??
+                        if (!newTxNode) {
+                            results.add();
+                        }
                         results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                         results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, objectType);
                         results.set(GraphRecordStoreUtilities.DESTINATION + "RDFType", "subRdfType");//Add RDFViewerConcept.VertexAttribute.RDFTYPE
