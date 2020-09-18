@@ -28,6 +28,11 @@ import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.rdf4j.federated.endpoint.Endpoint;
+import org.eclipse.rdf4j.federated.endpoint.EndpointFactory;
+import org.eclipse.rdf4j.federated.FedXFactory;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.repository.Repository;
 import org.openide.util.NbBundle;
@@ -94,18 +99,19 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //---------------------------------------------------Using FedX
         List<Endpoint> endpoints = new ArrayList<>();
         endpoints.add(EndpointFactory.loadSPARQLEndpoint("dbpedia", "http://dbpedia.org/sparql"));
-        endpoints.add(EndpointFactory.loadSPARQLEndpoint("swdf", "http://data.semanticweb.org/sparql"));
+//        endpoints.add(EndpointFactory.loadSPARQLEndpoint("wiki", "https://query.wikidata.org/sparql"));
+//        endpoints.add(EndpointFactory.loadSPARQLEndpoint("swdf", "http://data.semanticweb.org/sparql")); // commented this out as it was timing out.
 
         Repository repo = FedXFactory.createFederation(endpoints);
 
-        String q = "PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;\n"
-                + "PREFIX dbpedia-owl: &lt;http://dbpedia.org/ontology/&gt;\n"
-                + "SELECT ?President ?Party WHERE {\n"
-                + "?President rdf:type dbpedia-owl:President .\n"
-                + "?President dbpedia-owl:party ?Party . }";
+        String q = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+	+ "PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>\n"
+	+ "SELECT ?President ?Party WHERE {\n"
+	+ "?President rdf:type dbpedia-owl:President .\n"
+	+ "?President dbpedia-owl:party ?Party . }";
 
-        TupleQuery query = QueryManager.prepareTupleQuery(q);
-        try (TupleQueryResult res = query.evaluate()) {
+        TupleQuery tupleQuery = repo.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, q);
+        try (TupleQueryResult res = tupleQuery.evaluate()) {
             while (res.hasNext()) {
                 System.out.println(res.next());
             }
