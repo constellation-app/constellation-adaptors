@@ -90,6 +90,18 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //TODO Change the additional INFO logging to DEBUG or remove them once things are working
 
         GraphRecordStore results = new GraphRecordStore();
+
+//        final Map<String, String> prefixes = new HashMap<>();
+//        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
+//        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
+//        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
+//        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
+//        prefixes.put("dct", "http://purl.org/dc/terms/");
+//        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
+//        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+//        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
+//        prefixes.put("music", "http://neo4j.com/voc/music#");
+//        prefixes.put("ind", "http://neo4j.com/indiv#");
         
         //try (RepositoryConnection conn = repo.getConnection()) {
         // Create query string
