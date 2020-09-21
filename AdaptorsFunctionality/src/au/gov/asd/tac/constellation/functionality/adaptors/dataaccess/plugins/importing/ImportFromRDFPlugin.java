@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.RDF4JException;
@@ -88,7 +87,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
         //TODO Add triples to constellation graph and update display; RDF view?
         //TODO Change the additional INFO logging to DEBUG or remove them once things are working
-
         GraphRecordStore results = new GraphRecordStore();
 
 //        final Map<String, String> prefixes = new HashMap<>();
@@ -102,7 +100,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 //        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
 //        prefixes.put("music", "http://neo4j.com/voc/music#");
 //        prefixes.put("ind", "http://neo4j.com/indiv#");
-        
         //try (RepositoryConnection conn = repo.getConnection()) {
         // Create query string
 //        StringBuilder prefixString = new StringBuilder();
@@ -114,7 +111,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 //            prefixString.append("> ");
 //        }
 //        );
-
         final Map<String, String> subjectToType = new HashMap<>();
 
         try {
@@ -175,7 +171,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, activeNodeType);
+                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
                         results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
                     } else if ("type".equals(predicateName)) {
                         results.add();
@@ -185,20 +182,30 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         activeNodeIdentifier = subject;
                         activeNodeType = objectName;
 
-                        subjectToType.put(activeNodeIdentifier.stringValue(), activeNodeType);
+                        subjectToType.put(subjectName, activeNodeType);
                     } else if ("member".equals(predicateName)
                             || "writer".equals(predicateName)
                             || "artist".equals(predicateName)
                             || "track".equals(predicateName)) {
                         results.add();
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, ((IRI) activeNodeIdentifier).getLocalName());
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(activeNodeIdentifier.stringValue()));
+
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+
                         results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(object.stringValue()));
+                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
+
+                        results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+                        // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
                     } else {
                         LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
                     }
                 }
+
+//                Graph graph = GraphManager.getDefault().getActiveGraph();
+//                WritableGraph wg = graph.getWritableGraph("", true);
+//                final Comparator<SchemaVertexType> dominanceComparator = (Comparator<SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator();
+//                PlaceholderUtilities.collapsePlaceholders(wg, dominanceComparator, false);
             } catch (RDF4JException e) {
                 // handle unrecoverable error
             } finally {
