@@ -11,35 +11,35 @@
     
     <dependencies defaultconf="runtime">
         <!-- GAFFER Dependencies -->
-        
-        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="1.12.0"/>
-        <dependency org="uk.gov.gchq.gaffer" name="graph" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="accumulo-store" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="1.12.0">
+            <exclude org="org.apache.hadoop" module="hadoop-common" />
+        </dependency>
         <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="type" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.12.0" />
         <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="store" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="hdfs-library" rev="1.12.0" />
         
         <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.10.0">
             <artifact name="koryphe" type="pom" ext="pom"/>
-        </dependency>
-
+        </dependency>        
+        
         <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>
-  
-        <!-- GAFFER Dependencies end -->
         
-        <!--Test Dependancies -->
-        
+        <!--Test Dependancies -->     
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
         <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
   
+        <!-- Excludes -->
+        <exclude org="com.google.code.findbugs" module="annotations" />
+        <exclude org="com.google.code.findbugs" module="jsr305" />
+        <exclude org="com.google.guava" module="guava" />
+        <exclude org="com.fasterxml.jackson.core" module="jackson-annotations" />
+        <exclude org="org.slf4j" module="slf4j-log4j12" />
+        
         <exclude type="source" ext="jar" conf="*"/>
         <exclude type="javadoc" ext="jar" conf="*"/>
         <exclude type="license" ext="txt" conf="*"/>
-    
     
     </dependencies>
 </ivy-module>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://www.netbeans.org/ns/project/1">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://www.netbeans.org/ns/project/1">
     <type>org.netbeans.modules.apisupport.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
@@ -19,6 +18,41 @@
                 <package>com.clearspring.analytics.stream.membership</package>
                 <package>com.clearspring.analytics.stream.quantile</package>
                 <package>com.clearspring.analytics.util</package>
+                <package>com.fasterxml.jackson.annotation</package>
+                <package>com.fasterxml.jackson.core</package>
+                <package>com.fasterxml.jackson.core.base</package>
+                <package>com.fasterxml.jackson.core.filter</package>
+                <package>com.fasterxml.jackson.core.format</package>
+                <package>com.fasterxml.jackson.core.io</package>
+                <package>com.fasterxml.jackson.core.json</package>
+                <package>com.fasterxml.jackson.core.sym</package>
+                <package>com.fasterxml.jackson.core.type</package>
+                <package>com.fasterxml.jackson.core.util</package>
+                <package>com.fasterxml.jackson.databind</package>
+                <package>com.fasterxml.jackson.databind.annotation</package>
+                <package>com.fasterxml.jackson.databind.cfg</package>
+                <package>com.fasterxml.jackson.databind.deser</package>
+                <package>com.fasterxml.jackson.databind.deser.impl</package>
+                <package>com.fasterxml.jackson.databind.deser.std</package>
+                <package>com.fasterxml.jackson.databind.exc</package>
+                <package>com.fasterxml.jackson.databind.ext</package>
+                <package>com.fasterxml.jackson.databind.introspect</package>
+                <package>com.fasterxml.jackson.databind.jsonFormatVisitors</package>
+                <package>com.fasterxml.jackson.databind.jsonschema</package>
+                <package>com.fasterxml.jackson.databind.jsontype</package>
+                <package>com.fasterxml.jackson.databind.jsontype.impl</package>
+                <package>com.fasterxml.jackson.databind.module</package>
+                <package>com.fasterxml.jackson.databind.node</package>
+                <package>com.fasterxml.jackson.databind.ser</package>
+                <package>com.fasterxml.jackson.databind.ser.impl</package>
+                <package>com.fasterxml.jackson.databind.ser.std</package>
+                <package>com.fasterxml.jackson.databind.type</package>
+                <package>com.fasterxml.jackson.databind.util</package>
+                <package>com.fasterxml.jackson.datatype.jsr310</package>
+                <package>com.fasterxml.jackson.datatype.jsr310.deser</package>
+                <package>com.fasterxml.jackson.datatype.jsr310.deser.key</package>
+                <package>com.fasterxml.jackson.datatype.jsr310.ser</package>
+                <package>com.fasterxml.jackson.datatype.jsr310.ser.key</package>
                 <package>com.google.common.annotations</package>
                 <package>com.google.common.base</package>
                 <package>com.google.common.base.internal</package>
@@ -357,6 +391,7 @@
                 <package>org.apache.commons.io.output</package>
                 <package>org.apache.commons.lang</package>
                 <package>org.apache.commons.lang.builder</package>
+                <package>org.apache.commons.lang.enum</package>
                 <package>org.apache.commons.lang.enums</package>
                 <package>org.apache.commons.lang.exception</package>
                 <package>org.apache.commons.lang.math</package>
@@ -1424,512 +1459,140 @@
                 <package>uk.gov.gchq.koryphe.util</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/servlet-api-2.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/servlet-api-2.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/xmlenc-0.52-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/xmlenc-0.52-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/httpcore-4.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/httpcore-4.4-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/serialisation-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/serialisation-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-beanutils-1.7.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-beanutils-1.7.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/spotbugs-annotations-3.1.9-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/spotbugs-annotations-3.1.9-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/htrace-core-3.0.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/htrace-core-3.0.4-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/animal-sniffer-annotations-1.17-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/animal-sniffer-annotations-1.17-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jcip-annotations-1.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jcip-annotations-1.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-compress-1.4.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-compress-1.4.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-xc-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-xc-1.9.13-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/slf4j-log4j12-1.7.25-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/slf4j-log4j12-1.7.25-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/activation-1.1.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/activation-1.1.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jets3t-0.9.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jets3t-0.9.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-lang3-3.3.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang3-3.3.2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-csv-1.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-csv-1.4-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-el-1.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-el-1.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/reflections-0.9.10-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/reflections-0.9.10-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/type-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/type-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jasper-runtime-5.5.23-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jasper-runtime-5.5.23-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/fast-classpath-scanner-2.10.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/fast-classpath-scanner-2.10.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/stax-api-1.0-2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/stax-api-1.0-2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-annotations-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-annotations-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/store-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/store-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-yarn-common-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-yarn-common-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/memory-0.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/memory-0.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-logging-1.1.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-logging-1.1.3-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-yarn-server-common-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-yarn-server-common-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/accumulo-store-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-store-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-mapper-asl-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-mapper-asl-1.9.13-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/avro-mapred-1.7.7-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/avro-mapred-1.7.7-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-2.6.5-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/accumulo-fate-1.9.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-fate-1.9.3-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/mockito-all-1.10.19-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mockito-all-1.10.19-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/checker-qual-2.5.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/checker-qual-2.5.2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-jobclient-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-jobclient-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-app-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-app-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/htrace-core-3.1.0-incubating-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/htrace-core-3.1.0-incubating-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/json-20180813-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/json-20180813-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jersey-core-1.9-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jersey-core-1.9-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/operation-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/operation-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/cglib-2.2.1-v20090111-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cglib-2.2.1-v20090111-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-auth-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-auth-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-yarn-client-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-yarn-client-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-vfs2-2.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-vfs2-2.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/httpclient-4.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/httpclient-4.4-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/gson-2.2.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/gson-2.2.4-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/log4j-1.2.17-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/log4j-1.2.17-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-lang-2.6-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang-2.6-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-datatype-jsr310-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-datatype-jsr310-2.6.5-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-shuffle-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-shuffle-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/protobuf-java-2.5.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/protobuf-java-2.5.0-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/core-1.10.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/core-1.10.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/curator-framework-2.6.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/curator-framework-2.6.0-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/exception-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/exception-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/leveldbjni-all-1.8-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/leveldbjni-all-1.8-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/curator-client-2.6.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/curator-client-2.6.0-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/guice-servlet-3.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guice-servlet-3.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-asl-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-asl-1.9.13-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/common-util-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/common-util-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-collections-3.2.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections-3.2.2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/sketches-core-0.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-core-0.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jaxb-api-2.2.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jaxb-api-2.2.2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/sketches-library-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-library-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/j2objc-annotations-1.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/j2objc-annotations-1.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jetty-util-6.1.26-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jetty-util-6.1.26-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/fastutil-6.5.7-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/fastutil-6.5.7-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-common-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-common-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/apacheds-kerberos-codec-2.0.0-M15-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apacheds-kerberos-codec-2.0.0-M15-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-annotations-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-annotations-2.6.5-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/failureaccess-1.0.1-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/failureaccess-1.0.1-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jsch-0.1.42-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jsch-0.1.42-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/stream-2.7.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/stream-2.7.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hadoop-client-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-client-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jline-2.11-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jline-2.11-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/guice-3.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guice-3.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/api-util-1.0.0-M20-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/api-util-1.0.0-M20-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/accumulo-core-1.9.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-core-1.9.3-jar.jar</binary-origin>
+                <runtime-relative-path>ext/avro-1.7.7-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/avro-1.7.7-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/cache-1.12.0-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/cache-1.12.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/audience-annotations-0.5.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/audience-annotations-0.5.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/javax.inject-1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/javax.inject-1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/paranamer-2.6-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/paranamer-2.6-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/snappy-java-1.1.2.4-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/snappy-java-1.1.2.4-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/annotations-3.0.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/annotations-3.0.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/apacheds-i18n-2.0.0-M15-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/apacheds-i18n-2.0.0-M15-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/data-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/data-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/graph-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/graph-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-configuration-1.6-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-configuration-1.6-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jcommander-1.48-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jcommander-1.48-jar.jar</binary-origin>
+                <runtime-relative-path>ext/common-util-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/common-util-1.12.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-codec-1.6-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-codec-1.6-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hadoop-yarn-server-nodemanager-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-yarn-server-nodemanager-2.6.5-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-compress-1.4.1-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-compress-1.4.1-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hadoop-yarn-api-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-yarn-api-2.6.5-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/curator-recipes-2.6.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/curator-recipes-2.6.0-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jsr305-3.0.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jsr305-3.0.2-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-httpclient-3.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-httpclient-3.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/avro-1.7.7-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/avro-1.7.7-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/zookeeper-3.4.14-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/zookeeper-3.4.14-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/slf4j-api-1.7.25-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/slf4j-api-1.7.25-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/error_prone_annotations-2.2.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/error_prone_annotations-2.2.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hamcrest-all-1.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hamcrest-all-1.3-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/aopalliance-1.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/aopalliance-1.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/accumulo-start-1.9.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/accumulo-start-1.9.3-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jersey-guice-1.9-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jersey-guice-1.9-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/xz-1.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/xz-1.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/guava-27.0.1-jre-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guava-27.0.1-jre-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-math3-3.4.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-math3-3.4.1-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/javassist-3.19.0-GA-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/javassist-3.19.0-GA-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/hdfs-library-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hdfs-library-1.12.0-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jettison-1.1-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jettison-1.1-bundle.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/velocity-1.7-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/velocity-1.7-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-digester-1.8-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-digester-1.8-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/libthrift-0.9.3-1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/libthrift-0.9.3-1-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-csv-1.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-csv-1.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-io-2.4-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-io-2.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-beanutils-core-1.8.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-beanutils-core-1.8.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-lang3-3.3.2-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang3-3.3.2-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-common-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-common-2.6.5-jar.jar</binary-origin>
+                <runtime-relative-path>ext/core-1.10.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/core-1.10.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jasper-compiler-5.5.23-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jasper-compiler-5.5.23-jar.jar</binary-origin>
+                <runtime-relative-path>ext/data-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/data-1.12.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-net-3.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-net-3.1-jar.jar</binary-origin>
+                <runtime-relative-path>ext/exception-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/exception-1.12.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hadoop-mapreduce-client-core-2.6.5-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hadoop-mapreduce-client-core-2.6.5-jar.jar</binary-origin>
+                <runtime-relative-path>ext/fast-classpath-scanner-2.10.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/fast-classpath-scanner-2.10.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/fastutil-6.5.7-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/fastutil-6.5.7-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/hamcrest-all-1.3-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hamcrest-all-1.3-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-core-2.6.5-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-2.6.5-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-core-asl-1.9.13-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-asl-1.9.13-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jackson-databind-2.6.5-bundle.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jackson-databind-2.6.5-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-cli-1.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-cli-1.2-jar.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-datatype-jsr310-2.6.5-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-datatype-jsr310-2.6.5-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-jaxrs-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-jaxrs-1.9.13-jar.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-mapper-asl-1.9.13-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-mapper-asl-1.9.13-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/api-asn1-api-1.0.0-M20-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/api-asn1-api-1.0.0-M20-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/javassist-3.19.0-GA-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javassist-3.19.0-GA-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/java-xmlbuilder-0.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/java-xmlbuilder-0.4-jar.jar</binary-origin>
+                <runtime-relative-path>ext/json-20180813-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/json-20180813-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/asm-3.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/asm-3.2-jar.jar</binary-origin>
+                <runtime-relative-path>ext/memory-0.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/memory-0.12.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/avro-ipc-1.7.7-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/avro-ipc-1.7.7-jar.jar</binary-origin>
+                <runtime-relative-path>ext/mockito-all-1.10.19-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mockito-all-1.10.19-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jsp-api-2.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jsp-api-2.1-jar.jar</binary-origin>
+                <runtime-relative-path>ext/operation-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/operation-1.12.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/paranamer-2.6-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/paranamer-2.6-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/reflections-0.9.10-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/reflections-0.9.10-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/serialisation-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/serialisation-1.12.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/sketches-core-0.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-core-0.12.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/sketches-library-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-library-1.12.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/slf4j-api-1.7.25-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/slf4j-api-1.7.25-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/snappy-java-1.1.2.4-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/snappy-java-1.1.2.4-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/stream-2.7.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/stream-2.7.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/type-1.12.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/type-1.12.0-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xz-1.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xz-1.0-jar.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
