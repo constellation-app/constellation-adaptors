@@ -15,11 +15,15 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.utilities.VertexDominanceCalculator;
+import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.graph.utilities.placeholder.PlaceholderUtilities;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
@@ -38,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,8 +176,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
                         results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
                     } else if ("type".equals(predicateName)) {
                         results.add();
@@ -190,12 +195,16 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         results.add();
 
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+                        // results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
 
                         results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
+                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                        //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
 
                         results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+
+                        results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
                         // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
                     } else {
                         LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
@@ -265,6 +274,16 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         params.addParameter(inputFileFormat);
 
         return params;
+    }
+
+    @Override
+    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
+        super.edit(wg, interaction, parameters);
+        int i = wg.getVertexCount();
+        int tr = wg.getTransactionCount();
+
+        final Comparator<SchemaVertexType> dominanceComparator = (Comparator<SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator();
+        PlaceholderUtilities.collapsePlaceholders(wg, dominanceComparator, false);
     }
 
 }
