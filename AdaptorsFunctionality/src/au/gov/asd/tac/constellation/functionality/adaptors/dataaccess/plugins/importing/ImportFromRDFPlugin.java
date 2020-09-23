@@ -16,16 +16,17 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
+import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.utilities.VertexDominanceCalculator;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
+import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import au.gov.asd.tac.constellation.graph.utilities.placeholder.PlaceholderUtilities;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
+import au.gov.asd.tac.constellation.plugins.PluginExecution;
+import au.gov.asd.tac.constellation.plugins.PluginExecutor;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
@@ -42,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +78,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
+
+    final Map<String, String> subjectToType = new HashMap<>();
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -116,8 +118,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 //            prefixString.append("> ");
 //        }
 //        );
-        final Map<String, String> subjectToType = new HashMap<>();
-
         try {
             final URL documentUrl = new URL(inputFilename);
             final InputStream inputStream = documentUrl.openStream();
@@ -125,14 +125,15 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             final RDFFormat format = getRdfFormat(intpuFileFormat);
 
             try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
-                Resource activeNodeIdentifier = null;
-                String activeNodeType = null;
+                //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                //Model res = QueryResults.asModel(evaluate);
 
                 while (res.hasNext()) {
                     LOGGER.info("Processing next record...");
+
                     final Statement st = res.next();
 
-                    final Map<String, String> namespaces = res.getNamespaces();
+//                    final Map<String, String> namespaces = res.getNamespaces();
                     final Resource subject = st.getSubject();
                     final IRI predicate = st.getPredicate();
                     final Value object = st.getObject();
@@ -141,6 +142,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
 
                     boolean objectIsAttribute = false;
+                    boolean objectIsIRI = false;
 
                     // PROCESS: Subject
                     // ----------------
@@ -149,6 +151,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         subjectName = ((Literal) subject).getLabel();
                     } else if (subject instanceof IRI) {
                         subjectName = ((IRI) subject).getLocalName();
+//                    } else if (subject instanceof BNode) {
+//                        subjectName = ((BNode) subject).;
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
                     }
@@ -165,6 +169,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         objectIsAttribute = true;
                     } else if (object instanceof IRI) {
                         objectName = ((IRI) object).getLocalName();
+                        objectIsIRI = true;
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
                     }
@@ -176,30 +181,31 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
                         results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
                     } else if ("type".equals(predicateName)) {
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
 
-                        activeNodeIdentifier = subject;
-                        activeNodeType = objectName;
+                        //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
+                        String value = objectName;
+                        if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
+                            value = subjectToType.get(subjectName) + ", " + value;
+                        }
 
-                        subjectToType.put(subjectName, activeNodeType);
-                    } else if ("member".equals(predicateName)
-                            || "writer".equals(predicateName)
-                            || "artist".equals(predicateName)
-                            || "track".equals(predicateName)) {
+                        subjectToType.put(subjectName, value);
+
+                    } else if (objectIsIRI) {
                         results.add();
 
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        // results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
 
                         results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+//                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
                         //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
 
                         results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
@@ -211,10 +217,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     }
                 }
 
-//                Graph graph = GraphManager.getDefault().getActiveGraph();
-//                WritableGraph wg = graph.getWritableGraph("", true);
-//                final Comparator<SchemaVertexType> dominanceComparator = (Comparator<SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator();
-//                PlaceholderUtilities.collapsePlaceholders(wg, dominanceComparator, false);
             } catch (RDF4JException e) {
                 // handle unrecoverable error
             } finally {
@@ -279,11 +281,22 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     @Override
     protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
-        int i = wg.getVertexCount();
-        int tr = wg.getTransactionCount();
 
-        final Comparator<SchemaVertexType> dominanceComparator = (Comparator<SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator();
-        PlaceholderUtilities.collapsePlaceholders(wg, dominanceComparator, false);
+        // Add the Vertex Type attribute based on subjectToType map
+        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
+        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.ensure(wg);
+        final int graphVertexCount = wg.getVertexCount();
+        for (int position = 0; position < graphVertexCount; position++) {
+            final int currentVertexId = wg.getVertex(position);
+            final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
+            if (subjectToType.containsKey(identifier)) {
+                String value = subjectToType.get(identifier);
+                wg.setStringValue(vertexTypeAttributeId, currentVertexId, value);
+            }
+        }
+        PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
+        PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
     }
 
 }
