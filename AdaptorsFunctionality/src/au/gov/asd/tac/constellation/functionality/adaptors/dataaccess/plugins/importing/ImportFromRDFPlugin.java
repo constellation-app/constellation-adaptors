@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Resource;
@@ -143,6 +144,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
                     boolean objectIsAttribute = false;
                     boolean objectIsIRI = false;
+                    boolean objectOrSubjectIsBNode = false;
 
                     // PROCESS: Subject
                     // ----------------
@@ -151,8 +153,10 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         subjectName = ((Literal) subject).getLabel();
                     } else if (subject instanceof IRI) {
                         subjectName = ((IRI) subject).getLocalName();
-//                    } else if (subject instanceof BNode) {
-//                        subjectName = ((BNode) subject).;
+                    } else if (subject instanceof BNode) {
+                        subjectName = ((BNode) subject).stringValue();
+                        objectOrSubjectIsBNode = true;
+                        LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
                     }
@@ -170,12 +174,16 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     } else if (object instanceof IRI) {
                         objectName = ((IRI) object).getLocalName();
                         objectIsIRI = true;
+                    } else if (object instanceof BNode) {
+                        objectName = ((BNode) object).stringValue();
+                        objectOrSubjectIsBNode = true;
+                        LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
                     }
 
                     LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
-
+//                    if (!objectOrSubjectIsBNode) {
                     // create the record store
                     if (objectIsAttribute) { // literal object values are added as Vertex properties
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
@@ -215,6 +223,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     } else {
                         LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
                     }
+//                    }
                 }
 
             } catch (RDF4JException e) {
