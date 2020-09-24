@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
@@ -81,6 +82,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
 
     final Map<String, String> subjectToType = new HashMap<>();
+    final Map<String, String> bnodeToSubject = new HashMap<>();
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -125,7 +127,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             final String baseURI = documentUrl.toString();
             final RDFFormat format = getRdfFormat(intpuFileFormat);
 
-            try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+            try ( GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
 
@@ -142,9 +144,9 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
                     LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
 
-                    boolean objectIsAttribute = false;
+                    boolean addAttributes = false;
                     boolean objectIsIRI = false;
-                    boolean objectOrSubjectIsBNode = false;
+                    boolean objectIsBNode = false;
 
                     // PROCESS: Subject
                     // ----------------
@@ -155,7 +157,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         subjectName = ((IRI) subject).getLocalName();
                     } else if (subject instanceof BNode) {
                         subjectName = ((BNode) subject).stringValue();
-                        objectOrSubjectIsBNode = true;
+                        subjectName = bnodeToSubject.get(subjectName);
+                        addAttributes = true;
                         LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
@@ -170,22 +173,24 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     String objectName = null;
                     if (object instanceof Literal) {
                         objectName = ((Literal) object).getLabel();
-                        objectIsAttribute = true;
+                        addAttributes = true;
                     } else if (object instanceof IRI) {
                         objectName = ((IRI) object).getLocalName();
+                        ((IRI) object).getNamespace();
                         objectIsIRI = true;
                     } else if (object instanceof BNode) {
                         objectName = ((BNode) object).stringValue();
-                        objectOrSubjectIsBNode = true;
+                        objectIsBNode = true;
                         LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
                     } else {
                         LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
                     }
 
                     LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
-//                    if (!objectOrSubjectIsBNode) {
-                    // create the record store
-                    if (objectIsAttribute) { // literal object values are added as Vertex properties
+
+                    if (objectIsBNode) {
+                        bnodeToSubject.put(objectName, subjectName);
+                    } else if (addAttributes) { // literal object values are added as Vertex properties
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
@@ -202,7 +207,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
                             value = subjectToType.get(subjectName) + ", " + value;
                         }
-
                         subjectToType.put(subjectName, value);
 
                     } else if (objectIsIRI) {
@@ -212,14 +216,16 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                         //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
 //                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
 
-                        results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
+                        if (StringUtils.isNotBlank(objectName)) {
+                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
 //                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
-                        //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
+                            //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
 
-                        results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+                            results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
 
-                        results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
-                        // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
+                            results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
+                            // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
+                        }
                     } else {
                         LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
                     }
@@ -270,8 +276,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         final PluginParameter<FileParameterValue> inputFileUriParameter = FileParameterType.build(INPUT_FILE_URI_PARAMETER_ID);
         inputFileUriParameter.setName("Input File");
         inputFileUriParameter.setDescription("RDF file URI");
-        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
-//        openFileParam.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
+//        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
+        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
         params.addParameter(inputFileUriParameter);
 
         final List<String> rdfFileFormats = new ArrayList<>();
