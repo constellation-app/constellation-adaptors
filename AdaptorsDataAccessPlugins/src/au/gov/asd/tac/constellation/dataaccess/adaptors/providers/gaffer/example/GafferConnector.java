@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.dataaccess.adaptors.au.gov.asd.tac.constellations.dataaccess.adaptors.providers.gaffer.example;
+package au.gov.asd.tac.constellation.dataaccess.adaptors.providers.gaffer.example;
 
 import java.io.IOException;
 import java.net.URI;
