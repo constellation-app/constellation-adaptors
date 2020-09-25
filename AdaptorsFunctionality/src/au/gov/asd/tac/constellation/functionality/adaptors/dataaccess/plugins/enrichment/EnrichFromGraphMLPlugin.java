@@ -15,7 +15,6 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.e
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.GraphMLUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -34,6 +33,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
 import au.gov.asd.tac.constellation.utilities.xml.XmlUtilities;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
+import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -62,7 +62,7 @@ import org.w3c.dom.NodeList;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"ENRICH"})
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "ENRICHMENT"})
 @Messages("EnrichFromGraphMLPlugin=Enrich From GraphML File")
 public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
@@ -81,7 +81,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
 
     @Override
     public String getType() {
-        return DataAccessPluginAdaptorType.ENRICH;
+        return DataAccessPluginCoreType.ENRICHMENT;
     }
 
     @Override

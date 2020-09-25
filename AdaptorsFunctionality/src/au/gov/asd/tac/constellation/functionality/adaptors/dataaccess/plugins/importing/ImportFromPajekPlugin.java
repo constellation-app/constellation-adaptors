@@ -159,21 +159,21 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                             result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
                             result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                             result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
-                        }  catch (ArrayIndexOutOfBoundsException ex) {
+                        }  catch (final ArrayIndexOutOfBoundsException ex) {
                         }
                     }
                 }  
             }
             interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
-        } catch (FileNotFoundException ex) {
+        } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
                 } 
             }

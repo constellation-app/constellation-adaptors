@@ -265,15 +265,15 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     }
                 }   
             }   
-        } catch (FileNotFoundException ex) {
+        } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-        } catch (TransformerException ex) {
+        } catch (final TransformerException ex) {
             Exceptions.printStackTrace(ex);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
                 } 
             }
