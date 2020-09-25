@@ -1,0 +1,66 @@
+[
+    {
+        "class": "uk.gov.gchq.gaffer.data.element.Entity",
+        "group": "Cardinality",
+        "vertex": "M4",
+        "properties": {
+            "hllp": {
+                "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus": {
+                    "hyperLogLogPlus": {
+                        "hyperLogLogPlusSketchBytes": "/////gUFAQp7ggeAA36AA/wBhAKAAv4BgAQ=",
+                        "cardinality": 12
+                    }
+                }
+            },
+            "count": {
+                "java.lang.Long": 4512
+            },
+            "edgeGroup": {
+                "java.util.TreeSet": [
+                    "RoadHasJunction"
+                ]
+            }
+        }
+    },
+    {
+        "class": "uk.gov.gchq.gaffer.data.element.Edge",
+        "group": "RoadHasJunction",
+        "source": "M4",
+        "destination": "M4:15",
+        "directed": true,
+        "matchedVertex": "SOURCE",
+        "properties": {}
+    },
+    {
+        "class": "uk.gov.gchq.gaffer.data.element.Edge",
+        "group": "LocationContainsRoad",
+        "source": "Wiltshire",
+        "destination": "M4",
+        "directed": true,
+        "matchedVertex": "DESTINATION",
+        "properties": {}
+    },
+    {
+        "class": "uk.gov.gchq.gaffer.data.element.Entity",
+        "group": "Cardinality",
+        "vertex": "M4:15",
+        "properties": {
+            "hllp": {
+                "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus": {
+                    "hyperLogLogPlus": {
+                        "hyperLogLogPlusSketchBytes": "/////gUFAQH9Eg==",
+                        "cardinality": 1
+                    }
+                }
+            },
+            "count": {
+                "java.lang.Long": 264
+            },
+            "edgeGroup": {
+                "java.util.TreeSet": [
+                    "RoadHasJunction"
+                ]
+            }
+        }
+    }
+]
