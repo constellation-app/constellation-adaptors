@@ -15,13 +15,18 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
+import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
+import au.gov.asd.tac.constellation.plugins.PluginExecution;
+import au.gov.asd.tac.constellation.plugins.PluginExecutor;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
@@ -29,6 +34,8 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
+import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
@@ -37,8 +44,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Resource;
@@ -59,140 +71,165 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
 @NbBundle.Messages("ImportFromRDFPlugin=Import From RDF")
 public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-//    private static final Logger LOGGER = Logger.getLogger(RDFViewer.class.getName());
-    public static final String INPUT_FILE_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file");
+    private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
+
+    // parameters
+    public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
+    public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
+
+    final Map<String, String> subjectToType = new HashMap<>();
+    final Map<String, String> bnodeToSubject = new HashMap<>();
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
 
-        String inputFilename = parameters.getParameters().get(INPUT_FILE_PARAMETER_ID).getStringValue();
+        final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
+        final String intpuFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
 
         //TODO Research RDF4J etc
         //TODO Research base predicates; RDFS standard and what they map to in consty
-        //TODO Seperate queries to retrieve those
+        //TODO Seperate queries to retrieve base predicates
         //TODO Develop ontology for constellation -> mapping RDF stuff to existing constellation stuff (Allow for icons etc) <BASIC MAPPING>
         //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
         //TODO Add triples to constellation graph and update display; RDF view?
-        HashMap<String, String> prefixes = new HashMap<>();
-        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
-        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
-        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
-        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
-        prefixes.put("dct", "http://purl.org/dc/terms/");
-        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
-        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
-        prefixes.put("music", "http://neo4j.com/voc/music#");
-        prefixes.put("ind", "http://neo4j.com/indiv#");
-
+        //TODO Change the additional INFO logging to DEBUG or remove them once things are working
         GraphRecordStore results = new GraphRecordStore();
+
+//        final Map<String, String> prefixes = new HashMap<>();
+//        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
+//        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
+//        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
+//        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
+//        prefixes.put("dct", "http://purl.org/dc/terms/");
+//        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
+//        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+//        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
+//        prefixes.put("music", "http://neo4j.com/voc/music#");
+//        prefixes.put("ind", "http://neo4j.com/indiv#");
         //try (RepositoryConnection conn = repo.getConnection()) {
         // Create query string
-        StringBuilder prefixString = new StringBuilder();
-        prefixes.forEach((String key, String value) -> {
-            prefixString.append("PREFIX ");
-            prefixString.append(key);
-            prefixString.append(": <");
-            prefixString.append(value);
-            prefixString.append("> ");
-        }
-        );
-
-        Map<String, String> predicateMap = new HashMap<>();
-        //This map is
-        // predicateMap.put("name", GraphRecordStoreUtilities.SOURCE + SpatialConcept.VertexAttribute.COUNTRY);
-
-        //predicateMap.put("name", AnalyticConcept.VertexType.PERSON.getName());
-        predicateMap.put("type", GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE);
-        //predicateMap.put("writer", AnalyticConcept.VertexType.PERSON.toString());
-
-        predicateMap.put("artist", AnalyticConcept.VertexType.PERSON.toString()); //May be in a seperate map?
-        ArrayList<String> nodeIdentifiers = new ArrayList<>();
-
+//        StringBuilder prefixString = new StringBuilder();
+//        prefixes.forEach((String key, String value) -> {
+//            prefixString.append("PREFIX ");
+//            prefixString.append(key);
+//            prefixString.append(": <");
+//            prefixString.append(value);
+//            prefixString.append("> ");
+//        }
+//        );
         try {
-            URL documentUrl = new URL(inputFilename);
-            InputStream inputStream = documentUrl.openStream();
-            String baseURI = documentUrl.toString();
-            RDFFormat format = RDFFormat.TURTLE;
+            final URL documentUrl = new URL(inputFilename);
+            final InputStream inputStream = documentUrl.openStream();
+            final String baseURI = documentUrl.toString();
+            final RDFFormat format = getRdfFormat(intpuFileFormat);
 
-            try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+            try ( GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                //Model res = QueryResults.asModel(evaluate);
+
                 while (res.hasNext()) {
-                    Statement st = res.next();
-                    Resource r = st.getContext();
-                    //String ss = r.stringValue();
+                    LOGGER.info("Processing next record...");
 
-                    String subjectName = st.getSubject().stringValue();
-                    //String subType = getType(nodeTypeMap.get(st.getSubject())).getName();
-                    //st.getSubject().getClass().getName()
-                    String subjectType = predicateMap.getOrDefault(subjectName.toLowerCase(), "TempType"); //  Need to resolve type properly
+                    final Statement st = res.next();
 
-                    //String subRdfType = getResourceTypeShort(pm, nodeTypeMap.get(st.getSubject()));
-                    String predicateName = st.getPredicate().getLocalName();
-                    //String object = st.getObject().stringValue();
+//                    final Map<String, String> namespaces = res.getNamespaces();
+                    final Resource subject = st.getSubject();
+                    final IRI predicate = st.getPredicate();
+                    final Value object = st.getObject();
+                    final Resource context = st.getContext();
 
-                    for (String prefix : prefixes.values()) {
-                        subjectName = removePrefix(subjectName, prefix);
-                    }
-                    int index;
-                    boolean newTxNode;
+                    LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
 
-                    if (nodeIdentifiers.contains(subjectName)) {
-                        index = nodeIdentifiers.indexOf(subjectName);
-                        newTxNode = false;
+                    boolean addAttributes = false;
+                    boolean objectIsIRI = false;
+                    boolean objectIsBNode = false;
+
+                    // PROCESS: Subject
+                    // ----------------
+                    String subjectName = null;
+                    if (subject instanceof Literal) {
+                        subjectName = ((Literal) subject).getLabel();
+                    } else if (subject instanceof IRI) {
+                        subjectName = ((IRI) subject).getLocalName();
+                    } else if (subject instanceof BNode) {
+                        subjectName = ((BNode) subject).stringValue();
+                        subjectName = bnodeToSubject.get(subjectName);
+                        addAttributes = true;
+                        LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
                     } else {
-                        nodeIdentifiers.add(subjectName);
-                        results.add();//Generic
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectType);
-                        results.set(GraphRecordStoreUtilities.SOURCE + "RDFType", "subRdfType");//Add RDFViewerConcept.VertexAttribute.RDFTYPE
-
-                        index = results.index();
-                        newTxNode = true;
-
+                        LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
                     }
 
-                    // Process object
-                    Value object = st.getObject();
-                    String objectName = "";
+                    // PROCESS: Predicate
+                    // ----------------
+                    String predicateName = predicate.getLocalName();//predicate.stringValue()
 
+                    // PROCESS: Object
+                    // ----------------
+                    String objectName = null;
                     if (object instanceof Literal) {
-                        // Literal object values are added as Vertex properties
                         objectName = ((Literal) object).getLabel();
-                        System.out.println("\"" + ((Literal) object).getLabel() + "\"");
-                        String attribute = predicateMap.getOrDefault(predicateName, GraphRecordStoreUtilities.SOURCE + predicateName);
-                        results.set(index, attribute, objectName);
-
+                        addAttributes = true;
                     } else if (object instanceof IRI) {
-                        // IRI object values are added as a destination node
                         objectName = ((IRI) object).getLocalName();
-                        System.out.println("Added in Dest: " + objectName);
-
-                        //String objType = predicateMap.getOrDefault(objectName, object.getClass().getName()); // check??
-                        // String objRdfType = getResourceTypeShort(pm, nodeTypeMap.get(st.getObject().asResource()));
-                        String objectType = predicateMap.getOrDefault(objectName.toLowerCase(), "TempType"); // Need to resolve type properly
-
-                        // if the index already existed (= no new source is added), need to call results.add() here? How to link to the existing SOURCE??
-                        if (!newTxNode) {
-                            results.add();
-                        }
-                        results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, objectType);
-                        results.set(GraphRecordStoreUtilities.DESTINATION + "RDFType", "subRdfType");//Add RDFViewerConcept.VertexAttribute.RDFTYPE
-
-                        results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
-                        results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-
+                        ((IRI) object).getNamespace();
+                        objectIsIRI = true;
+                    } else if (object instanceof BNode) {
+                        objectName = ((BNode) object).stringValue();
+                        objectIsBNode = true;
+                        LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
                     } else {
-                        // It's a blank node. Just print out the internal identifier for now.
-                        //objectString = object.stringValue();
-                        System.out.println("Blank node: " + object);
+                        LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
                     }
 
+                    LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
+
+                    if (objectIsBNode) {
+                        bnodeToSubject.put(objectName, subjectName);
+                    } else if (addAttributes) { // literal object values are added as Vertex properties
+                        LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
+                        results.add();
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                        results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
+                    } else if ("type".equals(predicateName)) {
+                        results.add();
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
+
+                        //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
+                        String value = objectName;
+                        if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
+                            value = subjectToType.get(subjectName) + ", " + value;
+                        }
+                        subjectToType.put(subjectName, value);
+
+                    } else if (objectIsIRI) {
+                        results.add();
+
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+
+                        if (StringUtils.isNotBlank(objectName)) {
+                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
+//                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                            //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
+
+                            results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+
+                            results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
+                            // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
+                        }
+                    } else {
+                        LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
+                    }
+//                    }
                 }
 
             } catch (RDF4JException e) {
@@ -204,16 +241,16 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+
         return results;
     }
 
-    private String removePrefix(String value, String prefix) {
-        if (value.contentEquals(prefix)) {
-            return value;
-        } else if (value.contains(prefix)) {
-            return value.replaceFirst(prefix, "");
-        } else {
-            return value;
+    private RDFFormat getRdfFormat(final String format) {
+        switch (format) {
+            case "Turtle":
+                return RDFFormat.TURTLE;
+            default:
+                throw new AssertionError();
         }
     }
 
@@ -229,58 +266,52 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
     @Override
     public String getDescription() {
-        return "Import Topology from communication network RDF data";
+        return "Import an RDF dataset";
     }
 
-//    private String getResourceTypeShort(PrefixMapping pm, Set<Resource> types) {
-////        if (types != null) {
-//////            LOGGER.log(Level.INFO, "Get Type {0}", types.toString());
-////            if (types.contains(CNT.Node)) {
-////                return getShortForm(pm, CNT.Node);
-////            } else if (types.contains(CNT.Interface)) {
-////                return getShortForm(pm, CNT.Interface);
-////            } else if (types.contains(CNT.Segment)) {
-////                return getShortForm(pm, CNT.Segment);
-////            }
-////            return types.stream().map(r -> getShortForm(pm, r)).findFirst().orElse("");
-////        }
-//        return "";
-//    }
-//
-//    private SchemaVertexType getType(Set<Resource> types) {
-////        if (types != null) {
-//////        LOGGER.log(Level.INFO, "Get Type {0}", types.toString());
-////            if (types.contains(CNT.Node)) {
-////                return RDFViewerConcept.VertexType.CNTNode;
-////            } else if (types.contains(CNT.Interface)) {
-////                return RDFViewerConcept.VertexType.CNTInterface;
-////            } else if (types.contains(CNT.Segment)) {
-////                return RDFViewerConcept.VertexType.CNTSegment;
-////            }
-////        }
-////        return RDFViewerConcept.VertexType.RDFNODE;
-//    }
-//
-//    private String getShortForm(PrefixMapping pm, Resource res) {
-//        if (res.isAnon()) {
-//            return res.toString();
-//        } else {
-//            String shortForm = pm.shortForm(res.getURI());
-//            return shortForm;
-//        }
-//    }
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        final PluginParameter<FileParameterValue> openFileParam = FileParameterType.build(INPUT_FILE_PARAMETER_ID);
-        openFileParam.setName("Input file");
-        openFileParam.setDescription("RDF file");
-        //openFileParam.setStringValue("D:\\projects\\encaby\\encaby_ontologies\\src\\test\\resources\\dsto\\encaby\\test\\ontologies\\vxlan_layer1.trig");
-        openFileParam.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");
-        //"http://eulersharp.sourceforge.net/2003/03swap/countries";
-        params.addParameter(openFileParam);
+        final PluginParameter<FileParameterValue> inputFileUriParameter = FileParameterType.build(INPUT_FILE_URI_PARAMETER_ID);
+        inputFileUriParameter.setName("Input File");
+        inputFileUriParameter.setDescription("RDF file URI");
+//        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
+        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
+        params.addParameter(inputFileUriParameter);
+
+        final List<String> rdfFileFormats = new ArrayList<>();
+        rdfFileFormats.add(RDFFormat.TURTLE.getName());
+
+        final PluginParameter<SingleChoiceParameterValue> inputFileFormat = SingleChoiceParameterType.build(INPUT_FILE_FORMAT_PARAMETER_ID);
+        inputFileFormat.setName("File Format");
+        inputFileFormat.setDescription("RDF file format");
+        SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
+        SingleChoiceParameterType.setChoice(inputFileFormat, RDFFormat.TURTLE.getName());
+        params.addParameter(inputFileFormat);
+
         return params;
+    }
+
+    @Override
+    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
+        super.edit(wg, interaction, parameters);
+
+        // Add the Vertex Type attribute based on subjectToType map
+        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
+        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.ensure(wg);
+        final int graphVertexCount = wg.getVertexCount();
+        for (int position = 0; position < graphVertexCount; position++) {
+            final int currentVertexId = wg.getVertex(position);
+            final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
+            if (subjectToType.containsKey(identifier)) {
+                String value = subjectToType.get(identifier);
+                wg.setStringValue(vertexTypeAttributeId, currentVertexId, value);
+            }
+        }
+        PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
+        PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
     }
 
 }
