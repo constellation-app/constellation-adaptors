@@ -15,6 +15,7 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
@@ -59,6 +60,7 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
@@ -90,6 +92,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
         final String intpuFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
 
+        final RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(RDFFormat.TURTLE);
+
         //TODO Research RDF4J etc
         //TODO Research base predicates; RDFS standard and what they map to in consty
         //TODO Seperate queries to retrieve base predicates
@@ -99,35 +103,13 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //TODO Change the additional INFO logging to DEBUG or remove them once things are working
         GraphRecordStore results = new GraphRecordStore();
 
-//        final Map<String, String> prefixes = new HashMap<>();
-//        prefixes.put("country", "http://eulersharp.sourceforge.net/2003/03swap/countries#");
-//        prefixes.put("foaf", "http://xmlns.com/foaf/0.1/");
-//        prefixes.put("jur", "http://sweet.jpl.nasa.gov/2.3/humanJurisdiction.owl#");
-//        prefixes.put("dce", "http://purl.org/dc/elements/1.1/");
-//        prefixes.put("dct", "http://purl.org/dc/terms/");
-//        prefixes.put("owl", "http://www.w3.org/2002/07/owl#");
-//        prefixes.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-//        prefixes.put("skos", "http://www.w3.org/2004/02/skos/core#");
-//        prefixes.put("music", "http://neo4j.com/voc/music#");
-//        prefixes.put("ind", "http://neo4j.com/indiv#");
-        //try (RepositoryConnection conn = repo.getConnection()) {
-        // Create query string
-//        StringBuilder prefixString = new StringBuilder();
-//        prefixes.forEach((String key, String value) -> {
-//            prefixString.append("PREFIX ");
-//            prefixString.append(key);
-//            prefixString.append(": <");
-//            prefixString.append(value);
-//            prefixString.append("> ");
-//        }
-//        );
         try {
             final URL documentUrl = new URL(inputFilename);
             final InputStream inputStream = documentUrl.openStream();
             final String baseURI = documentUrl.toString();
-            final RDFFormat format = getRdfFormat(intpuFileFormat);
+            //final RDFFormat format = getRdfFormat(intpuFileFormat);
 
-            try ( GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+            try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
 
@@ -135,8 +117,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     LOGGER.info("Processing next record...");
 
                     final Statement st = res.next();
-
-//                    final Map<String, String> namespaces = res.getNamespaces();
                     final Resource subject = st.getSubject();
                     final IRI predicate = st.getPredicate();
                     final Value object = st.getObject();
@@ -193,13 +173,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     } else if (addAttributes) { // literal object values are added as Vertex properties
                         LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                         results.add();
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                         //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
                         results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
                     } else if ("type".equals(predicateName)) {
                         results.add();
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                         //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
 
                         //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
@@ -212,13 +193,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     } else if (objectIsIRI) {
                         results.add();
 
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
+                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                         //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-//                        results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
 
                         if (StringUtils.isNotBlank(objectName)) {
-                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-//                        results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PLACEHOLDER);
+                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, object.stringValue());
+                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, objectName);
                             //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
 
                             results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
@@ -291,6 +273,27 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         params.addParameter(inputFileFormat);
 
         return params;
+    }
+
+    @Override
+    public void updateParameters(final Graph graph, final PluginParameters parameters) {
+        if (parameters != null && parameters.getParameters() != null && !parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue().isBlank()) {
+            final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
+            RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(RDFFormat.TURTLE);
+
+            @SuppressWarnings("unchecked")
+            final PluginParameter<SingleChoiceParameterValue> inputFileFormat = (PluginParameter<SingleChoiceParameterValue>) parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID);
+
+            final List<String> rdfFileFormats = new ArrayList<>();
+            rdfFileFormats.add(format.getName());
+
+            SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
+
+            inputFileFormat.suppressEvent(true, new ArrayList<>());
+            SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
+            inputFileFormat.suppressEvent(false, new ArrayList<>());
+            inputFileFormat.setObjectValue(parameters.getObjectValue(INPUT_FILE_FORMAT_PARAMETER_ID));
+        }
     }
 
     @Override
