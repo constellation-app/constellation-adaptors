@@ -15,11 +15,11 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
-import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
@@ -47,16 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.RDF4JException;
-import org.eclipse.rdf4j.model.BNode;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Literal;
-import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -77,14 +68,12 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("ImportFromRDFPlugin=Import From RDF")
 public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
-
+    //private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
 
     final Map<String, String> subjectToType = new HashMap<>();
-    final Map<String, String> bnodeToSubject = new HashMap<>();
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -113,106 +102,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
 
-                while (res.hasNext()) {
-                    LOGGER.info("Processing next record...");
-
-                    final Statement st = res.next();
-                    final Resource subject = st.getSubject();
-                    final IRI predicate = st.getPredicate();
-                    final Value object = st.getObject();
-                    final Resource context = st.getContext();
-
-                    LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
-
-                    boolean addAttributes = false;
-                    boolean objectIsIRI = false;
-                    boolean objectIsBNode = false;
-
-                    // PROCESS: Subject
-                    // ----------------
-                    String subjectName = null;
-                    if (subject instanceof Literal) {
-                        subjectName = ((Literal) subject).getLabel();
-                    } else if (subject instanceof IRI) {
-                        subjectName = ((IRI) subject).getLocalName();
-                    } else if (subject instanceof BNode) {
-                        subjectName = ((BNode) subject).stringValue();
-                        subjectName = bnodeToSubject.get(subjectName);
-                        addAttributes = true;
-                        LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
-                    } else {
-                        LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
-                    }
-
-                    // PROCESS: Predicate
-                    // ----------------
-                    String predicateName = predicate.getLocalName();//predicate.stringValue()
-
-                    // PROCESS: Object
-                    // ----------------
-                    String objectName = null;
-                    if (object instanceof Literal) {
-                        objectName = ((Literal) object).getLabel();
-                        addAttributes = true;
-                    } else if (object instanceof IRI) {
-                        objectName = ((IRI) object).getLocalName();
-                        ((IRI) object).getNamespace();
-                        objectIsIRI = true;
-                    } else if (object instanceof BNode) {
-                        objectName = ((BNode) object).stringValue();
-                        objectIsBNode = true;
-                        LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
-                    } else {
-                        LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
-                    }
-
-                    LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
-
-                    if (objectIsBNode) {
-                        bnodeToSubject.put(objectName, subjectName);
-                    } else if (addAttributes) { // literal object values are added as Vertex properties
-                        LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
-                        results.add();
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
-                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-                        results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
-                    } else if ("type".equals(predicateName)) {
-                        results.add();
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
-                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
-
-                        //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
-                        String value = objectName;
-                        if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
-                            value = subjectToType.get(subjectName) + ", " + value;
-                        }
-                        subjectToType.put(subjectName, value);
-
-                    } else if (objectIsIRI) {
-                        results.add();
-
-
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subject.stringValue());
-                        results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
-                        //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-
-                        if (StringUtils.isNotBlank(objectName)) {
-                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, object.stringValue());
-                            results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, objectName);
-                            //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
-
-                            results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-
-                            results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
-                            // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
-                        }
-                    } else {
-                        LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
-                    }
-//                    }
-                }
+                RDFUtilities.PopulateRecordStore(results, res, subjectToType);
 
             } catch (RDF4JException e) {
                 // handle unrecoverable error
