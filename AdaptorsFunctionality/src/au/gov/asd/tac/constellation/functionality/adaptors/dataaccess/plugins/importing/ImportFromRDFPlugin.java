@@ -16,7 +16,6 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
-import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
@@ -31,6 +30,7 @@ import au.gov.asd.tac.constellation.plugins.PluginExecutor;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
+import au.gov.asd.tac.constellation.plugins.parameters.ParameterChange;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
@@ -162,30 +162,50 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         SingleChoiceParameterType.setChoice(inputFileFormat, RDFFormat.TURTLE.getName());
         params.addParameter(inputFileFormat);
 
+        params.addController(INPUT_FILE_URI_PARAMETER_ID, (final PluginParameter<?> master, final Map<String, PluginParameter<?>> parameters, final ParameterChange change) -> {
+            if (change == ParameterChange.VALUE) {
+                final String inputFilename2 = master.getStringValue();
+                final String inputFilename = parameters.get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
+                RDFFormat format = Rio.getParserFormatForFileName(inputFilename).orElse(null);
+                if (format != null) {
+                    //@SuppressWarnings("unchecked")
+
+                    final PluginParameter<SingleChoiceParameterValue> inputFileFormat2 = (PluginParameter<SingleChoiceParameterValue>) parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID);
+                    //SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
+                    inputFileFormat.suppressEvent(true, new ArrayList<>());
+                    SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
+                    inputFileFormat.suppressEvent(false, new ArrayList<>());
+                    inputFileFormat.setObjectValue(parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).getObjectValue());
+                    parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).setStringValue(format.getName());
+
+                }
+                parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).setEnabled(format == null);
+            }
+        });
+
         return params;
     }
 
-    @Override
-    public void updateParameters(final Graph graph, final PluginParameters parameters) {
-        if (parameters != null && parameters.getParameters() != null && !parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue().isBlank()) {
-            final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
-            RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(RDFFormat.TURTLE);
-
-            @SuppressWarnings("unchecked")
-            final PluginParameter<SingleChoiceParameterValue> inputFileFormat = (PluginParameter<SingleChoiceParameterValue>) parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID);
-
-            final List<String> rdfFileFormats = new ArrayList<>();
-            rdfFileFormats.add(format.getName());
-
-            SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
-
-            inputFileFormat.suppressEvent(true, new ArrayList<>());
-            SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
-            inputFileFormat.suppressEvent(false, new ArrayList<>());
-            inputFileFormat.setObjectValue(parameters.getObjectValue(INPUT_FILE_FORMAT_PARAMETER_ID));
-        }
-    }
-
+//    @Override
+//    public void updateParameters(final Graph graph, final PluginParameters parameters) {
+//        if (parameters != null && parameters.getParameters() != null && !parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue().isBlank()) {
+//            final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
+//            RDFFormat format = Rio.getParserFormatForFileName(inputFilename).orElse(RDFFormat.N3);
+//
+//            @SuppressWarnings("unchecked")
+//            final PluginParameter<SingleChoiceParameterValue> inputFileFormat = (PluginParameter<SingleChoiceParameterValue>) parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID);
+//
+//            final List<String> rdfFileFormats = new ArrayList<>();
+//            rdfFileFormats.add(format.getName());
+//
+//            SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
+//
+//            inputFileFormat.suppressEvent(true, new ArrayList<>());
+//            SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
+//            inputFileFormat.suppressEvent(false, new ArrayList<>());
+//            inputFileFormat.setObjectValue(parameters.getObjectValue(INPUT_FILE_FORMAT_PARAMETER_ID));
+//        }
+//    }
     @Override
     protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);

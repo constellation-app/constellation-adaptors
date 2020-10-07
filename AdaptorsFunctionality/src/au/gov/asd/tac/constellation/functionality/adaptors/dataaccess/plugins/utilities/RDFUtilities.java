@@ -37,6 +37,7 @@ public class RDFUtilities {
 
     final static Map<String, String> bnodeToSubject = new HashMap<>();
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
+    private static final int layer_Mask = 3;
 
     public static void PopulateRecordStore(GraphRecordStore results, GraphQueryResult res, Map<String, String> subjectToType) {
         while (res.hasNext()) {
