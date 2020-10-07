@@ -1,12 +1,12 @@
 /*
  * Copyright 2010-2020 Australian Signals Directorate
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,10 +36,16 @@ import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.query.GraphQueryResult;
+import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.QueryResults;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.sail.inferencer.fc.CustomGraphQueryInferencer;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
 import static org.testng.Assert.*;
 import org.testng.annotations.AfterClass;
@@ -75,7 +81,6 @@ public class ImportFromRDFPluginNGTest {
     public void tearDownMethod() throws Exception {
     }
 
-
     @Test
     public void testMusicTurtleQuery() throws Exception {
         final RecordStore query = new GraphRecordStore();
@@ -86,6 +91,7 @@ public class ImportFromRDFPluginNGTest {
 
         final RecordStore expResult = new GraphRecordStore();
         final RecordStore result = instance.query(query, interaction, parameters);
+//        TODO: instance.edit()
 //        System.out.println(result.toStringVerbose());
 
         final Set<String> expectedTypes = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE));
@@ -95,26 +101,25 @@ public class ImportFromRDFPluginNGTest {
         actualTypes.add("Band");
         actualTypes.add("Song");
         assertEquals(expectedTypes, actualTypes);
-
-//        assertEquals(expResult, result);
     }
 
     /**
-     * Learning how to use the RDF4J Model class
+     * Learning how to use the RDF4J Model and inferencing class
      *
      * @throws Exception
      */
-//    @Test
-    public void testRdf4jModel() throws Exception {
+    @Test
+    public void testRdf4jModelAndInferencing() throws Exception {
         final GraphRecordStore results = new GraphRecordStore();
+        final Model model = new LinkedHashModel();
 
+        // 1) read a file into a model
         try {
-            final URL documentUrl = new URL("file://" + this.getClass().getResource("./resources/music.ttl").getFile());
+            final URL documentUrl = new URL("file://" + this.getClass().getResource("./resources/example.ttl").getFile());
             final InputStream inputStream = documentUrl.openStream();
             final String baseURI = documentUrl.toString();
             final RDFFormat format = RDFFormat.TURTLE;
 
-            final Model model = new LinkedHashModel();
             try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 while (res.hasNext()) {
                     LOGGER.info("Processing next record...");
@@ -139,7 +144,6 @@ public class ImportFromRDFPluginNGTest {
                 for (final IRI predicate : predicates) {
                     final Model predicateModel = model.filter(null, predicate, null);
                     LOGGER.log(Level.INFO, "Predicate {0} has {1} rows in model", new Object[]{predicate.getLocalName(), predicateModel.size()});
-
                 }
             } catch (RDF4JException ex) {
                 Exceptions.printStackTrace(ex);
@@ -149,6 +153,51 @@ public class ImportFromRDFPluginNGTest {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+
+        // 2) add it to a consty graph using RDFUtilities.PopulateRecordStore()
+        // 3) convert the graph into a model
+        // 4) load the model into an in RDF4J memory model
+        System.out.println("4) load the model into an in RDF4J memory model");
+        final Repository repo = new SailRepository(new MemoryStore());
+
+        try (RepositoryConnection conn = repo.getConnection()) {
+            // add the model
+            conn.add(model);
+
+            // let's check that our data is actually in the database
+            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                for (Statement st : result) {
+                    System.out.println("db contains: " + st);
+                }
+            }
+        } finally {
+            repo.shutDown();
+        }
+
+        // 5) apply the inferenceing rule
+        System.out.println("5) apply the inferenceing rule");
+        String pre = "PREFIX : <http://foo.org/bar#>\n";
+        String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
+                + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
+        String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
+                + "WHERE { ?p :relatesTo :Cryptography }";
+
+        final Repository repo2 = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+        try (RepositoryConnection conn = repo2.getConnection()) {
+            // add the model
+            conn.add(model);
+
+            // let's check that our data is actually in the database
+            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                for (Statement st : result) {
+                    System.out.println("db now contains: " + st);
+                }
+            }
+        } finally {
+            repo2.shutDown();
+        }
+
+        // 6) process the model to the Consty graph using the RDFUtilities.PopulateRecordStore()
     }
 
 }
