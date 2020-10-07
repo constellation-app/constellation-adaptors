@@ -41,6 +41,7 @@ import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import com.google.common.collect.Lists;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -72,8 +73,9 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
-    
+
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
+
     static {
         rdfFileFormats.put(RDFFormat.BINARY.getName(), RDFFormat.BINARY);
         rdfFileFormats.put(RDFFormat.HDT.getName(), RDFFormat.HDT);
@@ -96,8 +98,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
 
-        final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
+        String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
         final String intpuFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
+
+        // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
+        final File file = new File(inputFilename);
+        if (file.exists()) {
+            inputFilename = "file:///" + inputFilename.replaceAll("\\\\", "/");
+        }
 
         final RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(RDFFormat.TURTLE);
 
