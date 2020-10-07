@@ -40,12 +40,11 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParamet
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.query.GraphQueryResult;
@@ -72,6 +71,25 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
+
+    final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
+
+    static {
+        rdfFileFormats.put(RDFFormat.BINARY.getName(), RDFFormat.BINARY);
+        rdfFileFormats.put(RDFFormat.HDT.getName(), RDFFormat.HDT);
+        rdfFileFormats.put(RDFFormat.JSONLD.getName(), RDFFormat.JSONLD);
+        rdfFileFormats.put(RDFFormat.N3.getName(), RDFFormat.N3);
+        rdfFileFormats.put(RDFFormat.NQUADS.getName(), RDFFormat.NQUADS);
+        rdfFileFormats.put(RDFFormat.NTRIPLES.getName(), RDFFormat.NTRIPLES);
+        rdfFileFormats.put(RDFFormat.RDFA.getName(), RDFFormat.RDFA);
+        rdfFileFormats.put(RDFFormat.RDFJSON.getName(), RDFFormat.RDFJSON);
+        rdfFileFormats.put(RDFFormat.RDFXML.getName(), RDFFormat.RDFXML);
+        rdfFileFormats.put(RDFFormat.TRIG.getName(), RDFFormat.TRIG);
+        rdfFileFormats.put(RDFFormat.TRIGSTAR.getName(), RDFFormat.TRIGSTAR);
+        rdfFileFormats.put(RDFFormat.TRIX.getName(), RDFFormat.TRIX);
+        rdfFileFormats.put(RDFFormat.TURTLE.getName(), RDFFormat.TURTLE);
+        rdfFileFormats.put(RDFFormat.TURTLESTAR.getName(), RDFFormat.TURTLESTAR);
+    }
 
     final Map<String, String> subjectToType = new HashMap<>();
 
@@ -118,12 +136,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     }
 
     private RDFFormat getRdfFormat(final String format) {
-        switch (format) {
-            case "Turtle":
-                return RDFFormat.TURTLE;
-            default:
-                throw new AssertionError();
-        }
+        return rdfFileFormats.get(format);
     }
 
     @Override
@@ -149,65 +162,34 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         inputFileUriParameter.setName("Input File");
         inputFileUriParameter.setDescription("RDF file URI");
 //        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
-        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
+//        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
+        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/stardog-union/pellet/master/examples/src/main/resources/data/university0-0.owl");
         params.addParameter(inputFileUriParameter);
-
-        final List<String> rdfFileFormats = new ArrayList<>();
-        rdfFileFormats.add(RDFFormat.TURTLE.getName());
 
         final PluginParameter<SingleChoiceParameterValue> inputFileFormat = SingleChoiceParameterType.build(INPUT_FILE_FORMAT_PARAMETER_ID);
         inputFileFormat.setName("File Format");
         inputFileFormat.setDescription("RDF file format");
-        SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
-        SingleChoiceParameterType.setChoice(inputFileFormat, RDFFormat.TURTLE.getName());
+        SingleChoiceParameterType.setOptions(inputFileFormat, Lists.newArrayList(rdfFileFormats.keySet()));
+        SingleChoiceParameterType.setChoice(inputFileFormat, RDFFormat.RDFXML.getName());
         params.addParameter(inputFileFormat);
 
         params.addController(INPUT_FILE_URI_PARAMETER_ID, (final PluginParameter<?> master, final Map<String, PluginParameter<?>> parameters, final ParameterChange change) -> {
             if (change == ParameterChange.VALUE) {
-                final String inputFilename2 = master.getStringValue();
-                final String inputFilename = parameters.get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
-                RDFFormat format = Rio.getParserFormatForFileName(inputFilename).orElse(null);
+                // If the Rio parder can auto detect the file format, set it and lock the dropdown
+                RDFFormat format = Rio.getParserFormatForFileName(master.getStringValue()).orElse(null);
                 if (format != null) {
-                    //@SuppressWarnings("unchecked")
-
-                    final PluginParameter<SingleChoiceParameterValue> inputFileFormat2 = (PluginParameter<SingleChoiceParameterValue>) parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID);
-                    //SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
-                    inputFileFormat.suppressEvent(true, new ArrayList<>());
-                    SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
-                    inputFileFormat.suppressEvent(false, new ArrayList<>());
                     inputFileFormat.setObjectValue(parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).getObjectValue());
                     parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).setStringValue(format.getName());
-
                 }
                 parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).setEnabled(format == null);
             }
         });
-
         return params;
     }
 
-//    @Override
-//    public void updateParameters(final Graph graph, final PluginParameters parameters) {
-//        if (parameters != null && parameters.getParameters() != null && !parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue().isBlank()) {
-//            final String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
-//            RDFFormat format = Rio.getParserFormatForFileName(inputFilename).orElse(RDFFormat.N3);
-//
-//            @SuppressWarnings("unchecked")
-//            final PluginParameter<SingleChoiceParameterValue> inputFileFormat = (PluginParameter<SingleChoiceParameterValue>) parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID);
-//
-//            final List<String> rdfFileFormats = new ArrayList<>();
-//            rdfFileFormats.add(format.getName());
-//
-//            SingleChoiceParameterType.setOptions(inputFileFormat, rdfFileFormats);
-//
-//            inputFileFormat.suppressEvent(true, new ArrayList<>());
-//            SingleChoiceParameterType.setChoice(inputFileFormat, format.getName());
-//            inputFileFormat.suppressEvent(false, new ArrayList<>());
-//            inputFileFormat.setObjectValue(parameters.getObjectValue(INPUT_FILE_FORMAT_PARAMETER_ID));
-//        }
-//    }
     @Override
-    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
+    protected void edit(GraphWriteMethods wg, PluginInteraction interaction,
+            PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
         // Add the Vertex Type attribute based on subjectToType map
@@ -226,5 +208,4 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
         PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
     }
-
 }
