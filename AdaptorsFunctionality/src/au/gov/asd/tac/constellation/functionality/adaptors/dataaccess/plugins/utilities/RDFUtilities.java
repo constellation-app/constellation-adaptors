@@ -16,6 +16,7 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
+import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
@@ -39,7 +40,8 @@ public class RDFUtilities {
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
     private static final int layer_Mask = 3;
 
-    public static void PopulateRecordStore(GraphRecordStore results, GraphQueryResult res, Map<String, String> subjectToType) {
+    public static void PopulateRecordStore(GraphRecordStore results, GraphQueryResult res, Map<String, String> subjectToType, int layerMask) {
+        //final int layerMaskAttributeId = LayersConcept.VertexAttribute.LAYER_MASK.ensure(wg);
         while (res.hasNext()) {
             LOGGER.info("Processing next record...");
 
@@ -102,13 +104,13 @@ public class RDFUtilities {
                 results.add();
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
-                results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName); // TODO: the "name" should be the identifier
+                results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName);
+                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
             } else if ("type".equals(predicateName)) {
                 results.add();
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, objectName);
+                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
                 String value = objectName;
@@ -125,18 +127,17 @@ public class RDFUtilities {
 
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                //results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(subjectName));
+                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 if (StringUtils.isNotBlank(objectName)) {
                     results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
                     results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                    //results.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, subjectToType.get(objectName));
+                    results.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                     results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
                     results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-
                     results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
-                    // results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, "rdf tx type"); //ObjectProperty?
+                    results.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
                 }
             } else {
                 LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);

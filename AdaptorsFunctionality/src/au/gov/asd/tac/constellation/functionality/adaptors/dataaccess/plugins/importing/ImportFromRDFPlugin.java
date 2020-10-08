@@ -72,7 +72,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
-
+    private static int layer_Mask = 3;
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
 
     static {
@@ -127,7 +127,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
 
-                RDFUtilities.PopulateRecordStore(results, res, subjectToType);
+                RDFUtilities.PopulateRecordStore(results, res, subjectToType, layer_Mask);
 
             } catch (RDF4JException e) {
                 // handle unrecoverable error

@@ -16,18 +16,12 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
-import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
-import au.gov.asd.tac.constellation.graph.LayersConcept;
-import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
-import au.gov.asd.tac.constellation.plugins.PluginExecution;
-import au.gov.asd.tac.constellation.plugins.PluginExecutor;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
@@ -65,25 +59,24 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
     public static final String RDF_DATA_STORE_URI_PARAMETER_ID = PluginParameter.buildId(QueryRDFDataSourcesPlugin.class, "data_store_uri");
     private static final String SOURCE_RDFIDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER;
     //private static final String SOURCE_IDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER;
-    private static final String layer_Mask = "3";
+    private static int layer_Mask = 5;
 
     final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
-    @Override
-    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
-        super.edit(wg, interaction, parameters);
-        final int graphVertexCount = wg.getVertexCount();
-        for (int position = 0; position < graphVertexCount; position++) {
-            final int currentVertexId = wg.getVertex(position);
-            //Set the layer 2 for now
-            final int layerMaskAttributeId = LayersConcept.VertexAttribute.LAYER_MASK.ensure(wg);
-            wg.setStringValue(layerMaskAttributeId, currentVertexId, layer_Mask);
-        }
-        PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
-        PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
-    }
-
+//    @Override
+//    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
+//        super.edit(wg, interaction, parameters);
+//        final int graphVertexCount = wg.getVertexCount();
+//        for (int position = 0; position < graphVertexCount; position++) {
+//            final int currentVertexId = wg.getVertex(position);
+//            //Set the layer 2 for now
+//            final int layerMaskAttributeId = LayersConcept.VertexAttribute.LAYER_MASK.ensure(wg);
+//            wg.setStringValue(layerMaskAttributeId, currentVertexId, layer_Mask);
+//        }
+//        PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
+//        PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
+//    }
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
         GraphRecordStore results = new GraphRecordStore();
@@ -110,8 +103,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
                 GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, qb.toString());
 
                 try (GraphQueryResult result = graphQuery.evaluate()) {
-
-                    RDFUtilities.PopulateRecordStore(results, result, subjectToType);
+                    RDFUtilities.PopulateRecordStore(results, result, subjectToType, layer_Mask);
 
                 } catch (RDF4JException e) {
                     LOGGER.log(Level.SEVERE, "An error occured: {0}", e);
