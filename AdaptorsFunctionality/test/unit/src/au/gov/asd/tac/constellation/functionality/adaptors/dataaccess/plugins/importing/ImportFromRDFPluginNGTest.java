@@ -19,6 +19,7 @@ import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import java.io.IOException;
@@ -94,14 +95,33 @@ public class ImportFromRDFPluginNGTest {
 //        TODO: instance.edit()
 //        System.out.println(result.toStringVerbose());
 
-        final Set<String> expectedTypes = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE));
-        Set<String> actualTypes = new TreeSet<>();
-        actualTypes.add("Album");
-        actualTypes.add("Artist");
-        actualTypes.add("Band");
-        actualTypes.add("Song");
-        assertEquals(expectedTypes, actualTypes);
-    }
+        final Set<String> expectedIdentifiers = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
+        Set<String> actualIdentifiers = new TreeSet<>();
+        actualIdentifiers.add("Bill_Wyman");
+        actualIdentifiers.add("Charlie_Watts");
+        actualIdentifiers.add("George_Harrison");
+        actualIdentifiers.add("Helter_Skelter");
+        actualIdentifiers.add("John_Lennon");
+        actualIdentifiers.add("Keith_Richards");
+        actualIdentifiers.add("Mick_Jagger");
+        actualIdentifiers.add("Out_of_Our_Heads");
+        actualIdentifiers.add("Paul_McCartney");
+        actualIdentifiers.add("Ringo_Starr");
+        actualIdentifiers.add("Ronnie_Wood");
+        actualIdentifiers.add("Satisfaction");
+        actualIdentifiers.add("The_Beatles");
+        actualIdentifiers.add("The_Stones");
+        actualIdentifiers.add("White_Album");
+        assertEquals(expectedIdentifiers, actualIdentifiers);
+        
+//        final Set<String> expectedTypes = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE));
+//        Set<String> actualTypes = new TreeSet<>();
+//        actualTypes.add("Album");
+//        actualTypes.add("Artist");
+//        actualTypes.add("Band");
+//        actualTypes.add("Song");
+//        assertEquals(expectedTypes, actualTypes);
+}
 
     /**
      * Learning how to use the RDF4J Model and inferencing class
