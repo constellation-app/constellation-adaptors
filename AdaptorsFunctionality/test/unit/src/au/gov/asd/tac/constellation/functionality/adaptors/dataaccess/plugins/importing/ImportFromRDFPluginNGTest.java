@@ -41,7 +41,6 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -60,6 +59,23 @@ import org.eclipse.rdf4j.sail.inferencer.fc.CustomGraphQueryInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.SchemaCachingRDFSInferencer;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
+import org.semanticweb.HermiT.ReasonerFactory;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.reasoner.ConsoleProgressMonitor;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import static org.testng.Assert.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -147,14 +163,12 @@ public class ImportFromRDFPluginNGTest {
         final Model model = new LinkedHashModel();
 
         // 1) read a file into a model
-        try {
+        {
             final URL documentUrl = new URL("file://" + this.getClass().getResource("./resources/example.ttl").getFile());
             final InputStream inputStream = documentUrl.openStream();
             final String baseURI = documentUrl.toString();
             final RDFFormat format = RDFFormat.TURTLE;
             loadTriples(model, inputStream, baseURI, format);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
         }
 
         // 2) add it to a consty graph using RDFUtilities.PopulateRecordStore()
@@ -249,23 +263,19 @@ public class ImportFromRDFPluginNGTest {
         final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
 
         // read the onology into a model
-        try {
-            final URL documentUrl = new URL("file://" + this.getClass().getResource("./resources/univ-bench.owl").getFile());
+        {
+            final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
             final InputStream inputStream = documentUrl.openStream();
             final RDFFormat format = RDFFormat.RDFXML;
             loadTriples(model, inputStream, baseURI, format);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
         }
 
         // read the data into a model
-        try {
-            final URL documentUrl = new URL("file://" + this.getClass().getResource("./resources/university0-0.owl").getFile());
+        {
+            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
             final InputStream inputStream = documentUrl.openStream();
             final RDFFormat format = RDFFormat.RDFXML;
             loadTriples(model, inputStream, baseURI, format);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
         }
 
         // add it to a consty graph using RDFUtilities.PopulateRecordStore()
@@ -311,8 +321,8 @@ public class ImportFromRDFPluginNGTest {
                     System.out.println(RDF.TYPE + ": " + st);
                 }
             }
-            */
-            
+             */
+
             {
                 // Query 1
                 // This query bears large input and high selectivity. It queries about just one class and
@@ -636,6 +646,124 @@ public class ImportFromRDFPluginNGTest {
         }
 
         // process the model to the Consty graph using the RDFUtilities.PopulateRecordStore()
+    }
+
+    /**
+     * Learning how to use the OWL API reasoners.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testOwlApiReasoners() throws Exception {
+        final GraphRecordStore results = new GraphRecordStore();
+        final Model model = new LinkedHashModel();
+        final ValueFactory VF = SimpleValueFactory.getInstance();
+        final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+        final OWLOntologyManager manager;
+        final OWLOntology ontology;
+
+        // read the onology into a model
+        {
+            //final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
+            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+
+            manager = OWLManager.createOWLOntologyManager();
+            ontology = manager.loadOntologyFromOntologyDocument(inputStream);
+            assertNotNull(ontology);
+            System.out.println("Ontology: " + ontology);
+        }
+
+        // read the data into a model
+//        {
+//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+//            final InputStream inputStream = documentUrl.openStream();
+//            final RDFFormat format = RDFFormat.RDFXML;
+//
+//            OWLOntology o = manager.loadOntologyFromOntologyDocument(inputStream);
+//            assertNotNull(o);
+//            System.out.println("Data: " + o);
+//            ontology.addAxioms(o.axioms());
+//        }
+//        System.out.println("Combined: " + ontology);
+        // get and configure a reasoner (HermiT)
+        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
+        ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
+        OWLReasonerConfiguration config = new SimpleConfiguration(progressMonitor);
+
+        OWLDataFactory factory = manager.getOWLDataFactory();
+
+        // load the ontology to the reasoner
+        //Hermi reasoner = com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory.getInstance().createReasoner(ontology);
+        OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
+
+        // read the data into a model
+//        {
+//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+//            final InputStream inputStream = documentUrl.openStream();
+//            final RDFFormat format = RDFFormat.RDFXML;
+//            loadTriples(model, inputStream, baseURI, format);
+//            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+//            Iterable<Statement> iterable = model.getStatements(null, null, null);
+//            for (Statement s : iterable) {
+//                OWLNamedIndividual subject = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getSubject().stringValue()));
+//                OWLNamedIndividual predicate = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getPredicate().stringValue()));
+//                OWLNamedIndividual object = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getObject().stringValue()));
+//                //OWLAxiom axiom = df.(subject, object);
+//                //ontology.add(axiom);
+//            }
+//        }
+        // create property and resources to query the reasoner
+        OWLClass Student = factory.getOWLClass(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#Student"));
+        OWLDataProperty studentName = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#name"));
+        OWLDataProperty emailAddress = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#emailAddress"));
+        OWLObjectProperty takesCourse = factory.getOWLObjectProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#takesCourse"));
+
+        // get all instances of Person class
+        Set<OWLNamedIndividual> individuals = reasoner.getInstances(Student, false).getFlattened();
+        int count = 0;
+        for (OWLNamedIndividual ind : individuals) {
+            count++;
+            System.out.println("------------------------------------");
+
+            // get the info about this specific individual
+            Set<OWLLiteral> names = reasoner.getDataPropertyValues(ind, studentName);
+            Set<OWLLiteral> emailAddrs = reasoner.getDataPropertyValues(ind, emailAddress);
+            NodeSet<OWLClass> types = reasoner.getTypes(ind, true);
+            NodeSet<OWLNamedIndividual> courses = reasoner.getObjectPropertyValues(ind, takesCourse);
+
+            // we know there is a single name for each person so we can get that value directly
+            String name = names.iterator().next().getLiteral();
+            System.out.println("Name:     " + name);
+
+            // we know there is a single name for each person so we can get that value directly
+            String emailAddr = emailAddrs.iterator().next().getLiteral();
+            System.out.println("Email:    " + emailAddr);
+
+            // at least one direct type is guaranteed to exist for each individual 
+            OWLClass type = types.iterator().next().getRepresentativeElement();
+            System.out.println("Type:     " + type.getIRI().getShortForm());
+            System.out.print("Types:   ");
+            for (Node<OWLClass> typeNode : types) {
+                System.out.print(" " + typeNode.getRepresentativeElement().getIRI().getShortForm());
+            }
+            System.out.println();
+
+            // there may be zero or more homepages so check first if there are any found
+            if (courses.isEmpty()) {
+                System.out.print("Courses:  None");
+            } else {
+                System.out.print("Courses: ");
+                for (Node<OWLNamedIndividual> course : courses) {
+                    System.out.print(" " + course.getRepresentativeElement().getIRI().getShortForm());
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("------------------------------------");
+        System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
+        assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
     }
 
     private class TupleCountHandler extends TupleQueryResultBuilder {
