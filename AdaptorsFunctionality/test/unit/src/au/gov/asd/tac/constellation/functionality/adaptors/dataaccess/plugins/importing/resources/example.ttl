@@ -1,3 +1,65 @@
 @prefix : <http://foo.org/bar#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:Person a rdfs:Class ;
+        rdfs:label "Person" ;
+        rdfs:comment "This represents a person." .
+
+:Adult a rdfs:Class ;
+        rdfs:label "Adult" ;
+        rdfs:comment "This represents a adult person." ;
+        rdfs:subClassOf :Person .
+
+:Man a rdfs:Class ;
+        rdfs:label "Man" ;
+        rdfs:comment "This represents a male adult person." ;
+        rdfs:subClassOf :Adult .
+
+:Woman a rdfs:Class ;
+        rdfs:label "Woman" ;
+        rdfs:comment "This represents a female adult person." ;
+        rdfs:subClassOf :Adult .
+
+:Hacker a rdfs:Class ;
+        rdfs:label "Hacker" ;
+        rdfs:comment "This represents a computer hacker." ;
+        rdfs:subClassOf :Adult .
+
+:action a rdf:Property ;
+    rdfs:label "action" ;
+    rdfs:comment "Do an action!" .
+
+:exchangesKeysWith a rdf:Property ;
+    rdfs:label "exchanges keys with" ;
+    :domainIncludes :Person ;
+    :rangeIncludes :Hacker, :Adult ;
+    rdfs:comment "A Person exchanges keys with a Hacker." ;
+    rdfs:subPropertyOf :action .
+
+:sendsMessageTo a rdf:Property ;
+    rdfs:label "sends message to" ;
+    :domainIncludes :Person ;
+    :rangeIncludes :Person ;
+    rdfs:comment "A Person messages another Person." ;
+    rdfs:subPropertyOf :action .
+
+:age a rdf:Property ;
+        rdfs:label "Age" ;
+        :domainIncludes :Person ;
+        :rangeIncludes :Integer ;
+        rdfs:comment "The person's age in years." .
+
+:Bob a :Man .
+:Bob :age 25 .
+
+:Alice a :Person .
+:Alice a :Adult .
+:Alice a :Woman .
+:Alice a :Hacker .
+:Alice :age 30 .
+
 :Bob   :exchangesKeysWith :Alice .
 :Alice :sendsMessageTo    :Bob .

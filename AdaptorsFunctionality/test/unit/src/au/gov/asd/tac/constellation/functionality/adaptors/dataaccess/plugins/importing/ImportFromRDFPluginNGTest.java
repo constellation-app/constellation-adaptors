@@ -41,6 +41,9 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.model.vocabulary.SESAME;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -56,6 +59,7 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.sail.inferencer.fc.CustomGraphQueryInferencer;
+import org.eclipse.rdf4j.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.SchemaCachingRDFSInferencer;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
@@ -161,6 +165,7 @@ public class ImportFromRDFPluginNGTest {
     public void testRdf4jModelAndInferencing() throws Exception {
         final GraphRecordStore results = new GraphRecordStore();
         final Model model = new LinkedHashModel();
+        final ValueFactory VF = SimpleValueFactory.getInstance();
 
         // 1) read a file into a model
         {
@@ -174,44 +179,111 @@ public class ImportFromRDFPluginNGTest {
         // 2) add it to a consty graph using RDFUtilities.PopulateRecordStore()
         // 3) convert the graph into a model
         // 4) load the model into an in RDF4J memory model
-        System.out.println("4) load the model into an in RDF4J memory model");
-        final Repository repo = new SailRepository(new MemoryStore());
+        {
+            System.out.println("4) load the model into an in RDF4J memory model");
+            final Repository repo = new SailRepository(new MemoryStore());
 
-        try (RepositoryConnection conn = repo.getConnection()) {
-            // add the model
-            conn.add(model);
+            try (RepositoryConnection conn = repo.getConnection()) {
+                // add the model
+                conn.add(model);
 
-            // let's check that our data is actually in the database
-            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
-                for (Statement st : result) {
-                    System.out.println("db contains: " + st);
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        System.out.println("raw triples: " + st);
+                    }
                 }
+            } finally {
+                repo.shutDown();
             }
-        } finally {
-            repo.shutDown();
         }
 
-        // 5) apply the inferenceing rule
-        System.out.println("5) apply the inferencing rule");
-        String pre = "PREFIX : <http://foo.org/bar#>\n";
-        String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
-                + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
-        String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
-                + "WHERE { ?p :relatesTo :Cryptography }";
+        // 5.1) apply the RDFS class rules
+        {
+            System.out.println("5.1) apply the RDFS class rules");
+            final Repository repo = new SailRepository(new DirectTypeHierarchyInferencer(new MemoryStore()));
 
-        final Repository repo2 = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-        try (RepositoryConnection conn = repo2.getConnection()) {
-            // add the model
-            conn.add(model);
+            try (RepositoryConnection conn = repo.getConnection()) {
+                // add the model
+                conn.add(model);
 
-            // let's check that our data is actually in the database
-            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
-                for (Statement st : result) {
-                    System.out.println("db now contains: " + st);
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        System.out.println("direct type inference: " + st);
+                    }
                 }
+
+                // what type is Bob? This should be easy.
+                try (RepositoryResult<Statement> result = conn.getStatements(
+                        VF.createIRI("http://foo.org/bar#Bob"),
+                        SESAME.DIRECTTYPE,
+                        null);) {
+                    assertTrue(result.hasNext());
+                    Statement st = result.next();
+                    assertEquals(st.getObject().stringValue(), "http://foo.org/bar#Man");
+                    assertFalse(result.hasNext());
+                }
+
+                // what type is Alice? This is harder because there are multiple options.
+                try (RepositoryResult<Statement> result = conn.getStatements(
+                        VF.createIRI("http://foo.org/bar#Alice"),
+                        SESAME.DIRECTTYPE,
+                        null);) {
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getObject().stringValue(), "http://foo.org/bar#Woman");
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getObject().stringValue(), "http://foo.org/bar#Hacker");
+                    assertFalse(result.hasNext());
+                }
+
+                // what type is the action exchangesKeysWith'?
+                try (RepositoryResult<Statement> result = conn.getStatements(
+                        VF.createIRI("http://foo.org/bar#exchangesKeysWith"),
+                        SESAME.DIRECTTYPE,
+                        null);) {
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getObject().stringValue(), RDF.PROPERTY.toString());
+                    assertFalse(result.hasNext());
+                }
+
+                // what type is the attribute 'age'?
+                try (RepositoryResult<Statement> result = conn.getStatements(
+                        VF.createIRI("http://foo.org/bar#age"),
+                        SESAME.DIRECTTYPE,
+                        null);) {
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getObject().stringValue(), RDF.PROPERTY.toString());
+                    assertFalse(result.hasNext());
+                }
+            } finally {
+                repo.shutDown();
             }
-        } finally {
-            repo2.shutDown();
+        }
+
+        // 5.2) apply the inferencing rules
+        {
+            System.out.println("5.2) apply the inferencing rule");
+            String pre = "PREFIX : <http://foo.org/bar#>\n";
+            String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
+                    + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
+            String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
+                    + "WHERE { ?p :relatesTo :Cryptography }";
+
+            final Repository repo2 = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+            try (RepositoryConnection conn = repo2.getConnection()) {
+                // add the model
+                conn.add(model);
+
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        System.out.println("custom inference: " + st);
+                    }
+                }
+            } finally {
+                repo2.shutDown();
+            }
         }
 
         // 6) process the model to the Consty graph using the RDFUtilities.PopulateRecordStore()
