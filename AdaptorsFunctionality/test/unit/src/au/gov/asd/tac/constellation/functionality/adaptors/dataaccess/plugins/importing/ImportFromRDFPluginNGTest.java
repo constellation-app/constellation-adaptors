@@ -281,6 +281,18 @@ public class ImportFromRDFPluginNGTest {
                         System.out.println("custom inference: " + st);
                     }
                 }
+
+                // check the new triples are added
+                try (RepositoryResult<Statement> result = conn.getStatements(
+                        null,
+                        VF.createIRI("http://foo.org/bar#relatesTo"),
+                        VF.createIRI("http://foo.org/bar#Cryptography"));) {
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getSubject().stringValue(), "http://foo.org/bar#sendsMessageTo");
+                    assertTrue(result.hasNext());
+                    assertEquals(result.next().getSubject().stringValue(), "http://foo.org/bar#exchangesKeysWith");
+                    assertFalse(result.hasNext());
+                }
             } finally {
                 repo2.shutDown();
             }
