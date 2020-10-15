@@ -6,6 +6,21 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
+                <package>com.carrotsearch.hppcrt</package>
+                <package>com.carrotsearch.hppcrt.cursors</package>
+                <package>com.carrotsearch.hppcrt.hash</package>
+                <package>com.carrotsearch.hppcrt.heaps</package>
+                <package>com.carrotsearch.hppcrt.lists</package>
+                <package>com.carrotsearch.hppcrt.maps</package>
+                <package>com.carrotsearch.hppcrt.predicates</package>
+                <package>com.carrotsearch.hppcrt.procedures</package>
+                <package>com.carrotsearch.hppcrt.sets</package>
+                <package>com.carrotsearch.hppcrt.sorting</package>
+                <package>com.carrotsearch.hppcrt.strategies</package>
+                <package>com.clarkparsia.owlapi.explanation</package>
+                <package>com.clarkparsia.owlapi.explanation.io</package>
+                <package>com.clarkparsia.owlapi.explanation.util</package>
+                <package>com.clarkparsia.owlapi.modularity.locality</package>
                 <package>com.ctc.wstx.api</package>
                 <package>com.ctc.wstx.cfg</package>
                 <package>com.ctc.wstx.compat</package>
@@ -56,6 +71,10 @@
                 <package>com.fasterxml.jackson.databind.ser.std</package>
                 <package>com.fasterxml.jackson.databind.type</package>
                 <package>com.fasterxml.jackson.databind.util</package>
+                <package>com.github.benmanes.caffeine</package>
+                <package>com.github.benmanes.caffeine.base</package>
+                <package>com.github.benmanes.caffeine.cache</package>
+                <package>com.github.benmanes.caffeine.cache.stats</package>
                 <package>com.github.jsonldjava.core</package>
                 <package>com.github.jsonldjava.impl</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.annotations</package>
@@ -83,6 +102,7 @@
                 <package>com.google.common.escape</package>
                 <package>com.google.common.eventbus</package>
                 <package>com.google.common.geometry</package>
+                <package>com.google.common.graph</package>
                 <package>com.google.common.hash</package>
                 <package>com.google.common.html</package>
                 <package>com.google.common.io</package>
@@ -92,6 +112,9 @@
                 <package>com.google.common.reflect</package>
                 <package>com.google.common.util.concurrent</package>
                 <package>com.google.common.xml</package>
+                <package>com.google.errorprone.annotations</package>
+                <package>com.google.errorprone.annotations.concurrent</package>
+                <package>com.google.j2objc.annotations</package>
                 <package>com.google.thirdparty.publicsuffix</package>
                 <package>com.opencsv</package>
                 <package>com.opencsv.bean</package>
@@ -101,13 +124,110 @@
                 <package>com.opencsv.enums</package>
                 <package>com.opencsv.exceptions</package>
                 <package>com.opencsv.stream.reader</package>
+                <package>de.uulm.ecs.ai.owlapi.krssparser</package>
+                <package>dk.brics.automaton</package>
+                <package>gnu.getopt</package>
+                <package>gnu.trove</package>
+                <package>gnu.trove.decorator</package>
+                <package>gnu.trove.function</package>
+                <package>gnu.trove.impl</package>
+                <package>gnu.trove.impl.hash</package>
+                <package>gnu.trove.impl.sync</package>
+                <package>gnu.trove.impl.unmodifiable</package>
+                <package>gnu.trove.iterator</package>
+                <package>gnu.trove.iterator.hash</package>
+                <package>gnu.trove.list</package>
+                <package>gnu.trove.list.array</package>
+                <package>gnu.trove.list.linked</package>
+                <package>gnu.trove.map</package>
+                <package>gnu.trove.map.custom_hash</package>
+                <package>gnu.trove.map.hash</package>
+                <package>gnu.trove.procedure</package>
+                <package>gnu.trove.procedure.array</package>
+                <package>gnu.trove.queue</package>
+                <package>gnu.trove.set</package>
+                <package>gnu.trove.set.hash</package>
+                <package>gnu.trove.stack</package>
+                <package>gnu.trove.stack.array</package>
+                <package>gnu.trove.strategy</package>
                 <package>javax.activation</package>
+                <package>javax.annotation</package>
+                <package>javax.annotation.concurrent</package>
+                <package>javax.annotation.meta</package>
+                <package>javax.inject</package>
+                <package>javax.mail</package>
+                <package>javax.mail.event</package>
+                <package>javax.mail.internet</package>
+                <package>javax.mail.search</package>
+                <package>javax.mail.util</package>
                 <package>javax.xml.bind</package>
                 <package>javax.xml.bind.annotation</package>
                 <package>javax.xml.bind.annotation.adapters</package>
                 <package>javax.xml.bind.attachment</package>
                 <package>javax.xml.bind.helpers</package>
                 <package>javax.xml.bind.util</package>
+                <package>javax.xml.stream</package>
+                <package>javax.xml.stream.events</package>
+                <package>javax.xml.stream.util</package>
+                <package>org.apache.axiom.attachments</package>
+                <package>org.apache.axiom.attachments.impl</package>
+                <package>org.apache.axiom.attachments.lifecycle</package>
+                <package>org.apache.axiom.attachments.lifecycle.impl</package>
+                <package>org.apache.axiom.attachments.utils</package>
+                <package>org.apache.axiom.c14n</package>
+                <package>org.apache.axiom.c14n.exceptions</package>
+                <package>org.apache.axiom.c14n.helpers</package>
+                <package>org.apache.axiom.c14n.impl</package>
+                <package>org.apache.axiom.c14n.omwrapper</package>
+                <package>org.apache.axiom.c14n.omwrapper.factory</package>
+                <package>org.apache.axiom.c14n.omwrapper.interfaces</package>
+                <package>org.apache.axiom.c14n.utils</package>
+                <package>org.apache.axiom.ext.activation</package>
+                <package>org.apache.axiom.ext.io</package>
+                <package>org.apache.axiom.ext.stax</package>
+                <package>org.apache.axiom.ext.stax.datahandler</package>
+                <package>org.apache.axiom.locator</package>
+                <package>org.apache.axiom.locator.loader</package>
+                <package>org.apache.axiom.mime</package>
+                <package>org.apache.axiom.mime.impl.axiom</package>
+                <package>org.apache.axiom.om</package>
+                <package>org.apache.axiom.om.dom</package>
+                <package>org.apache.axiom.om.ds</package>
+                <package>org.apache.axiom.om.ds.custombuilder</package>
+                <package>org.apache.axiom.om.impl</package>
+                <package>org.apache.axiom.om.impl.builder</package>
+                <package>org.apache.axiom.om.impl.dom</package>
+                <package>org.apache.axiom.om.impl.dom.factory</package>
+                <package>org.apache.axiom.om.impl.dom.jaxp</package>
+                <package>org.apache.axiom.om.impl.exception</package>
+                <package>org.apache.axiom.om.impl.jaxp</package>
+                <package>org.apache.axiom.om.impl.llom</package>
+                <package>org.apache.axiom.om.impl.llom.factory</package>
+                <package>org.apache.axiom.om.impl.serialize</package>
+                <package>org.apache.axiom.om.impl.traverse</package>
+                <package>org.apache.axiom.om.impl.util</package>
+                <package>org.apache.axiom.om.util</package>
+                <package>org.apache.axiom.om.xpath</package>
+                <package>org.apache.axiom.soap</package>
+                <package>org.apache.axiom.soap.impl.builder</package>
+                <package>org.apache.axiom.soap.impl.dom</package>
+                <package>org.apache.axiom.soap.impl.dom.factory</package>
+                <package>org.apache.axiom.soap.impl.dom.soap11</package>
+                <package>org.apache.axiom.soap.impl.dom.soap12</package>
+                <package>org.apache.axiom.soap.impl.llom</package>
+                <package>org.apache.axiom.soap.impl.llom.soap11</package>
+                <package>org.apache.axiom.soap.impl.llom.soap12</package>
+                <package>org.apache.axiom.util</package>
+                <package>org.apache.axiom.util.activation</package>
+                <package>org.apache.axiom.util.base64</package>
+                <package>org.apache.axiom.util.blob</package>
+                <package>org.apache.axiom.util.namespace</package>
+                <package>org.apache.axiom.util.sax</package>
+                <package>org.apache.axiom.util.stax</package>
+                <package>org.apache.axiom.util.stax.debug</package>
+                <package>org.apache.axiom.util.stax.dialect</package>
+                <package>org.apache.axiom.util.stax.wrapper</package>
+                <package>org.apache.axiom.util.stax.xop</package>
                 <package>org.apache.commons.beanutils</package>
                 <package>org.apache.commons.beanutils.converters</package>
                 <package>org.apache.commons.beanutils.expression</package>
@@ -248,12 +368,19 @@
                 <package>org.apache.commons.math3.stat.regression</package>
                 <package>org.apache.commons.math3.transform</package>
                 <package>org.apache.commons.math3.util</package>
+                <package>org.apache.commons.rdf.api</package>
+                <package>org.apache.commons.rdf.experimental</package>
                 <package>org.apache.commons.text</package>
                 <package>org.apache.commons.text.diff</package>
                 <package>org.apache.commons.text.lookup</package>
                 <package>org.apache.commons.text.matcher</package>
                 <package>org.apache.commons.text.similarity</package>
                 <package>org.apache.commons.text.translate</package>
+                <package>org.apache.geronimo.mail</package>
+                <package>org.apache.geronimo.mail.handlers</package>
+                <package>org.apache.geronimo.mail.util</package>
+                <package>org.apache.geronimo.osgi.locator</package>
+                <package>org.apache.geronimo.specs.activation</package>
                 <package>org.apache.http</package>
                 <package>org.apache.http.annotation</package>
                 <package>org.apache.http.auth</package>
@@ -318,6 +445,12 @@
                 <package>org.apache.http.protocol</package>
                 <package>org.apache.http.ssl</package>
                 <package>org.apache.http.util</package>
+                <package>org.apache.james.mime4j</package>
+                <package>org.apache.james.mime4j.codec</package>
+                <package>org.apache.james.mime4j.io</package>
+                <package>org.apache.james.mime4j.parser</package>
+                <package>org.apache.james.mime4j.stream</package>
+                <package>org.apache.james.mime4j.util</package>
                 <package>org.apache.jute</package>
                 <package>org.apache.jute.compiler</package>
                 <package>org.apache.jute.compiler.generated</package>
@@ -504,6 +637,7 @@
                 <package>org.apache.zookeeper.util</package>
                 <package>org.apache.zookeeper.version</package>
                 <package>org.apache.zookeeper.version.util</package>
+                <package>org.codehaus.mojo.animal_sniffer</package>
                 <package>org.codehaus.stax2</package>
                 <package>org.codehaus.stax2.evt</package>
                 <package>org.codehaus.stax2.io</package>
@@ -515,6 +649,12 @@
                 <package>org.codehaus.stax2.typed</package>
                 <package>org.codehaus.stax2.util</package>
                 <package>org.codehaus.stax2.validation</package>
+                <package>org.coode.owl.krssparser</package>
+                <package>org.coode.owlapi.latex</package>
+                <package>org.coode.owlapi.manchesterowlsyntax</package>
+                <package>org.coode.owlapi.obo.parser</package>
+                <package>org.coode.owlapi.obo12.parser</package>
+                <package>org.coode.owlapi.turtle</package>
                 <package>org.eclipse.rdf4j</package>
                 <package>org.eclipse.rdf4j.common.annotation</package>
                 <package>org.eclipse.rdf4j.common.concurrent.locks</package>
@@ -684,6 +824,22 @@
                 <package>org.eclipse.rdf4j.spin.function.spif</package>
                 <package>org.eclipse.rdf4j.util</package>
                 <package>org.eclipse.rdf4j.util.iterators</package>
+                <package>org.jaxen</package>
+                <package>org.jaxen.dom</package>
+                <package>org.jaxen.dom4j</package>
+                <package>org.jaxen.expr</package>
+                <package>org.jaxen.expr.iter</package>
+                <package>org.jaxen.function</package>
+                <package>org.jaxen.function.ext</package>
+                <package>org.jaxen.function.xslt</package>
+                <package>org.jaxen.javabean</package>
+                <package>org.jaxen.jdom</package>
+                <package>org.jaxen.pattern</package>
+                <package>org.jaxen.saxpath</package>
+                <package>org.jaxen.saxpath.base</package>
+                <package>org.jaxen.saxpath.helpers</package>
+                <package>org.jaxen.util</package>
+                <package>org.jaxen.xom</package>
                 <package>org.locationtech.jts</package>
                 <package>org.locationtech.jts.algorithm</package>
                 <package>org.locationtech.jts.algorithm.distance</package>
@@ -751,13 +907,158 @@
                 <package>org.locationtech.spatial4j.shape.jts</package>
                 <package>org.mapdb</package>
                 <package>org.noggit</package>
+                <package>org.obolibrary.macro</package>
+                <package>org.obolibrary.obo2owl</package>
+                <package>org.obolibrary.oboformat.diff</package>
+                <package>org.obolibrary.oboformat.model</package>
+                <package>org.obolibrary.oboformat.parser</package>
+                <package>org.obolibrary.oboformat.writer</package>
+                <package>org.obolibrary.owl</package>
+                <package>org.semanticweb.HermiT</package>
+                <package>org.semanticweb.HermiT.blocking</package>
+                <package>org.semanticweb.HermiT.cli</package>
+                <package>org.semanticweb.HermiT.datalog</package>
+                <package>org.semanticweb.HermiT.datatypes</package>
+                <package>org.semanticweb.HermiT.datatypes.anyuri</package>
+                <package>org.semanticweb.HermiT.datatypes.binarydata</package>
+                <package>org.semanticweb.HermiT.datatypes.bool</package>
+                <package>org.semanticweb.HermiT.datatypes.datetime</package>
+                <package>org.semanticweb.HermiT.datatypes.doublenum</package>
+                <package>org.semanticweb.HermiT.datatypes.floatnum</package>
+                <package>org.semanticweb.HermiT.datatypes.owlreal</package>
+                <package>org.semanticweb.HermiT.datatypes.rdfplainliteral</package>
+                <package>org.semanticweb.HermiT.datatypes.xmlliteral</package>
+                <package>org.semanticweb.HermiT.debugger</package>
+                <package>org.semanticweb.HermiT.debugger.commands</package>
+                <package>org.semanticweb.HermiT.existentials</package>
+                <package>org.semanticweb.HermiT.graph</package>
+                <package>org.semanticweb.HermiT.hierarchy</package>
+                <package>org.semanticweb.HermiT.model</package>
+                <package>org.semanticweb.HermiT.monitor</package>
+                <package>org.semanticweb.HermiT.structural</package>
+                <package>org.semanticweb.HermiT.tableau</package>
+                <package>org.semanticweb.owlapi.annotations</package>
+                <package>org.semanticweb.owlapi.apibinding</package>
+                <package>org.semanticweb.owlapi.atomicdecomposition</package>
+                <package>org.semanticweb.owlapi.change</package>
+                <package>org.semanticweb.owlapi.debugging</package>
+                <package>org.semanticweb.owlapi.dlsyntax</package>
+                <package>org.semanticweb.owlapi.dlsyntax.parser</package>
+                <package>org.semanticweb.owlapi.dlsyntax.renderer</package>
+                <package>org.semanticweb.owlapi.expression</package>
+                <package>org.semanticweb.owlapi.formats</package>
+                <package>org.semanticweb.owlapi.functional</package>
+                <package>org.semanticweb.owlapi.functional.parser</package>
+                <package>org.semanticweb.owlapi.functional.renderer</package>
+                <package>org.semanticweb.owlapi.io</package>
+                <package>org.semanticweb.owlapi.krss1.parser</package>
+                <package>org.semanticweb.owlapi.krss2</package>
+                <package>org.semanticweb.owlapi.krss2.parser</package>
+                <package>org.semanticweb.owlapi.krss2.renderer</package>
+                <package>org.semanticweb.owlapi.latex.renderer</package>
+                <package>org.semanticweb.owlapi.manchestersyntax</package>
+                <package>org.semanticweb.owlapi.manchestersyntax.parser</package>
+                <package>org.semanticweb.owlapi.manchestersyntax.renderer</package>
+                <package>org.semanticweb.owlapi.metrics</package>
+                <package>org.semanticweb.owlapi.model</package>
+                <package>org.semanticweb.owlapi.model.axiomproviders</package>
+                <package>org.semanticweb.owlapi.model.parameters</package>
+                <package>org.semanticweb.owlapi.model.providers</package>
+                <package>org.semanticweb.owlapi.modularity</package>
+                <package>org.semanticweb.owlapi.modularity.locality</package>
+                <package>org.semanticweb.owlapi.normalform</package>
+                <package>org.semanticweb.owlapi.oboformat</package>
+                <package>org.semanticweb.owlapi.owlxml</package>
+                <package>org.semanticweb.owlapi.owlxml.parser</package>
+                <package>org.semanticweb.owlapi.owlxml.renderer</package>
+                <package>org.semanticweb.owlapi.profiles</package>
+                <package>org.semanticweb.owlapi.profiles.violations</package>
+                <package>org.semanticweb.owlapi.rdf</package>
+                <package>org.semanticweb.owlapi.rdf.model</package>
+                <package>org.semanticweb.owlapi.rdf.rdfxml</package>
+                <package>org.semanticweb.owlapi.rdf.rdfxml.parser</package>
+                <package>org.semanticweb.owlapi.rdf.rdfxml.renderer</package>
+                <package>org.semanticweb.owlapi.rdf.turtle</package>
+                <package>org.semanticweb.owlapi.rdf.turtle.parser</package>
+                <package>org.semanticweb.owlapi.rdf.turtle.renderer</package>
+                <package>org.semanticweb.owlapi.reasoner</package>
+                <package>org.semanticweb.owlapi.reasoner.impl</package>
+                <package>org.semanticweb.owlapi.reasoner.knowledgeexploration</package>
+                <package>org.semanticweb.owlapi.reasoner.structural</package>
+                <package>org.semanticweb.owlapi.rio</package>
+                <package>org.semanticweb.owlapi.rio.utils</package>
+                <package>org.semanticweb.owlapi.search</package>
+                <package>org.semanticweb.owlapi.util</package>
+                <package>org.semanticweb.owlapi.util.mansyntax</package>
+                <package>org.semanticweb.owlapi.utilities</package>
+                <package>org.semanticweb.owlapi.vocab</package>
+                <package>org.semanticweb.owlapitools.builders</package>
+                <package>org.semanticweb.owlapitools.decomposition</package>
                 <package>org.slf4j</package>
                 <package>org.slf4j.event</package>
                 <package>org.slf4j.helpers</package>
                 <package>org.slf4j.spi</package>
                 <package>org.tartarus.snowball</package>
                 <package>org.tartarus.snowball.ext</package>
+                <package>org.tukaani.xz</package>
+                <package>org.tukaani.xz.check</package>
+                <package>org.tukaani.xz.common</package>
+                <package>org.tukaani.xz.delta</package>
+                <package>org.tukaani.xz.index</package>
+                <package>org.tukaani.xz.lz</package>
+                <package>org.tukaani.xz.lzma</package>
+                <package>org.tukaani.xz.rangecoder</package>
+                <package>org.tukaani.xz.simple</package>
+                <package>org.w3c.dom</package>
+                <package>rationals</package>
+                <package>rationals.algebra</package>
+                <package>rationals.converters</package>
+                <package>rationals.expr</package>
+                <package>rationals.properties</package>
+                <package>rationals.transformations</package>
+                <package>uk.ac.manchester.cs</package>
+                <package>uk.ac.manchester.cs.atomicdecomposition</package>
+                <package>uk.ac.manchester.cs.chainsaw</package>
+                <package>uk.ac.manchester.cs.factplusplusad</package>
+                <package>uk.ac.manchester.cs.owl.explanation.ordering</package>
+                <package>uk.ac.manchester.cs.owl.owlapi</package>
+                <package>uk.ac.manchester.cs.owl.owlapi.concurrent</package>
+                <package>uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer</package>
+                <package>uk.ac.manchester.cs.owlapi.dlsyntax</package>
+                <package>uk.ac.manchester.cs.owlapi.modularity</package>
             </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/animal-sniffer-annotations-1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/animal-sniffer-annotations-1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/apache-mime4j-core-0.7.2-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/apache-mime4j-core-0.7.2-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/automaton-1.11-8-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/automaton-1.11-8-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/axiom-api-1.2.14-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/axiom-api-1.2.14-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/axiom-c14n-1.2.14-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/axiom-c14n-1.2.14-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/axiom-dom-1.2.14-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/axiom-dom-1.2.14-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/axiom-impl-1.2.14-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/axiom-impl-1.2.14-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/caffeine-2.6.1-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/caffeine-2.6.1-jar.jar</binary-origin>
+            </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-beanutils-1.9.3-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-beanutils-1.9.3-jar.jar</binary-origin>
@@ -783,20 +1084,48 @@
                 <binary-origin>release/modules/ext/commons-lang3-3.9-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/commons-logging-1.1.3-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-logging-1.1.3-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/commons-math3-3.6.1-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-math3-3.6.1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-rdf-api-0.5.0-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-rdf-api-0.5.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-text-1.8-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-text-1.8-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/error_prone_annotations-2.0.18-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/error_prone_annotations-2.0.18-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/fluent-hc-4.5.10-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/fluent-hc-4.5.10-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/guava-18.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guava-18.0-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/geronimo-activation_1.1_spec-1.1-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/geronimo-activation_1.1_spec-1.1-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/geronimo-javamail_1.4_spec-1.7.1-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/geronimo-javamail_1.4_spec-1.7.1-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/geronimo-stax-api_1.0_spec-1.0.1-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/geronimo-stax-api_1.0_spec-1.0.1-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/guava-22.0-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/guava-22.0-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/hppcrt-0.7.5-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hppcrt-0.7.5-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/httpclient-4.5.10-jar.jar</runtime-relative-path>
@@ -827,6 +1156,10 @@
                 <binary-origin>release/modules/ext/httpmime-4.5.10-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/j2objc-annotations-1.1-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/j2objc-annotations-1.1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jackson-annotations-2.10.4-bundle.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jackson-annotations-2.10.4-bundle.jar</binary-origin>
             </class-path-extension>
@@ -839,12 +1172,24 @@
                 <binary-origin>release/modules/ext/jackson-databind-2.10.4-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/java-getopt-1.0.13-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/java-getopt-1.0.13-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/javax.activation-api-1.2.0-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/javax.activation-api-1.2.0-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/javax.inject-1-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javax.inject-1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jaxb-api-2.3.1-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jaxb-api-2.3.1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jaxen-1.1.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jaxen-1.1.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jcl-over-slf4j-1.7.30-jar.jar</runtime-relative-path>
@@ -853,6 +1198,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jsonld-java-0.13.0-bundle.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jsonld-java-0.13.0-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jsr305-3.0.2-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jsr305-3.0.2-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jts-core-1.15.1-bundle.jar</runtime-relative-path>
@@ -909,6 +1258,46 @@
             <class-path-extension>
                 <runtime-relative-path>ext/opencsv-4.6-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/opencsv-4.6-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.semanticweb.hermit-1.4.5.519-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.semanticweb.hermit-1.4.5.519-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-api-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-api-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-apibinding-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-apibinding-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-compatibility-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-compatibility-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-distribution-5.1.14-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-distribution-5.1.14-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-impl-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-impl-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-oboformat-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-oboformat-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-parsers-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-parsers-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-rio-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-rio-5.1.14-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/owlapi-tools-5.1.14-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/owlapi-tools-5.1.14-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/rdf4j-http-client-3.4.0-jar.jar</runtime-relative-path>
@@ -1147,8 +1536,16 @@
                 <binary-origin>release/modules/ext/stax2-api-3.1.4-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/trove4j-3.0.3-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/trove4j-3.0.3-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/woodstox-core-asl-4.4.1-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/woodstox-core-asl-4.4.1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xz-1.6-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xz-1.6-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/zookeeper-3.4.14-jar.jar</runtime-relative-path>
