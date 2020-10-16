@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDF4J;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.model.vocabulary.SESAME;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -55,6 +57,7 @@ import org.eclipse.rdf4j.query.impl.MapBindingSet;
 import org.eclipse.rdf4j.query.impl.TupleQueryResultBuilder;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
@@ -62,6 +65,9 @@ import org.eclipse.rdf4j.sail.inferencer.fc.CustomGraphQueryInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.SchemaCachingRDFSInferencer;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.sail.shacl.ShaclSail;
+import org.eclipse.rdf4j.sail.shacl.ShaclSailValidationException;
+import org.eclipse.rdf4j.sail.shacl.results.ValidationReport;
 import org.openide.util.Exceptions;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -261,17 +267,17 @@ public class ImportFromRDFPluginNGTest {
             }
         }
 
-        // 5.2) apply the inferencing rules
+        // 5.2) apply the custom inferencing rules
         {
-            System.out.println("5.2) apply the inferencing rule");
+            System.out.println("5.2) apply custom inferencing");
             String pre = "PREFIX : <http://foo.org/bar#>\n";
             String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
                     + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
             String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
                     + "WHERE { ?p :relatesTo :Cryptography }";
 
-            final Repository repo2 = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-            try (RepositoryConnection conn = repo2.getConnection()) {
+            final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
@@ -294,7 +300,96 @@ public class ImportFromRDFPluginNGTest {
                     assertFalse(result.hasNext());
                 }
             } finally {
-                repo2.shutDown();
+                repo.shutDown();
+            }
+        }
+
+        // 5.3) apply the SHACL inferencing rules
+        {
+            System.out.println("5.3) apply shacl inferencing");
+            final Repository repo = new SailRepository(new ShaclSail(new MemoryStore()));
+            repo.init();
+            try (RepositoryConnection conn = repo.getConnection()) {
+                // start a transaction
+                conn.begin();
+
+                // Persons have a single age and it is an integer
+                StringReader shaclRules = new StringReader(
+                        String.join("\n", "",
+                                "@prefix : <http://foo.org/bar#> .",
+                                "@prefix sh: <http://www.w3.org/ns/shacl#> .",
+                                "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
+                                ":PersonShape",
+                                "  a sh:NodeShape  ;",
+                                "  sh:targetClass :Person ;",
+                                "  sh:property :PersonShapeProperty .",
+                                ":PersonShapeProperty ",
+                                "  sh:path :age ;",
+                                "  sh:datatype xsd:integer ;",
+                                "  sh:maxCount 1 ;",
+                                "  sh:minCount 1 ."
+                        ));
+
+                // add the rules and the model
+                conn.add(shaclRules, "", RDFFormat.TURTLE, RDF4J.SHACL_SHAPE_GRAPH);
+                conn.add(model);
+                try {
+                    conn.commit();
+                } catch (RepositoryException exception) {
+                    System.err.println(exception.toString());
+                    Throwable cause = exception.getCause();
+                    if (cause instanceof ShaclSailValidationException) {
+                        ValidationReport validationReport = ((ShaclSailValidationException) cause).getValidationReport();
+                        System.out.println("validationReport=" + validationReport);
+
+                        Model validationReportModel = ((ShaclSailValidationException) cause).validationReportAsModel();
+                        //Rio.write(validationReportModel, System.out, RDFFormat.TURTLE);
+                        for (Statement st : validationReportModel.getStatements(null, null, null)) {
+                            System.out.println("validationReportModel: " + st);
+                        }
+                    }
+                    fail(exception.toString());
+                }
+
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        System.out.println("shacl inference: " + st);
+                    }
+                }
+
+                // now lets load some invalid data
+                conn.begin();
+                StringReader invalidSampleData = new StringReader(
+                        String.join("\n", "",
+                                "@prefix : <http://foo.org/bar#> .",
+                                "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
+                                ":Peter a :Man ;",
+                                "  :age 20, \"30\"^^xsd:integer ."
+                        ));
+
+                // Peter is defined as a Man, but the constraint is on Person,
+                // so type inference needs to occur for this to work correctly!
+                conn.add(invalidSampleData, "", RDFFormat.TURTLE);
+                try {
+                    conn.commit();
+                    fail("An exception should be thrown!");
+                } catch (RepositoryException exception) {
+                    Throwable cause = exception.getCause();
+                    assertTrue(cause instanceof ShaclSailValidationException, "Exception wrong type: " + cause.toString());
+                    if (cause instanceof ShaclSailValidationException) {
+                        ValidationReport validationReport = ((ShaclSailValidationException) cause).getValidationReport();
+                        System.out.println("validationReport=" + validationReport);
+
+                        Model validationReportModel = ((ShaclSailValidationException) cause).validationReportAsModel();
+                        //Rio.write(validationReportModel, System.out, RDFFormat.TURTLE);
+                        for (Statement st : validationReportModel.getStatements(null, null, null)) {
+                            System.out.println("validationReportModel: " + st);
+                        }
+                    }
+                }
+            } finally {
+                repo.shutDown();
             }
         }
 
