@@ -15,6 +15,7 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -97,12 +98,17 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 /**
- * TODO: - Plugin 1 & 2 - RDF4J SailRepo for Constellation or Utility conversion
- * class - Plugin 1 & 2 - Chain Direct Type, Duplicate Remover and RDFS
- * inferencing in importing example - Plugin 3 - OWL-API inferencing
- * interface/conversion to/from Constellation data - Plugin 4 - SPARQL query
- * using OWL inferences (if possible) - Plugin 5 - User adding a custom SPARQL
- * CONSTRUCT inference rule (stretch goal)
+ * TODO:
+ * <ul>
+ * <li> Plugin 1 & 2 - RDF4J SailRepo for Constellation or Utility conversion
+ * <li> Plugin 1 & 2 - Chain Direct Type, Duplicate Remover and RDFS inferencing
+ * in importing example (done)
+ * <li> Plugin 3 - OWL-API inferencing interface/conversion to/from
+ * Constellation data
+ * <li> Plugin 4 - SPARQL query using OWL inferences (if possible)
+ * <li> Plugin 5 - User adding a custom SPARQL CONSTRUCT inference rule (stretch
+ * goal)
+ * </ul>
  *
  * @author arcturus2
  * @author scorpius77
@@ -523,13 +529,12 @@ public class ImportFromRDFPluginNGTest {
      *
      * Note that some of the answers here are wrong, which is expected, since
      * RDF4J only implements RDFS, and not OWL, which is required for some of
-     * the questions.
+     * the questions. We need OWL support to get the right answer.
      *
      * @throws Exception
      */
     @Test
     public void testRdf4jRdfsReasonersWithLUBM() throws Exception {
-        final GraphRecordStore results = new GraphRecordStore();
         final Model model = new LinkedHashModel();
         final ValueFactory VF = SimpleValueFactory.getInstance();
         final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
@@ -909,6 +914,7 @@ public class ImportFromRDFPluginNGTest {
      */
     @Test
     public void testPlugin1and2() throws Exception {
+// Pseudo code:
 //        Model model = new LinkedHashModel()); or Model model = new ConstellationSailRepo();
 //        model.add(file or sparql);
 //        model.add(Utilities.toRDF4J(constellationGraph));
@@ -916,10 +922,43 @@ public class ImportFromRDFPluginNGTest {
 //        connnection.runInferencrer(Duplicate Removal, RDFS, Direct Type, Duplicate Removal);
 //        constellation.insert(Utilities.toConstallation(connection.getTriples()));
 //        model = null;
+
+        final Model model = new LinkedHashModel();
+        final ValueFactory VF = SimpleValueFactory.getInstance();
+        final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+
+        // read the onology into a model
+        {
+            final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+            loadTriples(model, inputStream, baseURI, format);
+        }
+
+        // read the data into a model
+        {
+            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+            loadTriples(model, inputStream, baseURI, format);
+        }
+
+        // apply the RDFS inferencing rules to a Constellation SAIL !
+        final Repository repo = new SailRepository(
+                new DedupingInferencer(
+                        new DirectTypeHierarchyInferencer(
+                                new SchemaCachingRDFSInferencer(
+                                        new ConstellationSail(), true))));
+        try (RepositoryConnection conn = repo.getConnection()) {
+            // add the model
+            conn.add(model);
+        }
     }
 
     /**
      * Learning how to use the OWL API reasoners.
+     * 
+     * TODO: How do we run a SPARQL query against an OWL-API Model?
      *
      * @throws Exception
      */
