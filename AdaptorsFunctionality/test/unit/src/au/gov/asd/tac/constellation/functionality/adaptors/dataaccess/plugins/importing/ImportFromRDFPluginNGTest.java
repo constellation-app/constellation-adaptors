@@ -62,6 +62,7 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.sail.inferencer.fc.CustomGraphQueryInferencer;
+import org.eclipse.rdf4j.sail.inferencer.fc.DedupingInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.eclipse.rdf4j.sail.inferencer.fc.SchemaCachingRDFSInferencer;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
@@ -71,6 +72,7 @@ import org.eclipse.rdf4j.sail.shacl.results.ValidationReport;
 import org.openide.util.Exceptions;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -95,8 +97,15 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 /**
+ * TODO: - Plugin 1 & 2 - RDF4J SailRepo for Constellation or Utility conversion
+ * class - Plugin 1 & 2 - Chain Direct Type, Duplicate Remover and RDFS
+ * inferencing in importing example - Plugin 3 - OWL-API inferencing
+ * interface/conversion to/from Constellation data - Plugin 4 - SPARQL query
+ * using OWL inferences (if possible) - Plugin 5 - User adding a custom SPARQL
+ * CONSTRUCT inference rule (stretch goal)
  *
- * @author arcturus
+ * @author arcturus2
+ * @author scorpius77
  */
 public class ImportFromRDFPluginNGTest {
 
@@ -121,6 +130,11 @@ public class ImportFromRDFPluginNGTest {
     public void tearDownMethod() throws Exception {
     }
 
+    /**
+     * Demonstrates basic turtle file importing.
+     *
+     * @throws Exception
+     */
     @Test
     public void testMusicTurtleQuery() throws Exception {
         final RecordStore query = new GraphRecordStore();
@@ -163,7 +177,7 @@ public class ImportFromRDFPluginNGTest {
     }
 
     /**
-     * Learning how to use the RDF4J Model and Inferencing class
+     * Learning how to use the RDF4J Model and RDFS Inferencing.
      *
      * @throws Exception
      */
@@ -365,7 +379,7 @@ public class ImportFromRDFPluginNGTest {
                                 "@prefix : <http://foo.org/bar#> .",
                                 "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
                                 ":Peter a :Man ;",
-                                "  :age 20, \"30\"^^xsd:integer ."
+                                "  :age 20, \"30\"^^xsd:integer ." // two ages!
                         ));
 
                 // Peter is defined as a Man, but the constraint is on Person,
@@ -457,11 +471,91 @@ public class ImportFromRDFPluginNGTest {
             loadTriples(model, inputStream, baseURI, format);
         }
 
-        // add it to a consty graph using RDFUtilities.PopulateRecordStore()
-        // convert the graph into a model
-        // load the model into an in RDF4J memory model
-        System.out.println("load the model into an in RDF4J memory model");
-        final Repository repo = new SailRepository(new MemoryStore());
+        int rawCount = 0;
+        {
+            // add it to a consty graph using RDFUtilities.PopulateRecordStore()
+            // convert the graph into a model
+            // load the model into an in RDF4J memory model
+            System.out.println("load the model into an in RDF4J memory model");
+            final Repository repo = new SailRepository(new MemoryStore());
+            try (RepositoryConnection conn = repo.getConnection()) {
+                // add the model
+                conn.add(model);
+
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        rawCount++;
+                        //System.out.println("db contains: " + st);
+                    }
+                    System.out.println("db raw count: " + rawCount);
+                }
+            } finally {
+                repo.shutDown();
+            }
+        }
+
+        int inferenceCount = 0;
+        {
+            // apply the RDFS inferencing rules
+            final Repository repo = new SailRepository(new SchemaCachingRDFSInferencer(new MemoryStore(), true));
+            try (RepositoryConnection conn = repo.getConnection()) {
+                // add the model
+                conn.add(model);
+
+                // let's check that our data is actually in the database
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                    for (Statement st : result) {
+                        inferenceCount++;
+                        //System.out.println("db now contains: " + st);
+                    }
+                    System.out.println("after inference count: " + inferenceCount);
+                }
+            }
+        }
+
+        // the inference engine should have created more triples
+        assertTrue(inferenceCount > rawCount, inferenceCount + " > " + rawCount);
+    }
+
+    /**
+     * Learning how to use the RDF4J RDFS reasoners against the LUBM data set.
+     *
+     * Note that some of the answers here are wrong, which is expected, since
+     * RDF4J only implements RDFS, and not OWL, which is required for some of
+     * the questions.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testRdf4jRdfsReasonersWithLUBM() throws Exception {
+        final GraphRecordStore results = new GraphRecordStore();
+        final Model model = new LinkedHashModel();
+        final ValueFactory VF = SimpleValueFactory.getInstance();
+        final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+
+        // read the onology into a model
+        {
+            final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+            loadTriples(model, inputStream, baseURI, format);
+        }
+
+        // read the data into a model
+        {
+            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+            loadTriples(model, inputStream, baseURI, format);
+        }
+
+        // apply the RDFS inferencing rules
+        final Repository repo = new SailRepository(
+                new DedupingInferencer(
+                        new DirectTypeHierarchyInferencer(
+                                new SchemaCachingRDFSInferencer(
+                                        new MemoryStore(), true))));
         try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
@@ -473,26 +567,7 @@ public class ImportFromRDFPluginNGTest {
                     count++;
                     //System.out.println("db contains: " + st);
                 }
-                System.out.println("db count: " + count);
-            }
-        } finally {
-            repo.shutDown();
-        }
-
-        // apply the inferenceing rule
-        final Repository repo2 = new SailRepository(new SchemaCachingRDFSInferencer(new MemoryStore(), true));
-        try (RepositoryConnection conn = repo2.getConnection()) {
-            // add the model
-            conn.add(model);
-
-            // let's check that our data is actually in the database
-            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
-                int count = 0;
-                for (Statement st : result) {
-                    count++;
-                    //System.out.println("db now contains: " + st);
-                }
-                System.out.println("after inference count: " + count);
+                System.out.println("inference count: " + count);
             }
             /*
             try (RepositoryResult<Statement> result = conn.getStatements(null, RDF.TYPE, null);) {
@@ -821,10 +896,26 @@ public class ImportFromRDFPluginNGTest {
             }
 
         } finally {
-            repo2.shutDown();
+            repo.shutDown();
         }
 
         // process the model to the Consty graph using the RDFUtilities.PopulateRecordStore()
+    }
+
+    /**
+     * Planning for Plugins 1 and 2.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testPlugin1and2() throws Exception {
+//        Model model = new LinkedHashModel()); or Model model = new ConstellationSailRepo();
+//        model.add(file or sparql);
+//        model.add(Utilities.toRDF4J(constellationGraph));
+//        connnection = model.getConnection();
+//        connnection.runInferencrer(Duplicate Removal, RDFS, Direct Type, Duplicate Removal);
+//        constellation.insert(Utilities.toConstallation(connection.getTriples()));
+//        model = null;
     }
 
     /**
@@ -833,7 +924,7 @@ public class ImportFromRDFPluginNGTest {
      * @throws Exception
      */
     @Test
-    public void testOwlApiReasoners() throws Exception {
+    public void testOwlApiReasonersPlugin3() throws Exception {
         final GraphRecordStore results = new GraphRecordStore();
         final Model model = new LinkedHashModel();
         final ValueFactory VF = SimpleValueFactory.getInstance();
