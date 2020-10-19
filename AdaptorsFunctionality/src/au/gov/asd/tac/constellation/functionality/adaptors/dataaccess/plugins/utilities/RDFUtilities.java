@@ -16,6 +16,7 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
+import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -29,10 +30,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.query.GraphQueryResult;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 
 public class RDFUtilities {
 
@@ -40,110 +44,122 @@ public class RDFUtilities {
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
     private static final int layer_Mask = 3;
 
-    public static void PopulateRecordStore(GraphRecordStore results, GraphQueryResult res, Map<String, String> subjectToType, int layerMask) {
-        //final int layerMaskAttributeId = LayersConcept.VertexAttribute.LAYER_MASK.ensure(wg);
-        while (res.hasNext()) {
-            LOGGER.info("Processing next record...");
-
-            final Statement st = res.next();
-            final Resource subject = st.getSubject();
-            final IRI predicate = st.getPredicate();
-            final Value object = st.getObject();
-            final Resource context = st.getContext();
-
-            LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
-
-            boolean addAttributes = false;
-            boolean objectIsIRI = false;
-            boolean objectIsBNode = false;
-
-            // PROCESS: Subject
-            // ----------------
-            String subjectName = null;
-            if (subject instanceof Literal) {
-                subjectName = ((Literal) subject).getLabel();
-            } else if (subject instanceof IRI) {
-                subjectName = ((IRI) subject).getLocalName();
-            } else if (subject instanceof BNode) {
-                subjectName = ((BNode) subject).stringValue();
-                subjectName = bnodeToSubject.get(subjectName);
-                addAttributes = true;
-                LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
-            } else {
-                LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
-            }
-
-            // PROCESS: Predicate
-            // ----------------
-            String predicateName = predicate.getLocalName();//predicate.stringValue()
-
-            // PROCESS: Object
-            // ----------------
-            String objectName = null;
-            if (object instanceof Literal) {
-                objectName = ((Literal) object).getLabel();
-                addAttributes = true;
-            } else if (object instanceof IRI) {
-                objectName = ((IRI) object).getLocalName();
-                ((IRI) object).getNamespace();
-                objectIsIRI = true;
-            } else if (object instanceof BNode) {
-                objectName = ((BNode) object).stringValue();
-                objectIsBNode = true;
-                LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
-            } else {
-                LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
-            }
-
-            LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
-
-            if (objectIsBNode) {
-                bnodeToSubject.put(objectName, subjectName);
-            } else if (addAttributes) { // literal object values are added as Vertex properties
-                LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
-                results.add();
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                results.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName);
-                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-            } else if ("type".equals(predicateName)) {
-                results.add();
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-
-                //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
-                String value = objectName;
-                if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
-                    value = subjectToType.get(subjectName) + ", " + value;
-                }
-                subjectToType.put(subjectName, value);
-
-            } else if (objectIsIRI) {
-                results.add();
-
-                String s = subject.stringValue();
-                String s2 = subject.toString();
-
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-                results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-                results.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-
-                if (StringUtils.isNotBlank(objectName)) {
-                    results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
-                    results.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                    results.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-
-                    results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
-                    results.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-                    results.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
-                    results.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
-            }
-//                    }
+    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, int layerMask) {
+        for (Statement statement : repositoryResult) {
+            processNextRecord(recordStore, statement, subjectToType, layerMask);
         }
     }
 
+    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, int layerMask) {
+        while (res.hasNext()) {
+            processNextRecord(recordStore, res.next(), subjectToType, layerMask);
+        }
+    }
+
+    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, int layerMask) {
+        LOGGER.info("Processing next record...");
+        final Resource subject = statement.getSubject();
+        final IRI predicate = statement.getPredicate();
+        final Value object = statement.getObject();
+        final Resource context = statement.getContext();
+
+        LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
+
+        boolean addAttributes = false;
+        boolean objectIsIRI = false;
+        boolean objectIsBNode = false;
+
+        // PROCESS: Subject
+        // ----------------
+        String subjectName = null;
+        if (subject instanceof Literal) {
+            subjectName = ((Literal) subject).getLabel();
+        } else if (subject instanceof IRI) {
+            subjectName = ((IRI) subject).getLocalName();
+        } else if (subject instanceof BNode) {
+            subjectName = ((BNode) subject).stringValue();
+            subjectName = bnodeToSubject.get(subjectName);
+            addAttributes = true;
+            LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping", subjectName);
+        } else {
+            LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
+        }
+
+        // PROCESS: Predicate
+        // ----------------
+        String predicateName = predicate.getLocalName();//predicate.stringValue()
+
+        // PROCESS: Object
+        // ----------------
+        String objectName = null;
+        if (object instanceof Literal) {
+            objectName = ((Literal) object).getLabel();
+            addAttributes = true;
+        } else if (object instanceof IRI) {
+            objectName = ((IRI) object).getLocalName();
+            ((IRI) object).getNamespace();
+            objectIsIRI = true;
+        } else if (object instanceof BNode) {
+            objectName = ((BNode) object).stringValue();
+            objectIsBNode = true;
+            LOGGER.log(Level.WARNING, "BNode object type: {0}, dropping", objectName);
+        } else {
+            LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
+        }
+
+        LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
+
+        if (objectIsBNode) {
+            bnodeToSubject.put(objectName, subjectName);
+        } else if (addAttributes) { // literal object values are added as Vertex properties
+            LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
+            recordStore.add();
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + predicateName, objectName);
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+        } else if ("type".equals(predicateName)) {
+            recordStore.add();
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+            //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
+            String value = objectName;
+            if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
+                value = subjectToType.get(subjectName) + ", " + value;
+            }
+            subjectToType.put(subjectName, value);
+
+        } else if (objectIsIRI) {
+            recordStore.add();
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+            if (StringUtils.isNotBlank(objectName)) {
+                recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
+                recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
+                recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
+                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);
+                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+            }
+        } else {
+            LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
+        }
+    }
+
+    public static Model getGraphModel(GraphWriteMethods graph) {
+        Model graphModel = new LinkedHashModel();
+        //TODO-Generate the model here
+        //graphModel.add();
+        return graphModel;
+    }
+
+//    public static void setGraphModel(Model model) {
+//        graphModel = model;
+//    }
 }

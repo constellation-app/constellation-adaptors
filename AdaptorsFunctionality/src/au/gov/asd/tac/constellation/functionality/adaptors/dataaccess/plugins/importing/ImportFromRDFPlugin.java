@@ -115,19 +115,20 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
         //TODO Add triples to constellation graph and update display; RDF view?
         //TODO Change the additional INFO logging to DEBUG or remove them once things are working
-        GraphRecordStore results = new GraphRecordStore();
+        GraphRecordStore recordStore = new GraphRecordStore();
 
         try {
             final URL documentUrl = new URL(inputFilename);
             final InputStream inputStream = documentUrl.openStream();
             final String baseURI = documentUrl.toString();
             //final RDFFormat format = getRdfFormat(intpuFileFormat);
+            //Model model = Rio.parse(inputStream, baseURI, format);
 
-            try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+            try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
 
-                RDFUtilities.PopulateRecordStore(results, res, subjectToType, layer_Mask);
+                RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
 
             } catch (RDF4JException e) {
                 // handle unrecoverable error
@@ -139,7 +140,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             Exceptions.printStackTrace(ex);
         }
 
-        return results;
+        return recordStore;
     }
 
     private RDFFormat getRdfFormat(final String format) {

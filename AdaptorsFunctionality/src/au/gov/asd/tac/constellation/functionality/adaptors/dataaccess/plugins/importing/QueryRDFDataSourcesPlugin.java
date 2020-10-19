@@ -79,7 +79,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
 //    }
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
-        GraphRecordStore results = new GraphRecordStore();
+        GraphRecordStore recordStore = new GraphRecordStore();
         String identifier = "";
         query.reset();
         while (query.next()) {
@@ -102,8 +102,8 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
 
                 GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, qb.toString());
 
-                try (GraphQueryResult result = graphQuery.evaluate()) {
-                    RDFUtilities.PopulateRecordStore(results, result, subjectToType, layer_Mask);
+                try (GraphQueryResult queryResult = graphQuery.evaluate()) {
+                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
 
                 } catch (RDF4JException e) {
                     LOGGER.log(Level.SEVERE, "An error occured: {0}", e);
@@ -115,7 +115,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
                 conn.close();
             }
         }
-        return results;
+        return recordStore;
     }
 
     @Override
