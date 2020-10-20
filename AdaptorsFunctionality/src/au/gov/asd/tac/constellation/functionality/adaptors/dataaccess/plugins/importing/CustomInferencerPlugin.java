@@ -50,7 +50,7 @@ import org.openide.util.lookup.ServiceProviders;
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
-@NbBundle.Messages("InferencePlugin=Inferring the Data in the graph")
+@NbBundle.Messages("CustomInferencerPlugin=Inferring the Data in the graph")
 public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAccessPlugin {
 
     private static final Logger LOGGER = Logger.getLogger(CustomInferencerPlugin.class.getName());
