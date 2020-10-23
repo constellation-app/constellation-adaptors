@@ -16,9 +16,13 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
+import au.gov.asd.tac.constellation.graph.Graph;
+import au.gov.asd.tac.constellation.graph.locking.DualGraph;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
+import au.gov.asd.tac.constellation.graph.processing.HookRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
@@ -27,6 +31,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,6 +82,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -942,17 +948,32 @@ public class ImportFromRDFPluginNGTest {
             final RDFFormat format = RDFFormat.RDFXML;
             loadTriples(model, inputStream, baseURI, format);
         }
+        
+        // TODO: This should take in a Constellation Graph instance I'm guessing...
+        final ConstellationSail sail = new ConstellationSail();
 
         // apply the RDFS inferencing rules to a Constellation SAIL !
         final Repository repo = new SailRepository(
                 new DedupingInferencer(
                         new DirectTypeHierarchyInferencer(
-                                new SchemaCachingRDFSInferencer(
-                                        new ConstellationSail(), true))));
+                                new SchemaCachingRDFSInferencer(sail, true))));
+        
+        // Add records via RDF4J connection
         try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
+        } finally {
+            //repo.shutDown();
         }
+        
+        // TODO: Add records to RDF4J by adding to Constellation graph. Doesn't work yet.
+        final RecordStore recordStore = new HookRecordStore(new GraphRecordStore(), sail);
+        recordStore.add();
+        recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, "some string");
+        recordStore.close();
+        
+        // Alternatively, use the GraphChangeListener
+        
     }
 
     /**
@@ -1073,6 +1094,9 @@ public class ImportFromRDFPluginNGTest {
         System.out.println("------------------------------------");
         System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
         assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
+        
+        // Test serialising the ontology back to triples
+        ontology.saveOntology(System.out);
     }
 
     private class TupleCountHandler extends TupleQueryResultBuilder {

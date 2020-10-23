@@ -98,7 +98,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
 
         String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
-        final String intpuFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
+        final String inputFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
 
         // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
         final File file = new File(inputFilename);
