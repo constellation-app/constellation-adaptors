@@ -28,7 +28,7 @@ import org.eclipse.rdf4j.sail.base.SailStore;
  */
 public class ConstellationSailStore implements SailStore {
 
-        private static final ValueFactory VF = SimpleValueFactory.getInstance();
+    private static final ValueFactory VF = SimpleValueFactory.getInstance();
 
     public ConstellationSailStore() {
     }

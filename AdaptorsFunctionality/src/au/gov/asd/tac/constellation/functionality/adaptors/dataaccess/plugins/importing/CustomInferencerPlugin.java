@@ -69,7 +69,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
         //populate model from query or the whole graph as required
         Model model = RDFUtilities.getGraphModel(graph);
 
-        LOGGER.info("Apply the inferenceing rule...");
+        LOGGER.info("Apply the inferencing rule...");
 
         final String rule = parameters.getParameters().get(RULE_QUERY_PARAMETER_ID).getStringValue();
         final String match = parameters.getParameters().get(MATCH_QUERY_PARAMETER_ID).getStringValue();
