@@ -47,6 +47,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryResults;
@@ -75,6 +76,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     private static int layer_Mask = 3;
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
 
+    private static final Logger LOGGER = Logger.getLogger(OWLApiInferencerPlugin.class.getName());
+
     static {
         rdfFileFormats.put(RDFFormat.BINARY.getName(), RDFFormat.BINARY);
         rdfFileFormats.put(RDFFormat.HDT.getName(), RDFFormat.HDT);
@@ -99,14 +102,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
         String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
         final String intpuFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
-
+        final RDFFormat rdfFormat = getRdfFormat(intpuFileFormat);
         // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
         final File file = new File(inputFilename);
         if (file.exists()) {
             inputFilename = "file:///" + inputFilename.replaceAll("\\\\", "/");
         }
 
-        final RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(RDFFormat.TURTLE);
+        final RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(rdfFormat);
 
         //TODO Research RDF4J etc
         //TODO Research base predicates; RDFS standard and what they map to in consty
@@ -127,10 +130,14 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                 //Model res = QueryResults.asModel(evaluate);
-
-                RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                if (queryResult.hasNext()) {
+                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                } else {
+                    LOGGER.info("queryResult IS EMPTY ");
+                }
 
             } catch (RDF4JException e) {
+                LOGGER.info("RDF4JException: " + e);
                 // handle unrecoverable error
             } finally {
                 inputStream.close();

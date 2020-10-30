@@ -89,7 +89,6 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
             try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
                 RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, layer_Mask);
             }
-            new String();
 
         } finally {
             repo.shutDown();
@@ -103,7 +102,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
 
     @Override
     public int getPosition() {
-        return 102;
+        return 103;
     }
 
     @Override
