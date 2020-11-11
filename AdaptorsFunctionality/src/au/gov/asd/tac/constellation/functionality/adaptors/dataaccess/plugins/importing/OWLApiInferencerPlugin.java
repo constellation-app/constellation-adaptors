@@ -54,7 +54,6 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -74,7 +73,6 @@ import org.semanticweb.owlapi.util.InferredPropertyAssertionGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredSubDataPropertyAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredSubObjectPropertyAxiomGenerator;
-import org.semanticweb.owlapi.util.OWLOntologyMerger;
 
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
@@ -85,12 +83,10 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 
     private static final Logger LOGGER = Logger.getLogger(OWLApiInferencerPlugin.class.getName());
 
-    private static int layer_Mask = 9;
+    final private static int layer_Mask = 9;
 
     final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
-    private Set<InferenceType> precompute;
-    private InferredOntologyGenerator inferredOntologyGenerator;
 
     @Override
     //public void edit(GraphWriteMethods graph, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
@@ -103,38 +99,37 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
         final OWLOntology ontology;
 
         try {
-            ///final URL documentUrl = getClass().getResource("university0-0.owl");
-            ///final InputStream inputStream = documentUrl.openStream();
+            final IRI iri = IRI.create("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
+            ontology = manager.loadOntologyFromOntologyDocument(iri);
+
+            //--------------------------------------- Merge 2 univ files to infer
+//            String inputFilename = "C:\\Projects\\constellation-adaptors\\AdaptorsFunctionality\\src\\au\\gov\\asd\\tac\\constellation\\functionality\\adaptors\\dataaccess\\plugins\\importing\\university0-0.owl"; //https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl";
+//            //final URL documentUrl = getClass().getResource("univ-bench.owl");
+//            // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
+//            final File file = new File(inputFilename);
+//            if (file.exists()) {
+//                inputFilename = "file:///" + inputFilename.replaceAll("\\\\", "/");
+//            }
+//
+//            final URL documentUrl = new URL(inputFilename);
+//            //final InputStream inputStream = documentUrl.openStream();
+//
+//            //----------------------------------Load File2 for testing only
+//            String inputFilename2 = "C:\\Projects\\constellation-adaptors\\AdaptorsFunctionality\\src\\au\\gov\\asd\\tac\\constellation\\functionality\\adaptors\\dataaccess\\plugins\\importing\\univ-bench.owl";
+//            final File file2 = new File(inputFilename2);
+//            if (file2.exists()) {
+//                inputFilename2 = "file:///" + inputFilename2.replaceAll("\\\\", "/");
+//            }
+//
+//            OWLOntology o1 = manager.loadOntology(IRI.create(inputFilename));
+//            OWLOntology o2 = manager.loadOntology(IRI.create(inputFilename2));
+//            // Create our ontology merger
+//            OWLOntologyMerger merger = new OWLOntologyMerger(manager);
+//            // Merge all of the loaded ontologies, specifying an IRI for the new ontology
+//
+//            IRI mergedOntologyIRI = IRI.create("http://www.semanticweb.com/mymergedont");
+//            ontology = merger.createMergedOntology(manager, mergedOntologyIRI);
             //---------------------------------------
-            String inputFilename = "C:\\Projects\\constellation-adaptors\\AdaptorsFunctionality\\src\\au\\gov\\asd\\tac\\constellation\\functionality\\adaptors\\dataaccess\\plugins\\importing\\university0-0.owl"; //https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl";
-            //final URL documentUrl = getClass().getResource("univ-bench.owl");
-            // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
-            final File file = new File(inputFilename);
-            if (file.exists()) {
-                inputFilename = "file:///" + inputFilename.replaceAll("\\\\", "/");
-            }
-
-            final URL documentUrl = new URL(inputFilename);
-            //final InputStream inputStream = documentUrl.openStream();
-
-            //----------------------------------Load File2 for testing only
-            String inputFilename2 = "C:\\Projects\\constellation-adaptors\\AdaptorsFunctionality\\src\\au\\gov\\asd\\tac\\constellation\\functionality\\adaptors\\dataaccess\\plugins\\importing\\univ-bench.owl";
-            final File file2 = new File(inputFilename2);
-            if (file2.exists()) {
-                inputFilename2 = "file:///" + inputFilename2.replaceAll("\\\\", "/");
-            }
-
-            OWLOntology o1 = manager.loadOntology(IRI.create(inputFilename));
-            OWLOntology o2 = manager.loadOntology(IRI.create(inputFilename2));
-            // Create our ontology merger
-            OWLOntologyMerger merger = new OWLOntologyMerger(manager);
-            // Merge all of the loaded ontologies, specifying an IRI for the new ontology
-
-            IRI mergedOntologyIRI = IRI.create("http://www.semanticweb.com/mymergedont");
-            ontology = merger.createMergedOntology(manager, mergedOntologyIRI);
-            //---------------------------------------
-
-            //ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             LOGGER.info("Ontology: " + ontology);
             //Check if the ontology contains any axioms
             LOGGER.info("Number of axioms before: " + ontology.getAxiomCount());
@@ -144,28 +139,10 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             //ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
             //OWLReasonerConfiguration config = new SimpleConfiguration(progressMonitor);
 
-            var factory = manager.getOWLDataFactory();
-
             // load the ontology to the reasoner
             //Hermi reasoner = com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory.getInstance().createReasoner(ontology);
             OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
-            //Check if the ontology  axioms count has changed
-            LOGGER.info("Number of axioms after reasoning(?): " + ontology.getAxiomCount());
 
-            // read the data into a model
-//        final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
-//        final InputStream inputStream = documentUrl.openStream();
-//        final RDFFormat format = RDFFormat.RDFXML;
-//        loadTriples(model, inputStream, documentUrl, format);
-//        OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
-//        Iterable<Statement> iterable = model.getStatements(null, null, null);
-//        for (Statement s : iterable) {
-//            OWLNamedIndividual subject = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getSubject().stringValue()));
-//            OWLNamedIndividual predicate = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getPredicate().stringValue()));
-//            OWLNamedIndividual object = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getObject().stringValue()));
-//            //OWLAxiom axiom = df.(subject, object);
-//            //ontology.add(axiom);
-//        }
             Stream<OWLAxiom> add = reasoner.pendingAxiomAdditions();
             Stream<OWLAxiom> rem = reasoner.pendingAxiomRemovals();
             Stream<OWLOntologyChange> s = reasoner.pendingChanges();
@@ -176,14 +153,13 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 
             LOGGER.info("Number of axioms before precompute: " + ontology.getAxiomCount());
             ////////////////////////////////////1. PRECOMPUTE
-
             //precompute(reasoner);
             //reasoner.flush();
             ////////////////////////////////////2. Use generator and reasoner to infer
-            long t0 = System.nanoTime();
 
             // Starting to add axiom generators
             OWLDataFactory datafactory = manager.getOWLDataFactory();
+
             List<InferredAxiomGenerator<? extends OWLAxiom>> inferredAxioms = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
             inferredAxioms.add(new InferredSubClassAxiomGenerator());
             inferredAxioms.add(new InferredClassAssertionAxiomGenerator());
@@ -199,18 +175,10 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             OWLOntology infOnt = manager.createOntology(IRI.create(ontology.getOntologyID().getOntologyIRI().get() + "_inferred"));
 
             // use generator and reasoner to infer some axioms
-            InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, inferredAxioms);
+            InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, inferredAxioms);
 
             //Storing the results
-            iog.fillOntology(datafactory, infOnt);
-
-            long elapsed_time = System.nanoTime() - t0;
-
-            // save the ontology
-            manager.saveOntology(infOnt, IRI.create("file:///C:/Projects/test.rdf"));
-            LOGGER.info("Saved the ontology in file:///C:/Projects/test.rdf");
-            LOGGER.info("Elapsed time: " + elapsed_time);
-            ///////////////////////////////////////
+            inferredOntologyGenerator.fillOntology(datafactory, infOnt);
 
             //reasoner.precomputeInferences(precompute.toArray(InferenceType));
             LOGGER.info("Number of axioms after reasoning : " + infOnt.getAxiomCount());
@@ -224,18 +192,22 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             LOGGER.info("Number of axioms after reasoning- pendingChanges: " + s2.count());
 
             //-------------------------\//Create a file for the new format
-            File fileformatted = new File("test-format.owl");
+            File fileformatted = File.createTempFile("InferredFile", ".owl");
             //Save the ontology in a different format
-            OWLDocumentFormat format = manager.getOntologyFormat(infOnt);
-            //OWLXMLOntologyFormat owlxmlFormat = new OWLXMLOntologyFormat();
-            //OWLAPIRDFFormat format2 = OWLAPIRDFFormat.OWL_XML;
+//            OWLDocumentFormat format = manager.getOntologyFormat(infOnt);
 
-//            if (format.isPrefixOWLOntologyFormat()) {
-            //owlxmlFormat.copyPrefixesFrom(format.asPrefixOWLDocumentFormat()); Removed to see if this removed parser exceptions:
-            //RDFFormat.RDFXML->org.eclipse.rdf4j.rio.RDFParseException: unqualified attribute 'name' not allowed [line 8, column 84]
-            //RDFFormat.NTRIPLES-> org.eclipse.rdf4j.rio.RDFParseException: IRI imelbourne ncluded an unencoded space:   [line 1]
+            // Save the ontology in owl/xml format
+//            OWLXMLDocumentFormat owlxmlFormat = new OWLXMLDocumentFormat();
+            // Some ontology formats support prefix names and prefix IRIs.
+            // When we save the ontology in the new format we will copy the prefixes over
+            // so that we have nicely abbreviated IRIs in the new ontology document
+//            if (format.isPrefixOWLDocumentFormat()) {
+//                owlxmlFormat.copyPrefixesFrom(format.asPrefixOWLDocumentFormat());
+//                //Removed as this caused rdf4j parser exceptions:
+//                //RDFFormat.RDFXML->org.eclipse.rdf4j.rio.RDFParseException: unqualified attribute 'name' not allowed [line 8, column 84]
+//                //RDFFormat.NTRIPLES-> org.eclipse.rdf4j.rio.RDFParseException: IRI included an unencoded space:   [line 1]
 //            }
-            manager.saveOntology(infOnt, format, IRI.create(fileformatted.toURI()));
+            manager.saveOntology(infOnt, IRI.create(fileformatted.toURI()));
             //-------------------------\Draw the graph
             Repository repo = new SailRepository(new MemoryStore());
             try {
@@ -248,11 +220,6 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
                     RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
 
                     try {
-//                        while (statements.hasNext()) {
-//                            Statement st = statements.next();
-//                            System.out.println(st);
-//                            LOGGER.info("----STATEMENT---" + st);
-//                        }
                         RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, layer_Mask);
                     } finally {
                         statements.close();

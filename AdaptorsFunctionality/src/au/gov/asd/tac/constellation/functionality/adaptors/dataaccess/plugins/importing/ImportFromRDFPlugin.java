@@ -48,15 +48,28 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.QueryResults;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
  *
@@ -73,7 +86,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
-    private static int layer_Mask = 3;
+    final private static int layer_Mask = 3;
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
 
     private static final Logger LOGGER = Logger.getLogger(OWLApiInferencerPlugin.class.getName());
@@ -109,7 +122,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             inputFilename = "file:///" + inputFilename.replaceAll("\\\\", "/");
         }
 
-        final RDFFormat format = Rio.getParserFormatForFileName(inputFilename.toString()).orElse(rdfFormat);
+        final RDFFormat format = Rio.getParserFormatForFileName(inputFilename).orElse(rdfFormat);
 
         //TODO Research RDF4J etc
         //TODO Research base predicates; RDFS standard and what they map to in consty
@@ -123,27 +136,60 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         try {
             final URL documentUrl = new URL(inputFilename);
             final InputStream inputStream = documentUrl.openStream();
-            final String baseURI = documentUrl.toString();
+
             //final RDFFormat format = getRdfFormat(intpuFileFormat);
             //Model model = Rio.parse(inputStream, baseURI, format);
+            final String baseURI = documentUrl.toString();
 
-            try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
-                //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
-                //Model res = QueryResults.asModel(evaluate);
-                if (queryResult.hasNext()) {
-                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
-                } else {
-                    LOGGER.info("queryResult IS EMPTY ");
+            if (FilenameUtils.getExtension(inputFilename).equalsIgnoreCase("owl") && inputFilename.startsWith("http://")) {
+                final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+                final IRI iri = IRI.create(inputFilename);
+                final OWLOntology ontology = manager.loadOntologyFromOntologyDocument(iri);
+
+                final File tempFile = File.createTempFile("TempOwlFile", ".owl");
+                manager.saveOntology(ontology, IRI.create(tempFile.toURI()));
+
+                final Repository repo = new SailRepository(new MemoryStore());
+                final RepositoryConnection conn = repo.getConnection();
+                conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
+                final RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
+
+                try {
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, layer_Mask);
+                } finally {
+                    statements.close();
+                    inputStream.close();
                 }
+//                String beginning = "<?xml version=\"1.0\"?>\n";
+//
+//                List<InputStream> streams = Arrays.asList(
+//                        new ByteArrayInputStream(beginning.getBytes()),
+//                        inputStream);
+//                inputStream = new SequenceInputStream(Collections.enumeration(streams));
+//
+            } else {
 
-            } catch (RDF4JException e) {
-                LOGGER.info("RDF4JException: " + e);
-                // handle unrecoverable error
-            } finally {
-                inputStream.close();
+                try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                    //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                    //Model res = QueryResults.asModel(evaluate);
+                    if (queryResult.hasNext()) {
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                    } else {
+                        LOGGER.info("queryResult IS EMPTY ");
+                    }
+                } catch (RDF4JException ex) {
+                    LOGGER.info("RDF4JException: " + ex);
+                    // handle unrecoverable error
+
+                } finally {
+                    inputStream.close();
+                }
             }
-
         } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (OWLOntologyStorageException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (OWLOntologyCreationException ex) {
             Exceptions.printStackTrace(ex);
         }
 
