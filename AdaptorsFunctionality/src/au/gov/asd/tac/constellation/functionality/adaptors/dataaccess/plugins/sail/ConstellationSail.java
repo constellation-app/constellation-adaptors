@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
  *
  * @author scorpius77
  */
-public class ConstellationSail extends AbstractNotifyingSail implements FederatedServiceResolverClient, GraphManagerListener, GraphChangeListener { //HookRecordStoreCallback
+public class ConstellationSail extends AbstractNotifyingSail implements FederatedServiceResolverClient, GraphManagerListener, GraphChangeListener {
 
     private static final Logger LOGGER = Logger.getLogger(ConstellationSail.class.getName());
 
@@ -115,8 +115,6 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
         final Graph graph = constellationEvent.getGraph();
 
-        System.out.println("@@CS Graph Changed !!!");
-
         // update the model with changes to the graph
         final ReadableGraph readableGraph = graph.getReadableGraph();
         try {
@@ -128,6 +126,9 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         } finally {
             readableGraph.release();
         }
+
+        // TODO: handle node or link delete scenario
+
 
 //        // RDF model to Consty Graph
 //        GraphRecordStore recordStore = new GraphRecordStore();
@@ -170,7 +171,7 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 
         WritableGraph writableGraph = null;
         try {
-            writableGraph = graph.getWritableGraph("RDF Update", true);
+            writableGraph = graph.getWritableGraph("Apply RDF model to the graph", true);
             GraphRecordStoreUtilities.addRecordStoreToGraph(writableGraph, recordStore, true, true, null);
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);

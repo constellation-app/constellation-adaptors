@@ -64,7 +64,7 @@ public class ConstellationSailDataset implements SailDataset {
     @Override
     public CloseableIteration<? extends Statement, SailException> getStatements(Resource rsrc, IRI iri, Value value, Resource... rsrcs) throws SailException {
         // get the actual statements
-        final Iterator<Statement> iterator = model.getStatements(rsrc, iri, value, rsrcs).iterator();
+        final Iterator<Statement> iterator = model.unmodifiable().getStatements(rsrc, iri, value, rsrcs).iterator();
 
         return new CloseableIteration<Statement, SailException>() {
             @Override
