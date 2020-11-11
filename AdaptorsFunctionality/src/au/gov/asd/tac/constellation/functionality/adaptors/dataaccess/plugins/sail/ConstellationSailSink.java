@@ -15,10 +15,9 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
-import java.util.Arrays;
 import org.eclipse.rdf4j.IsolationLevel;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
@@ -31,7 +30,10 @@ import org.eclipse.rdf4j.sail.base.SailSink;
  */
 public class ConstellationSailSink implements SailSink {
 
-    public ConstellationSailSink(IsolationLevel il) {
+    private final Model model;
+
+    public ConstellationSailSink(IsolationLevel level, final Model model) {
+        this.model = model;
     }
 
     @Override
@@ -64,15 +66,16 @@ public class ConstellationSailSink implements SailSink {
 
     @Override
     public void approve(Resource subj, IRI pred, Value obj, Resource ctx) throws SailException {
-        // Add the data into Constellation!
         System.out.println("Adding: " + subj + " " + pred + " " + obj + " " + ctx);
-        //RDFUtilities.PopulateRecordStore(results, res, subjectToType, 0);
+        model.add(subj, pred, obj, ctx);
     }
 
     @Override
     public void deprecate(Statement statement) throws SailException {
         // Remove the data from Constellation!
         System.out.println("Removing: " + statement);
+        model.remove(statement.getSubject(), statement.getPredicate(), statement.getObject());
+        // TODO: need to notify the graph that records need to be removed
     }
 
     @Override

@@ -17,13 +17,18 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.i
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
 import au.gov.asd.tac.constellation.graph.Graph;
+import au.gov.asd.tac.constellation.graph.ReadableGraph;
+import au.gov.asd.tac.constellation.graph.WritableGraph;
 import au.gov.asd.tac.constellation.graph.locking.DualGraph;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
-import au.gov.asd.tac.constellation.graph.processing.HookRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.schema.Schema;
+import au.gov.asd.tac.constellation.graph.schema.SchemaFactoryUtilities;
+import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.graph.utilities.io.SaveGraphUtilities;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import java.io.IOException;
@@ -31,7 +36,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +54,6 @@ import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.RDF4J;
-import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.model.vocabulary.SESAME;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.GraphQueryResult;
@@ -75,14 +78,13 @@ import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.eclipse.rdf4j.sail.shacl.ShaclSail;
 import org.eclipse.rdf4j.sail.shacl.ShaclSailValidationException;
 import org.eclipse.rdf4j.sail.shacl.results.ValidationReport;
+import org.locationtech.jts.util.Assert;
 import org.openide.util.Exceptions;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -612,7 +614,7 @@ public class ImportFromRDFPluginNGTest {
 
             {
                 // Query 2
-                // This query increases in complexity: 3 classes and 3 properties are involved. Additionally, 
+                // This query increases in complexity: 3 classes and 3 properties are involved. Additionally,
                 // there is a triangular pattern of relationships between the objects involved.
                 // Note: Modified GraduateStudent88 to make this work in sample data set.
                 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, ""
@@ -667,8 +669,8 @@ public class ImportFromRDFPluginNGTest {
 
             {
                 // Query 4
-                // This query has small input and high selectivity. It assumes subClassOf relationship 
-                // between Professor and its subclasses. Class Professor has a wide hierarchy. Another 
+                // This query has small input and high selectivity. It assumes subClassOf relationship
+                // between Professor and its subclasses. Class Professor has a wide hierarchy. Another
                 // feature is that it queries about multiple properties of a single class.
                 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, ""
                         + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -765,7 +767,7 @@ public class ImportFromRDFPluginNGTest {
             }
 
             {
-                // Query 9 
+                // Query 9
                 // Besides the aforementioned features of class Student and the wide hierarchy of
                 // class Faculty, like Query 2, this query is characterized by the most classes and
                 // properties in the query set and there is a triangular pattern of relationships.
@@ -798,7 +800,7 @@ public class ImportFromRDFPluginNGTest {
             {
                 // Query 10
                 // This query differs from Query 6, 7, 8 and 9 in that it only requires the
-                // (implicit) subClassOf relationship between GraduateStudent and Student, i.e., 
+                // (implicit) subClassOf relationship between GraduateStudent and Student, i.e.,
                 // subClassOf relationship between UndergraduateStudent and Student does not add
                 // to the results.
                 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, ""
@@ -823,9 +825,9 @@ public class ImportFromRDFPluginNGTest {
                 // Query 11, 12 and 13 are intended to verify the presence of certain OWL reasoning
                 // capabilities in the system. In this query, property subOrganizationOf is defined
                 // as transitive. Since in the benchmark data, instances of ResearchGroup are stated
-                // as a sub-organization of a Department individual and the later suborganization of 
+                // as a sub-organization of a Department individual and the later suborganization of
                 // a University individual, inference about the subOrgnizationOf relationship between
-                // instances of ResearchGroup and University is required to answer this query. 
+                // instances of ResearchGroup and University is required to answer this query.
                 // Additionally, its input is small.
                 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, ""
                         + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -845,7 +847,7 @@ public class ImportFromRDFPluginNGTest {
             {
                 // Query 12
                 // The benchmark data do not produce any instances of class Chair. Instead, each
-                // Department individual is linked to the chair professor of that department by 
+                // Department individual is linked to the chair professor of that department by
                 // property headOf. Hence this query requires realization, i.e., inference that
                 // that professor is an instance of class Chair because he or she is the head of a
                 // department. Input of this query is small as well.
@@ -870,10 +872,10 @@ public class ImportFromRDFPluginNGTest {
             {
                 // Query 13
                 // Property hasAlumnus is defined in the benchmark ontology as the inverse of
-                // property degreeFrom, which has three subproperties: undergraduateDegreeFrom, 
+                // property degreeFrom, which has three subproperties: undergraduateDegreeFrom,
                 // mastersDegreeFrom, and doctoralDegreeFrom. The benchmark data state a person as
                 // an alumnus of a university using one of these three subproperties instead of
-                // hasAlumnus. Therefore, this query assumes subPropertyOf relationships between 
+                // hasAlumnus. Therefore, this query assumes subPropertyOf relationships between
                 // degreeFrom and its subproperties, and also requires inference about inverseOf.
                 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, ""
                         + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -948,7 +950,7 @@ public class ImportFromRDFPluginNGTest {
             final RDFFormat format = RDFFormat.RDFXML;
             loadTriples(model, inputStream, baseURI, format);
         }
-        
+
         // TODO: This should take in a Constellation Graph instance I'm guessing...
         final ConstellationSail sail = new ConstellationSail();
 
@@ -957,7 +959,7 @@ public class ImportFromRDFPluginNGTest {
                 new DedupingInferencer(
                         new DirectTypeHierarchyInferencer(
                                 new SchemaCachingRDFSInferencer(sail, true))));
-        
+
         // Add records via RDF4J connection
         try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
@@ -965,20 +967,179 @@ public class ImportFromRDFPluginNGTest {
         } finally {
             //repo.shutDown();
         }
-        
+
         // TODO: Add records to RDF4J by adding to Constellation graph. Doesn't work yet.
-        final RecordStore recordStore = new HookRecordStore(new GraphRecordStore(), sail);
-        recordStore.add();
-        recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, "some string");
-        recordStore.close();
-        
+//        final RecordStore recordStore = new HookRecordStore(new GraphRecordStore(), sail);
+//        recordStore.add();
+//        recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, "some string");
+//        recordStore.close();
         // Alternatively, use the GraphChangeListener
-        
+    }
+
+    /**
+     * Planning for Plugins 1 and 2.
+     *
+     * Note that this unit test can replace testPlugin1and2 when this works.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testPlugin1and2Simplified() throws Exception {
+// Pseudo code:
+//        Model model = new LinkedHashModel()); or Model model = new ConstellationSailRepo();
+//        model.add(file or sparql);
+//        model.add(Utilities.toRDF4J(constellationGraph));
+//        connnection = model.getConnection();
+//        connnection.runInferencrer(Duplicate Removal, RDFS, Direct Type, Duplicate Removal);
+//        constellation.insert(Utilities.toConstallation(connection.getTriples()));
+//        model = null;
+
+        final ConstellationSail sail = new ConstellationSail();
+        sail.initialize();
+
+        // new consty graph
+        final Schema schema = SchemaFactoryUtilities.getSchemaFactory(AnalyticSchemaFactory.ANALYTIC_SCHEMA_ID).createSchema();
+        final Graph graph = new DualGraph(schema);
+        sail.newActiveGraph(graph);
+
+        // bootstrap the Sail API
+        final Repository repo = new SailRepository(
+                new DedupingInferencer(
+                        new DirectTypeHierarchyInferencer(
+                                new SchemaCachingRDFSInferencer(sail, true)
+                        )
+                )
+        );
+
+        // confirm we have an empty graph
+        {
+            final ReadableGraph readableGraph = graph.getReadableGraph();
+            try {
+                Assert.equals(0, readableGraph.getVertexCount());
+                Assert.equals(0, readableGraph.getTransactionCount());
+            } finally {
+                readableGraph.release();
+            }
+        }
+
+        // add some nodes to the in-memory model
+        {
+            final WritableGraph writableGraph = graph.getWritableGraph("Add nodes", true);
+            try {
+                final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(writableGraph);
+                final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.ensure(writableGraph);
+                final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.ensure(writableGraph);
+                final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.ensure(writableGraph);
+
+                final int vxId0 = writableGraph.addVertex();
+                writableGraph.setStringValue(vertexIdentifierAttributeId, vxId0, "someone@from.com");
+                writableGraph.setStringValue(vertexTypeAttributeId, vxId0, "Email");
+                writableGraph.setStringValue(vertexSourceAttributeId, vxId0, "local");
+
+                final int vxId1 = writableGraph.addVertex();
+                writableGraph.setStringValue(vertexIdentifierAttributeId, vxId1, "someone@to.com");
+                writableGraph.setStringValue(vertexTypeAttributeId, vxId1, "Email");
+                writableGraph.setStringValue(vertexSourceAttributeId, vxId1, "local");
+
+                final int txId0 = writableGraph.addTransaction(vxId0, vxId1, true);
+                writableGraph.setStringValue(transactionTypeAttributeId, txId0, "Communication");
+            } finally {
+                writableGraph.commit();
+            }
+        }
+
+        // simulate a change event but not required because the commit just did this
+        //sail.graphChanged(new GraphChangeEvent(null, graph, null, null));
+        // confirm the new nodes and transaction was added
+        {
+            final ReadableGraph readableGraph = graph.getReadableGraph();
+            try {
+                Assert.equals(2, readableGraph.getVertexCount());
+                Assert.equals(1, readableGraph.getTransactionCount());
+            } finally {
+                readableGraph.release();
+            }
+        }
+
+        Assert.equals(0, sail.getModel().size());
+
+        // peek at the graph so far
+        SaveGraphUtilities.saveGraphToTemporaryDirectory(graph, "1_manual_nodes_added", true);
+
+        // setting up the connection first time adds some baseline triples
+        try (RepositoryConnection conn = repo.getConnection()) {
+            Assert.isTrue(repo.isInitialized());
+        } finally {
+//            repo.shutDown();
+        }
+
+        Assert.equals(141, sail.getModel().size());
+
+        final Model model = new LinkedHashModel();
+        final String baseURI = "http://foo.org/bar#";
+
+        // read the onology into a model
+        {
+            final URL documentUrl = getClass().getResource("./resources/simple.ttl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.TURTLE;
+            loadTriples(model, inputStream, baseURI, format);
+        }
+
+        Assert.equals(2, model.size());
+
+        // Add records via RDF4J connection
+        try (RepositoryConnection conn = repo.getConnection()) {
+            // add the model
+            conn.add(model);
+        } finally {
+//            repo.shutDown();
+        }
+
+//        Assert.equals(147, sail.getModel().size());// TODO: getting 210 because of the concurrent mod exception
+        // apply the model to the graph
+        sail.writeModelToGraph();//TODO: may not be required
+
+        //Assert.equals(181, sail.getModel().size());
+        SaveGraphUtilities.saveGraphToTemporaryDirectory(graph, "2_after_synced_with_model", true);
+
+        // display graph nodes and links...it has a lot of schema definitions too
+        {
+            final ReadableGraph readableGraph = graph.getReadableGraph();
+            try {
+                System.out.println("vertex count => " + readableGraph.getVertexCount());
+                System.out.println("tx count => " + readableGraph.getTransactionCount());
+            } finally {
+                readableGraph.release();
+            }
+        }
+//        sail.printVerboseModel();
+
+        // 5.1) apply the RDFS class rules
+        // apply inferencing
+        try (RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
+                for (Statement st : result) {
+                    System.out.println("direct type inference: " + st);
+                }
+            }
+        } finally {
+//            repo.shutDown();
+        }
+        sail.printVerboseModel();
+        // TODO: Add records to RDF4J by adding to Constellation graph. Doesn't work yet.
+//        final RecordStore recordStore = new HookRecordStore(new GraphRecordStore(), sail);
+//        recordStore.add();
+//        recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, "some string");
+//        recordStore.close();
+        // Alternatively, use the GraphChangeListener
+
+        repo.shutDown();
     }
 
     /**
      * Learning how to use the OWL API reasoners.
-     * 
+     *
      * TODO: How do we run a SPARQL query against an OWL-API Model?
      *
      * @throws Exception
@@ -1071,7 +1232,7 @@ public class ImportFromRDFPluginNGTest {
             String emailAddr = emailAddrs.iterator().next().getLiteral();
             System.out.println("Email:    " + emailAddr);
 
-            // at least one direct type is guaranteed to exist for each individual 
+            // at least one direct type is guaranteed to exist for each individual
             OWLClass type = types.iterator().next().getRepresentativeElement();
             System.out.println("Type:     " + type.getIRI().getShortForm());
             System.out.print("Types:   ");
@@ -1094,7 +1255,7 @@ public class ImportFromRDFPluginNGTest {
         System.out.println("------------------------------------");
         System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
         assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
-        
+
         // Test serialising the ontology back to triples
         ontology.saveOntology(System.out);
     }

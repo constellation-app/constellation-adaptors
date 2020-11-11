@@ -15,6 +15,7 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail;
 
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.algebra.evaluation.impl.EvaluationStatistics;
@@ -30,7 +31,10 @@ public class ConstellationSailStore implements SailStore {
 
     private static final ValueFactory VF = SimpleValueFactory.getInstance();
 
-    public ConstellationSailStore() {
+    final ConstellationSailSource source;
+
+    public ConstellationSailStore(final Model model) {
+        source = new ConstellationSailSource(model);
     }
 
     @Override
@@ -46,17 +50,19 @@ public class ConstellationSailStore implements SailStore {
     @Override
     public SailSource getExplicitSailSource() {
         // The actual database triples
-        return new ConstellationSailSource();
+        return source;
     }
 
     @Override
     public SailSource getInferredSailSource() {
         // The inferred database triples
-        return new ConstellationSailSource();
+        // return new ConstellationSailSource();
+        // TODO: not sure if this is correct - do we need 2 sources?
+        return source;
     }
 
     @Override
     public void close() throws SailException {
     }
-    
+
 }

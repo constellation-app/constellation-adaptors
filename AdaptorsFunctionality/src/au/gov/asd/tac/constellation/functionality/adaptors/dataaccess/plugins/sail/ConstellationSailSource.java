@@ -16,6 +16,7 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail;
 
 import org.eclipse.rdf4j.IsolationLevel;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.sail.SailException;
 import org.eclipse.rdf4j.sail.base.SailDataset;
 import org.eclipse.rdf4j.sail.base.SailSink;
@@ -27,7 +28,12 @@ import org.eclipse.rdf4j.sail.base.SailSource;
  */
 public class ConstellationSailSource implements SailSource {
 
-    public ConstellationSailSource() {
+    final SailSink sink;
+    final SailDataset dataset;
+
+    public ConstellationSailSource(final Model model) {
+        sink = new ConstellationSailSink(null, model);
+        dataset = new ConstellationSailDataset(null, model);
     }
 
     @Override
@@ -36,13 +42,13 @@ public class ConstellationSailSource implements SailSource {
     }
 
     @Override
-    public SailSink sink(IsolationLevel il) throws SailException {
-        return new ConstellationSailSink(il);
+    public SailSink sink(IsolationLevel level) throws SailException {
+        return sink;
     }
 
     @Override
-    public SailDataset dataset(IsolationLevel il) throws SailException {
-        return new ConstellationSailDataset(il);
+    public SailDataset dataset(IsolationLevel level) throws SailException {
+        return dataset;
     }
 
     @Override
@@ -56,5 +62,5 @@ public class ConstellationSailSource implements SailSource {
     @Override
     public void close() throws SailException {
     }
-    
+
 }

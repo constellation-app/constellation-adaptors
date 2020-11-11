@@ -16,7 +16,7 @@
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
-import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
+import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -35,6 +35,8 @@ import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 
@@ -152,11 +154,35 @@ public class RDFUtilities {
         }
     }
 
-    public static Model getGraphModel(GraphWriteMethods graph) {
-        Model graphModel = new LinkedHashModel();
-        //TODO-Generate the model here
-        //graphModel.add();
-        return graphModel;
+    public static Model getGraphModel(final GraphReadMethods graph) {
+        final Model model = new LinkedHashModel();
+
+        // vertex attributes
+        final int vertexLabelAttributeId = VisualConcept.VertexAttribute.LABEL.get(graph);
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
+        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.get(graph);
+        final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
+
+        // transaction attributes
+        final int transactionIdentifierAttributeId = VisualConcept.TransactionAttribute.IDENTIFIER.get(graph);
+        final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
+
+        // statement: vertex X is a thing Y
+        final int vxCount = graph.getVertexCount();
+        for (int i = 0; i < vxCount; i++) {
+            final int vertexId = graph.getVertex(i);
+            final String identifier = graph.getStringValue(vertexIdentifierAttributeId, vertexId);
+            final String source = graph.getStringValue(vertexSourceAttributeId, vertexId);
+            final String type = graph.getStringValue(vertexTypeAttributeId, vertexId);
+
+            final Resource subject = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + identifier); // TODO: check if the RDF type is defined, if so then use it, otherwise is a http://consty.local#
+            final Value object = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + type); // TODO: this will require a lookup to convert a Consty type to RDF type
+
+            model.add(SimpleValueFactory.getInstance().createStatement(subject, RDF.TYPE, object));
+        }
+
+        // TODO: loop through transaction statements
+        return model;
     }
 
 //    public static void setGraphModel(Model model) {

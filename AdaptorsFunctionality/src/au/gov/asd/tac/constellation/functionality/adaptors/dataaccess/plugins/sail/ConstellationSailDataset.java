@@ -15,9 +15,12 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail;
 
+import java.util.Iterator;
+import java.util.logging.Logger;
 import org.eclipse.rdf4j.IsolationLevel;
 import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -31,7 +34,12 @@ import org.eclipse.rdf4j.sail.base.SailDataset;
  */
 public class ConstellationSailDataset implements SailDataset {
 
-    public ConstellationSailDataset(IsolationLevel il) {
+    private final Model model;
+
+    private static final Logger LOGGER = Logger.getLogger(ConstellationSailDataset.class.getName());
+
+    public ConstellationSailDataset(IsolationLevel level, final Model model) {
+        this.model = model;
     }
 
     @Override
@@ -55,7 +63,9 @@ public class ConstellationSailDataset implements SailDataset {
 
     @Override
     public CloseableIteration<? extends Statement, SailException> getStatements(Resource rsrc, IRI iri, Value value, Resource... rsrcs) throws SailException {
-        // Get the actual statements
+        // get the actual statements
+        final Iterator<Statement> iterator = model.getStatements(rsrc, iri, value, rsrcs).iterator();
+
         return new CloseableIteration<Statement, SailException>() {
             @Override
             public void close() throws SailException {
@@ -63,18 +73,25 @@ public class ConstellationSailDataset implements SailDataset {
 
             @Override
             public boolean hasNext() throws SailException {
-                return false;
+                try {
+                    return iterator.hasNext();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    // TODO: fix this concurrent mod exception
+                    return false;
+                }
             }
 
             @Override
             public Statement next() throws SailException {
-                return null;
+                return iterator.next();
             }
 
             @Override
             public void remove() throws SailException {
+                iterator.next();
             }
         };
     }
-    
+
 }

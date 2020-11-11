@@ -17,48 +17,53 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.s
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
+import au.gov.asd.tac.constellation.graph.ReadableGraph;
+import au.gov.asd.tac.constellation.graph.WritableGraph;
+import au.gov.asd.tac.constellation.graph.manager.GraphManager;
+import au.gov.asd.tac.constellation.graph.manager.GraphManagerListener;
 import au.gov.asd.tac.constellation.graph.monitor.GraphChangeEvent;
 import au.gov.asd.tac.constellation.graph.monitor.GraphChangeListener;
-import au.gov.asd.tac.constellation.graph.processing.HookRecordStoreCallback;
-import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
+import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolver;
 import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverClient;
-import org.eclipse.rdf4j.sail.NotifyingSail;
-import org.eclipse.rdf4j.sail.NotifyingSailConnection;
-import org.eclipse.rdf4j.sail.Sail;
-import org.eclipse.rdf4j.sail.SailChangedEvent;
 import org.eclipse.rdf4j.sail.SailChangedListener;
-import org.eclipse.rdf4j.sail.SailConnection;
 import org.eclipse.rdf4j.sail.SailException;
 import org.eclipse.rdf4j.sail.base.SailStore;
 import org.eclipse.rdf4j.sail.helpers.AbstractNotifyingSail;
-import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author scorpius77
  */
-public class ConstellationSail extends AbstractNotifyingSail implements FederatedServiceResolverClient, GraphChangeListener, HookRecordStoreCallback {
+public class ConstellationSail extends AbstractNotifyingSail implements FederatedServiceResolverClient, GraphManagerListener, GraphChangeListener { //HookRecordStoreCallback
 
     private static final Logger LOGGER = Logger.getLogger(ConstellationSail.class.getName());
 
+    private Graph graph;
     private SailStore store;
+    private Model model;
     private FederatedServiceResolver serviceResolver;
     private ConstellationSailConnection connection;
-    private Graph graph;
+
+    public void addGraphManagerListener() {
+        GraphManager.getDefault().addGraphManagerListener(ConstellationSail.this);
+    }
 
     @Override
     protected void initializeInternal() throws SailException {
         super.initializeInternal();
 
-        // Do more stuff
-        store = new ConstellationSailStore();
+        model = new LinkedHashModel();
+        store = new ConstellationSailStore(model);
     }
 
     @Override
@@ -82,7 +87,6 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 
     @Override
     public ValueFactory getValueFactory() {
-        //return VF;
         return store.getValueFactory();
     }
 
@@ -108,7 +112,38 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
      */
     @Override
     public void graphChanged(GraphChangeEvent constellationEvent) {
-        graph = constellationEvent.getGraph();
+        // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
+        final Graph graph = constellationEvent.getGraph();
+
+        System.out.println("@@CS Graph Changed !!!");
+
+        // update the model with changes to the graph
+        final ReadableGraph readableGraph = graph.getReadableGraph();
+        try {
+            final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
+            for (final Statement statement : graphModel.getStatements(null, null, null)) {
+                model.add(statement);
+            }
+            LOGGER.log(Level.INFO, "Model size is {0}", model.size());
+        } finally {
+            readableGraph.release();
+        }
+
+//        // RDF model to Consty Graph
+//        GraphRecordStore recordStore = new GraphRecordStore();
+//        RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
+//
+//        WritableGraph writableGraph = null;
+//        try {
+//            writableGraph = graph.getWritableGraph("RDF Update", true);
+//            GraphRecordStoreUtilities.addRecordStoreToGraph(writableGraph, recordStore, true, true, null);
+//        } catch (InterruptedException ex) {
+//            Exceptions.printStackTrace(ex);
+//        } finally {
+//            if (writableGraph != null) {
+//                writableGraph.commit();
+//            }
+//        }
 //        connection.clearInferred();
 //        if (!inferred) {
 //            connection.addStatement(subj, pred, obj, contexts);
@@ -123,26 +158,73 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
     }
 
     /**
-     * Constellation's hook record store callback.
-     *
-     * @param recordStore
+     * Generate a graph of the in-memory RDF model and add it to the graph on
+     * demand.
      */
-    @Override
-    public void onAdd(RecordStore recordStore) {
-        // This shouldn't happen!
-        if (graph == null) {
-            LOGGER.severe("Graph object is null!");
-            return;
+    public void writeModelToGraph() {
+        final GraphRecordStore recordStore = new GraphRecordStore();
+
+        for (final Statement statement : model.getStatements(null, null, null)) {
+            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
         }
 
-        // Convert a Constellation RecordStore into updates to the RDF4J model
+        WritableGraph writableGraph = null;
         try {
-            Model graphModel = RDFUtilities.getGraphModel(graph.getWritableGraph(this.toString(), true));
-            graphModel.forEach(statement -> {
-                connection.addStatement(statement.getSubject(), statement.getPredicate(), statement.getObject(), statement.getContext());
-            });
+            writableGraph = graph.getWritableGraph("RDF Update", true);
+            GraphRecordStoreUtilities.addRecordStoreToGraph(writableGraph, recordStore, true, true, null);
         } catch (InterruptedException ex) {
-            LOGGER.logp(Level.SEVERE, this.getClass().getName(), "onAdd", "Interrupted importing Constellation changes into RDF4J!", ex);
+            Exceptions.printStackTrace(ex);
+        } finally {
+            if (writableGraph != null) {
+                writableGraph.commit();
+            }
+        }
+    }
+
+    /**
+     * Return the RDF in-memory model
+     *
+     * @return An unmodifiable copy of the in-memory model
+     */
+    public Model getModel() {
+        return model.unmodifiable();
+    }
+
+    @Override
+    public void graphOpened(Graph graph) {
+        // covered by the newActiveGraph
+    }
+
+    @Override
+    public void graphClosed(Graph graph) {
+        this.graph = null;
+        this.graph.removeGraphChangeListener(this);
+    }
+
+    @Override
+    public void newActiveGraph(Graph graph) {
+        this.graph = graph;
+        this.graph.addGraphChangeListener(this);
+    }
+
+    /**
+     * Manually append to the in-memory RDF model.
+     *
+     * Note this is experimental and could ideally be removed. The model should
+     * ideally be updated by using the (@link RepositoryConnection).
+     *
+     * @param model RDF Model containing triples to add to the in-memory graph.
+     */
+    public void appendToModel(final Model model) {
+        for (final Statement statement : model.getStatements(null, null, null)) {
+            this.model.add(statement);
+        }
+    }
+
+    public void printVerboseModel() {
+        LOGGER.log(Level.INFO, "Model size is {0}", this.model.size());
+        for (final Statement statement : model.getStatements(null, null, null)) {
+            LOGGER.log(Level.INFO, "\tStatement is {0}", statement);
         }
     }
 
