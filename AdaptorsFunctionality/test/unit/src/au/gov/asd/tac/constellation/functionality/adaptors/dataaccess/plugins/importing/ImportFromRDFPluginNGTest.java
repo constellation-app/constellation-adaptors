@@ -218,12 +218,12 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("4) load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
 
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         System.out.println("raw triples: " + st);
                     }
@@ -238,19 +238,19 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("5.1) apply the RDFS class rules");
             final Repository repo = new SailRepository(new DirectTypeHierarchyInferencer(new MemoryStore()));
 
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         System.out.println("direct type inference: " + st);
                     }
                 }
 
                 // what type is Bob? This should be easy.
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#Bob"),
                         SESAME.DIRECTTYPE,
                         null);) {
@@ -261,7 +261,7 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // what type is Alice? This is harder because there are multiple options.
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#Alice"),
                         SESAME.DIRECTTYPE,
                         null);) {
@@ -273,7 +273,7 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // what type is the action exchangesKeysWith'?
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#exchangesKeysWith"),
                         SESAME.DIRECTTYPE,
                         null);) {
@@ -283,7 +283,7 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // what type is the attribute 'age'?
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#age"),
                         SESAME.DIRECTTYPE,
                         null);) {
@@ -306,19 +306,19 @@ public class ImportFromRDFPluginNGTest {
                     + "WHERE { ?p :relatesTo :Cryptography }";
 
             final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         System.out.println("custom inference: " + st);
                     }
                 }
 
                 // check the new triples are added
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         null,
                         VF.createIRI("http://foo.org/bar#relatesTo"),
                         VF.createIRI("http://foo.org/bar#Cryptography"));) {
@@ -338,7 +338,7 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("5.3) apply shacl inferencing");
             final Repository repo = new SailRepository(new ShaclSail(new MemoryStore()));
             repo.init();
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // start a transaction
                 conn.begin();
 
@@ -381,7 +381,7 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         System.out.println("shacl inference: " + st);
                     }
@@ -426,7 +426,7 @@ public class ImportFromRDFPluginNGTest {
     }
 
     private void loadTriples(Model model, InputStream inputStream, String baseURI, RDFFormat format) throws IOException {
-        try ( GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+        try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
             while (res.hasNext()) {
                 //LOGGER.info("Processing next record...");
 
@@ -493,12 +493,12 @@ public class ImportFromRDFPluginNGTest {
             // load the model into an in RDF4J memory model
             System.out.println("load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         rawCount++;
                         //System.out.println("db contains: " + st);
@@ -514,12 +514,12 @@ public class ImportFromRDFPluginNGTest {
         {
             // apply the RDFS inferencing rules
             final Repository repo = new SailRepository(new SchemaCachingRDFSInferencer(new MemoryStore(), true));
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         inferenceCount++;
                         //System.out.println("db now contains: " + st);
@@ -570,12 +570,12 @@ public class ImportFromRDFPluginNGTest {
                         new DirectTypeHierarchyInferencer(
                                 new SchemaCachingRDFSInferencer(
                                         new MemoryStore(), true))));
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
 
             // let's check that our data is actually in the database
-            try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                 int count = 0;
                 for (Statement st : result) {
                     count++;
@@ -917,6 +917,129 @@ public class ImportFromRDFPluginNGTest {
     }
 
     /**
+     * Learning how to use the OWL API reasoners.
+     *
+     * TODO: How do we run a SPARQL query against an OWL-API Model?
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testOwlApiReasonersPlugin3() throws Exception {
+        final GraphRecordStore results = new GraphRecordStore();
+        final Model model = new LinkedHashModel();
+        final ValueFactory VF = SimpleValueFactory.getInstance();
+        final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
+        final OWLOntologyManager manager;
+        final OWLOntology ontology;
+
+        // read the onology into a model
+        {
+            //final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
+            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+            final InputStream inputStream = documentUrl.openStream();
+            final RDFFormat format = RDFFormat.RDFXML;
+
+            manager = OWLManager.createOWLOntologyManager();
+            ontology = manager.loadOntologyFromOntologyDocument(inputStream);
+            assertNotNull(ontology);
+            System.out.println("Ontology: " + ontology);
+        }
+
+        // read the data into a model
+//        {
+//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+//            final InputStream inputStream = documentUrl.openStream();
+//            final RDFFormat format = RDFFormat.RDFXML;
+//
+//            OWLOntology o = manager.loadOntologyFromOntologyDocument(inputStream);
+//            assertNotNull(o);
+//            System.out.println("Data: " + o);
+//            ontology.addAxioms(o.axioms());
+//        }
+//        System.out.println("Combined: " + ontology);
+        // get and configure a reasoner (HermiT)
+        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
+        ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
+        OWLReasonerConfiguration config = new SimpleConfiguration(progressMonitor);
+
+        OWLDataFactory factory = manager.getOWLDataFactory();
+
+        // load the ontology to the reasoner
+        //Hermi reasoner = com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory.getInstance().createReasoner(ontology);
+        OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
+
+        // read the data into a model
+//        {
+//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
+//            final InputStream inputStream = documentUrl.openStream();
+//            final RDFFormat format = RDFFormat.RDFXML;
+//            loadTriples(model, inputStream, baseURI, format);
+//            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+//            Iterable<Statement> iterable = model.getStatements(null, null, null);
+//            for (Statement s : iterable) {
+//                OWLNamedIndividual subject = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getSubject().stringValue()));
+//                OWLNamedIndividual predicate = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getPredicate().stringValue()));
+//                OWLNamedIndividual object = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getObject().stringValue()));
+//                //OWLAxiom axiom = df.(subject, object);
+//                //ontology.add(axiom);
+//            }
+//        }
+        // create property and resources to query the reasoner
+        OWLClass Student = factory.getOWLClass(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#Student"));
+        OWLDataProperty studentName = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#name"));
+        OWLDataProperty emailAddress = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#emailAddress"));
+        OWLObjectProperty takesCourse = factory.getOWLObjectProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#takesCourse"));
+
+        // get all instances of Person class
+        Set<OWLNamedIndividual> individuals = reasoner.getInstances(Student, false).getFlattened();
+        int count = 0;
+        for (OWLNamedIndividual ind : individuals) {
+            count++;
+            System.out.println("------------------------------------");
+
+            // get the info about this specific individual
+            Set<OWLLiteral> names = reasoner.getDataPropertyValues(ind, studentName);
+            Set<OWLLiteral> emailAddrs = reasoner.getDataPropertyValues(ind, emailAddress);
+            NodeSet<OWLClass> types = reasoner.getTypes(ind, true);
+            NodeSet<OWLNamedIndividual> courses = reasoner.getObjectPropertyValues(ind, takesCourse);
+
+            // we know there is a single name for each person so we can get that value directly
+            String name = names.iterator().next().getLiteral();
+            System.out.println("Name:     " + name);
+
+            // we know there is a single name for each person so we can get that value directly
+            String emailAddr = emailAddrs.iterator().next().getLiteral();
+            System.out.println("Email:    " + emailAddr);
+
+            // at least one direct type is guaranteed to exist for each individual
+            OWLClass type = types.iterator().next().getRepresentativeElement();
+            System.out.println("Type:     " + type.getIRI().getShortForm());
+            System.out.print("Types:   ");
+            for (Node<OWLClass> typeNode : types) {
+                System.out.print(" " + typeNode.getRepresentativeElement().getIRI().getShortForm());
+            }
+            System.out.println();
+
+            // there may be zero or more homepages so check first if there are any found
+            if (courses.isEmpty()) {
+                System.out.print("Courses:  None");
+            } else {
+                System.out.print("Courses: ");
+                for (Node<OWLNamedIndividual> course : courses) {
+                    System.out.print(" " + course.getRepresentativeElement().getIRI().getShortForm());
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("------------------------------------");
+        System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
+        assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
+
+        // Test serialising the ontology back to triples
+        ontology.saveOntology(System.out);
+    }
+
+    /**
      * Planning for Plugins 1 and 2.
      *
      * @throws Exception
@@ -962,7 +1085,7 @@ public class ImportFromRDFPluginNGTest {
                                 new SchemaCachingRDFSInferencer(sail, true))));
 
         // Add records via RDF4J connection
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         } finally {
@@ -1107,7 +1230,7 @@ public class ImportFromRDFPluginNGTest {
         }
 
         // setting up the connection first time adds some baseline triples
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
         } finally {
 //            repo.shutDown();
@@ -1130,7 +1253,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(141, sail.getModel().size());
 
         // Add records via RDF4J connection
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         } finally {
@@ -1208,7 +1331,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(0, sail.getModel().size());
 
         // setting up the connection first time adds some baseline triples
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
         } finally {
 //            repo.shutDown();
@@ -1230,7 +1353,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(2, model.size());
 
         // Add records via RDF4J connection
-        try ( RepositoryConnection conn = repo.getConnection()) {
+        try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         } finally {
@@ -1250,16 +1373,16 @@ public class ImportFromRDFPluginNGTest {
                     + "WHERE { ?p :relatesTo :Cryptography }";
 
 //            final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 // let's check that our data is actually in the database
-                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
                         System.out.println("custom inference: " + st);
                     }
                 }
 
                 // check the new triples are added
-                try ( RepositoryResult<Statement> result = conn.getStatements(
+                try (RepositoryResult<Statement> result = conn.getStatements(
                         null,
                         sail.getValueFactory().createIRI("http://foo.org/bar#relatesTo"),
                         sail.getValueFactory().createIRI("http://foo.org/bar#Cryptography"));) {
@@ -1289,129 +1412,6 @@ public class ImportFromRDFPluginNGTest {
         }
 
         repo.shutDown();
-    }
-
-    /**
-     * Learning how to use the OWL API reasoners.
-     *
-     * TODO: How do we run a SPARQL query against an OWL-API Model?
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testOwlApiReasonersPlugin3() throws Exception {
-        final GraphRecordStore results = new GraphRecordStore();
-        final Model model = new LinkedHashModel();
-        final ValueFactory VF = SimpleValueFactory.getInstance();
-        final String baseURI = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl";
-        final OWLOntologyManager manager;
-        final OWLOntology ontology;
-
-        // read the onology into a model
-        {
-            //final URL documentUrl = getClass().getResource("./resources/univ-bench.owl");
-            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
-            final InputStream inputStream = documentUrl.openStream();
-            final RDFFormat format = RDFFormat.RDFXML;
-
-            manager = OWLManager.createOWLOntologyManager();
-            ontology = manager.loadOntologyFromOntologyDocument(inputStream);
-            assertNotNull(ontology);
-            System.out.println("Ontology: " + ontology);
-        }
-
-        // read the data into a model
-//        {
-//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
-//            final InputStream inputStream = documentUrl.openStream();
-//            final RDFFormat format = RDFFormat.RDFXML;
-//
-//            OWLOntology o = manager.loadOntologyFromOntologyDocument(inputStream);
-//            assertNotNull(o);
-//            System.out.println("Data: " + o);
-//            ontology.addAxioms(o.axioms());
-//        }
-//        System.out.println("Combined: " + ontology);
-        // get and configure a reasoner (HermiT)
-        OWLReasonerFactory reasonerFactory = new ReasonerFactory();
-        ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
-        OWLReasonerConfiguration config = new SimpleConfiguration(progressMonitor);
-
-        OWLDataFactory factory = manager.getOWLDataFactory();
-
-        // load the ontology to the reasoner
-        //Hermi reasoner = com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory.getInstance().createReasoner(ontology);
-        OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
-
-        // read the data into a model
-//        {
-//            final URL documentUrl = getClass().getResource("./resources/university0-0.owl");
-//            final InputStream inputStream = documentUrl.openStream();
-//            final RDFFormat format = RDFFormat.RDFXML;
-//            loadTriples(model, inputStream, baseURI, format);
-//            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
-//            Iterable<Statement> iterable = model.getStatements(null, null, null);
-//            for (Statement s : iterable) {
-//                OWLNamedIndividual subject = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getSubject().stringValue()));
-//                OWLNamedIndividual predicate = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getPredicate().stringValue()));
-//                OWLNamedIndividual object = df.getOWLNamedIndividual(org.semanticweb.owlapi.model.IRI.create(s.getObject().stringValue()));
-//                //OWLAxiom axiom = df.(subject, object);
-//                //ontology.add(axiom);
-//            }
-//        }
-        // create property and resources to query the reasoner
-        OWLClass Student = factory.getOWLClass(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#Student"));
-        OWLDataProperty studentName = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#name"));
-        OWLDataProperty emailAddress = factory.getOWLDataProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#emailAddress"));
-        OWLObjectProperty takesCourse = factory.getOWLObjectProperty(org.semanticweb.owlapi.model.IRI.create("http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#takesCourse"));
-
-        // get all instances of Person class
-        Set<OWLNamedIndividual> individuals = reasoner.getInstances(Student, false).getFlattened();
-        int count = 0;
-        for (OWLNamedIndividual ind : individuals) {
-            count++;
-            System.out.println("------------------------------------");
-
-            // get the info about this specific individual
-            Set<OWLLiteral> names = reasoner.getDataPropertyValues(ind, studentName);
-            Set<OWLLiteral> emailAddrs = reasoner.getDataPropertyValues(ind, emailAddress);
-            NodeSet<OWLClass> types = reasoner.getTypes(ind, true);
-            NodeSet<OWLNamedIndividual> courses = reasoner.getObjectPropertyValues(ind, takesCourse);
-
-            // we know there is a single name for each person so we can get that value directly
-            String name = names.iterator().next().getLiteral();
-            System.out.println("Name:     " + name);
-
-            // we know there is a single name for each person so we can get that value directly
-            String emailAddr = emailAddrs.iterator().next().getLiteral();
-            System.out.println("Email:    " + emailAddr);
-
-            // at least one direct type is guaranteed to exist for each individual
-            OWLClass type = types.iterator().next().getRepresentativeElement();
-            System.out.println("Type:     " + type.getIRI().getShortForm());
-            System.out.print("Types:   ");
-            for (Node<OWLClass> typeNode : types) {
-                System.out.print(" " + typeNode.getRepresentativeElement().getIRI().getShortForm());
-            }
-            System.out.println();
-
-            // there may be zero or more homepages so check first if there are any found
-            if (courses.isEmpty()) {
-                System.out.print("Courses:  None");
-            } else {
-                System.out.print("Courses: ");
-                for (Node<OWLNamedIndividual> course : courses) {
-                    System.out.print(" " + course.getRepresentativeElement().getIRI().getShortForm());
-                }
-            }
-            System.out.println();
-        }
-        System.out.println("------------------------------------");
-        System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
-        assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
-
-        // Test serialising the ontology back to triples
-        ontology.saveOntology(System.out);
     }
 
     private class TupleCountHandler extends TupleQueryResultBuilder {
