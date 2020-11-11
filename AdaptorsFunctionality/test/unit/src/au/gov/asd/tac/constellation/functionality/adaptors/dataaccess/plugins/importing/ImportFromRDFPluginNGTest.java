@@ -1251,9 +1251,6 @@ public class ImportFromRDFPluginNGTest {
 
 //            final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
             try ( RepositoryConnection conn = repo.getConnection()) {
-                // add the model
-                conn.add(model);
-
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
                     for (Statement st : result) {
