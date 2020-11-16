@@ -157,52 +157,63 @@ public class RDFUtilities {
     public static Model getGraphModel(final GraphReadMethods graph) {
         final Model model = new LinkedHashModel();
 
-        // vertex attributes
-        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
-        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.get(graph);
-        final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
-
-        // transaction attributes
-        final int transactionIdentifierAttributeId = VisualConcept.TransactionAttribute.IDENTIFIER.get(graph);
-        final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
-        final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
-
         // statement: vertex X is a thing Y
         final int vxCount = graph.getVertexCount();
         for (int i = 0; i < vxCount; i++) {
             final int vertexId = graph.getVertex(i);
-            final String identifier = graph.getStringValue(vertexIdentifierAttributeId, vertexId);
-            final String source = graph.getStringValue(vertexSourceAttributeId, vertexId);
-            final String type = graph.getStringValue(vertexTypeAttributeId, vertexId);
-
-            final Resource subject = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + identifier); // TODO: check if the RDF type is defined, if so then use it, otherwise is a http://consty.local#
-            final Value object = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + type); // TODO: this will require a lookup to convert a Consty type to RDF type
-
-            model.add(SimpleValueFactory.getInstance().createStatement(subject, RDF.TYPE, object));
+            addVertexToModel(graph, model, vertexId);
         }
 
         // statement: source vertex -> transaction type -> destination vertex
         final int txCount = graph.getTransactionCount();
         for (int i = 0; i < txCount; i++) {
             final int transactionId = graph.getTransaction(i);
-            final int sourceVertexId = graph.getTransactionSourceVertex(transactionId);
-            final int destinationVertexId = graph.getTransactionDestinationVertex(transactionId);
-
-            final String sourceIdentifier = graph.getStringValue(vertexIdentifierAttributeId, sourceVertexId);
-            final String sourceSource = graph.getStringValue(vertexSourceAttributeId, sourceVertexId);
-            final String destinationIdentifier = graph.getStringValue(vertexIdentifierAttributeId, destinationVertexId);
-            final String destinationSource = graph.getStringValue(vertexSourceAttributeId, destinationVertexId);
-            final String transactionSource = graph.getStringValue(transactionSourceAttributeId, transactionId);
-            final String transactionType = graph.getStringValue(transactionTypeAttributeId, transactionId);
-
-            final Resource subject = SimpleValueFactory.getInstance().createIRI("http://" + sourceSource + "/" + sourceIdentifier); // TODO: source node needs to be mapped to a proper RDF subject
-            final IRI predicate = SimpleValueFactory.getInstance().createIRI("http://" + transactionSource + "/" +transactionType);
-            final Value object = SimpleValueFactory.getInstance().createIRI("http://" + destinationSource + "/" + destinationIdentifier);
-
-            model.add(SimpleValueFactory.getInstance().createStatement(subject, predicate, object));
+            addTransactionToModel(graph, model, transactionId);
         }
 
         return model;
+    }
+
+    public static void addVertexToModel(final GraphReadMethods graph, Model model, int vertexId) {
+        // vertex attributes
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
+        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.get(graph);
+        final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
+
+        final String identifier = graph.getStringValue(vertexIdentifierAttributeId, vertexId);
+        final String source = graph.getStringValue(vertexSourceAttributeId, vertexId);
+        final String type = graph.getStringValue(vertexTypeAttributeId, vertexId);
+
+        final Resource subject = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + identifier); // TODO: check if the RDF type is defined, if so then use it, otherwise is a http://consty.local#
+        final Value object = SimpleValueFactory.getInstance().createIRI("http://" + source + "/" + type); // TODO: this will require a lookup to convert a Consty type to RDF type
+        model.add(SimpleValueFactory.getInstance().createStatement(subject, RDF.TYPE, object));
+    }
+
+    public static void addTransactionToModel(final GraphReadMethods graph, Model model, int transactionId) {
+        // transaction attributes
+        final int transactionIdentifierAttributeId = VisualConcept.TransactionAttribute.IDENTIFIER.get(graph);
+        final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
+        final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
+
+        // vertex attributes
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
+        final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
+
+        final int sourceVertexId = graph.getTransactionSourceVertex(transactionId);
+        final int destinationVertexId = graph.getTransactionDestinationVertex(transactionId);
+
+        final String sourceIdentifier = graph.getStringValue(vertexIdentifierAttributeId, sourceVertexId);
+        final String sourceSource = graph.getStringValue(vertexSourceAttributeId, sourceVertexId);
+        final String destinationIdentifier = graph.getStringValue(vertexIdentifierAttributeId, destinationVertexId);
+        final String destinationSource = graph.getStringValue(vertexSourceAttributeId, destinationVertexId);
+        final String transactionSource = graph.getStringValue(transactionSourceAttributeId, transactionId);
+        final String transactionType = graph.getStringValue(transactionTypeAttributeId, transactionId);
+
+        final Resource subject = SimpleValueFactory.getInstance().createIRI("http://" + sourceSource + "/" + sourceIdentifier); // TODO: source node needs to be mapped to a proper RDF subject
+        final IRI predicate = SimpleValueFactory.getInstance().createIRI("http://" + transactionSource + "/" + transactionType);
+        final Value object = SimpleValueFactory.getInstance().createIRI("http://" + destinationSource + "/" + destinationIdentifier);
+
+        model.add(SimpleValueFactory.getInstance().createStatement(subject, predicate, object));
     }
 
 //    public static void setGraphModel(Model model) {
