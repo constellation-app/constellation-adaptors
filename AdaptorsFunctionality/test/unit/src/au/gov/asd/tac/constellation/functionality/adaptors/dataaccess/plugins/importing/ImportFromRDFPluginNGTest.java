@@ -1089,7 +1089,7 @@ public class ImportFromRDFPluginNGTest {
             // add the model
             conn.add(model);
         } finally {
-            //repo.shutDown();
+            repo.shutDown();
         }
 
         // TODO: Add records to RDF4J by adding to Constellation graph. Doesn't work yet.
@@ -1194,6 +1194,7 @@ public class ImportFromRDFPluginNGTest {
         // wait for the RDF memory model to update
         Thread.sleep(1000);
 
+        sail.printVerboseModel();
         Assert.equals(3, sail.getModel().size());
 
         repo.shutDown();
@@ -1232,8 +1233,6 @@ public class ImportFromRDFPluginNGTest {
         // setting up the connection first time adds some baseline triples
         try (RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
-        } finally {
-//            repo.shutDown();
         }
 
         Assert.equals(141, sail.getModel().size());
@@ -1256,8 +1255,6 @@ public class ImportFromRDFPluginNGTest {
         try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
-        } finally {
-//            repo.shutDown();
         }
 
         Assert.equals(210, sail.getModel().size()); // TODO: There should be more, its small because of the concurrent mod exception
@@ -1333,8 +1330,6 @@ public class ImportFromRDFPluginNGTest {
         // setting up the connection first time adds some baseline triples
         try (RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
-        } finally {
-//            repo.shutDown();
         }
 
         Assert.equals(141, sail.getModel().size());
@@ -1356,8 +1351,6 @@ public class ImportFromRDFPluginNGTest {
         try (RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
-        } finally {
-//            repo.shutDown();
         }
 
         Assert.equals(210, sail.getModel().size());// TODO: getting 210 because of the concurrent mod exception
@@ -1392,8 +1385,6 @@ public class ImportFromRDFPluginNGTest {
 //                    assertEquals(result.next().getSubject().stringValue(), "http://foo.org/bar#exchangesKeysWith");
 //                    assertFalse(result.hasNext());
                 }
-            } finally {
-//                repo.shutDown();
             }
         }
 

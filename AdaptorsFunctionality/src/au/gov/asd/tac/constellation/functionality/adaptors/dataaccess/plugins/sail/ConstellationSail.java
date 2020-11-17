@@ -29,9 +29,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolver;
 import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverClient;
 import org.eclipse.rdf4j.sail.SailChangedListener;
@@ -50,7 +49,6 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 
     private Graph graph;
     private SailStore store;
-    private Model model;
     private FederatedServiceResolver serviceResolver;
     private ConstellationSailConnection connection;
 
@@ -62,8 +60,7 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
     protected void initializeInternal() throws SailException {
         super.initializeInternal();
 
-        model = new LinkedHashModel();
-        store = new ConstellationSailStore(model);
+        store = new ConstellationSailStore();
     }
 
     @Override
@@ -75,14 +72,16 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
     @Override
     protected void shutDownInternal() throws SailException {
         // Not sure what's required?
-        this.store.close();
+        if (store != null) {
+            store.close();
+        }
     }
 
     @Override
     public boolean isWritable() throws SailException {
         // I assume this is always true?
         //return true;
-        return getConnectionInternal().isOpen();
+        return connection.isOpen();
     }
 
     @Override
@@ -119,10 +118,9 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         final ReadableGraph readableGraph = graph.getReadableGraph();
         try {
             final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
-            for (final Statement statement : graphModel.getStatements(null, null, null)) {
-                model.add(statement);
-            }
-            LOGGER.log(Level.INFO, "Model size is {0}", model.size());
+            graphModel.getStatements(null, null, null).forEach((statement) -> {
+                store.getExplicitSailSource().sink(getDefaultIsolationLevel()).approve(statement);
+            });
         } finally {
             readableGraph.release();
         }
@@ -156,18 +154,22 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 //        } else {
 //            connection.addInferredStatement(subj, pred, obj, contexts);
 //        }
+
+        
+        this.graph = graph;
     }
 
     /**
      * Generate a graph of the in-memory RDF model and add it to the graph on
      * demand.
      */
+    @Deprecated
     public void writeModelToGraph() {
         final GraphRecordStore recordStore = new GraphRecordStore();
 
-        for (final Statement statement : model.getStatements(null, null, null)) {
+        store.getExplicitSailSource().dataset(getDefaultIsolationLevel()).getStatements(null, null, null).stream().forEach((statement) -> {
             RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
-        }
+        });
 
         WritableGraph writableGraph = null;
         try {
@@ -188,6 +190,11 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
      * @return An unmodifiable copy of the in-memory model
      */
     public Model getModel() {
+        Model model = new TreeModel();
+        store.getExplicitSailSource().dataset(getDefaultIsolationLevel()).getStatements(null, null, null)
+                .stream().forEach((statement) -> {
+                    model.add(statement);
+                });
         return model.unmodifiable();
     }
 
@@ -216,17 +223,21 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
      *
      * @param model RDF Model containing triples to add to the in-memory graph.
      */
+    /*
+    @Deprecated
     public void appendToModel(final Model model) {
         for (final Statement statement : model.getStatements(null, null, null)) {
             this.model.add(statement);
         }
     }
+    */
 
     public void printVerboseModel() {
-        LOGGER.log(Level.INFO, "Model size is {0}", this.model.size());
-        for (final Statement statement : model.getStatements(null, null, null)) {
+        Model model = getModel();
+        LOGGER.log(Level.INFO, "Model size is {0}", model.size());
+        model.getStatements(null, null, null).forEach((statement) -> {
             LOGGER.log(Level.INFO, "\tStatement is {0}", statement);
-        }
+        });
     }
 
 }
