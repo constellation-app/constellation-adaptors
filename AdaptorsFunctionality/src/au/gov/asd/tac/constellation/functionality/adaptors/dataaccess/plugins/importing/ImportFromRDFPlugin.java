@@ -224,7 +224,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         inputFileUriParameter.setDescription("RDF file URI");
 //        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
 //        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
-        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/stardog-union/pellet/master/examples/src/main/resources/data/university0-0.owl");
+        //inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/stardog-union/pellet/master/examples/src/main/resources/data/university0-0.owl");
+        inputFileUriParameter.setStringValue("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
         params.addParameter(inputFileUriParameter);
 
         final PluginParameter<SingleChoiceParameterValue> inputFileFormat = SingleChoiceParameterType.build(INPUT_FILE_FORMAT_PARAMETER_ID);

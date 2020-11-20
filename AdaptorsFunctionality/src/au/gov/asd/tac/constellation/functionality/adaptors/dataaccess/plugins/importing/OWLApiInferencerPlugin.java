@@ -15,7 +15,10 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
+import au.gov.asd.tac.constellation.graph.Graph;
+import au.gov.asd.tac.constellation.graph.manager.GraphManager;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.plugins.Plugin;
@@ -28,6 +31,7 @@ import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,15 +39,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.eclipse.rdf4j.RDF4JException;
+import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
@@ -99,7 +106,59 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
         final OWLOntology ontology;
 
         try {
-            final IRI iri = IRI.create("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
+            final File tempFile = File.createTempFile("TempConstyFile", ".owl");
+//            final IRI iri = IRI.create("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
+//            ontology = manager.loadOntologyFromOntologyDocument(iri);
+
+            Graph graph = GraphManager.getDefault().getActiveGraph();
+
+            //----------------------------Create the model from RDFUtilities (work)
+//            final ReadableGraph readableGraph = graph.getReadableGraph();
+//            try {
+//                final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
+//                LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
+//                //Save the model in a temp file
+//                FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
+//                try {
+//                    Rio.write(graphModel, out, RDFFormat.RDFXML);
+//                } finally {
+//                    out.close();
+//                }
+//
+//            } finally {
+//                readableGraph.release();
+//            }
+            //----------------------------Access the model from the Sail (model returned is empty)
+            final ConstellationSail sail = new ConstellationSail();
+            sail.initialize();
+
+            // new consty graph
+            //final Schema schema = SchemaFactoryUtilities.getSchemaFactory(AnalyticSchemaFactory.ANALYTIC_SCHEMA_ID).createSchema();
+            //final Graph graph = new DualGraph(schema);
+            sail.newActiveGraph(graph);
+
+            // bootstrap the Sail API
+//                final Repository repo = new SailRepository(
+//                        new DedupingInfIerencer(
+//                                new DirectTypeHierarchyInferencer(
+//                                        new SchemaCachingRDFSInferencer(sail, true)
+//                                )
+//                        )
+//                );
+            Model graphModel = sail.getModel();
+            //----------------
+            LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
+            //Save the model in a temp file
+            FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
+            try {
+                Rio.write(graphModel, out, RDFFormat.RDFXML);
+            } finally {
+                out.close();
+            }
+            //----------------------------------END -Access the model from the Sail
+
+            //Load the ontology from the saved temp file
+            final IRI iri = IRI.create("file:/" + tempFile.getPath().replaceAll("\\\\", "/"));
             ontology = manager.loadOntologyFromOntologyDocument(iri);
 
             //--------------------------------------- Merge 2 univ files to infer
@@ -172,7 +231,11 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             inferredAxioms.add(new InferredSubObjectPropertyAxiomGenerator());
 
             // for writing inferred axioms to the new ontology
-            OWLOntology infOnt = manager.createOntology(IRI.create(ontology.getOntologyID().getOntologyIRI().get() + "_inferred"));
+            //OWLOntologyID id = ontology.getOntologyID();
+            ///Optional<IRI> iri2 = id.getOntologyIRI();
+            //String iri3 = iri2.get().getIRIString();
+            //OWLOntology infOnt = manager.createOntology(IRI.create(ontology.getOntologyID().getOntologyIRI().get() + "_inferred"));
+            OWLOntology infOnt = manager.createOntology(IRI.create("_inferred"));
 
             // use generator and reasoner to infer some axioms
             InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, inferredAxioms);
@@ -209,9 +272,9 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 //            }
             manager.saveOntology(infOnt, IRI.create(fileformatted.toURI()));
             //-------------------------\Draw the graph
-            Repository repo = new SailRepository(new MemoryStore());
+            Repository sailRepo = new SailRepository(new MemoryStore());
             try {
-                RepositoryConnection conn = repo.getConnection();
+                RepositoryConnection conn = sailRepo.getConnection();
                 final URL newdocumentUrl = new URL("file:///" + fileformatted.getPath());
                 final String baseURI = newdocumentUrl.toString();
 
@@ -234,7 +297,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             } catch (RDF4JException e) {
                 LOGGER.info("-------------------------Ex = " + e);
             } finally {
-                repo.shutDown();
+                sailRepo.shutDown();
             }
 
             LOGGER.info("-------END-------");
@@ -242,6 +305,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             Exceptions.printStackTrace(ex);
 
         }
+        //LOGGER.info(recordStore.toStringVerbose());
         return recordStore;
     }
 
