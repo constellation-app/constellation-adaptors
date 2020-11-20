@@ -15,9 +15,9 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail;
 
-import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.eclipse.rdf4j.query.algebra.evaluation.impl.EvaluationStatistics;
 import org.eclipse.rdf4j.sail.SailException;
 import org.eclipse.rdf4j.sail.base.SailSource;
@@ -31,10 +31,12 @@ public class ConstellationSailStore implements SailStore {
 
     private static final ValueFactory VF = SimpleValueFactory.getInstance();
 
-    final ConstellationSailSource source;
+    private final ConstellationSailSource explictSource;
+    private final ConstellationSailSource implicitSource;
 
-    public ConstellationSailStore(final Model model) {
-        source = new ConstellationSailSource(model);
+    public ConstellationSailStore() {
+        this.explictSource = new ConstellationSailSource(new TreeModel());
+        this.implicitSource = new ConstellationSailSource(new TreeModel());
     }
 
     @Override
@@ -42,23 +44,34 @@ public class ConstellationSailStore implements SailStore {
         return VF;
     }
 
+    /**
+     * TODO as required for performance.
+     *
+     * @return
+     */
     @Override
     public EvaluationStatistics getEvaluationStatistics() {
         return new EvaluationStatistics();
     }
 
+    /**
+     * The actual database of triples.
+     *
+     * @return
+     */
     @Override
     public SailSource getExplicitSailSource() {
-        // The actual database triples
-        return source;
+        return explictSource;
     }
 
+    /**
+     * The inferred database triples, derived from the data-set by RDFS or OWL.
+     *
+     * @return
+     */
     @Override
     public SailSource getInferredSailSource() {
-        // The inferred database triples
-        // return new ConstellationSailSource();
-        // TODO: not sure if this is correct - do we need 2 sources?
-        return source;
+        return implicitSource;
     }
 
     @Override
