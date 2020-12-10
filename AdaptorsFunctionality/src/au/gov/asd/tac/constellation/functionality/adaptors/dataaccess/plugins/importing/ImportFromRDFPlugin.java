@@ -152,12 +152,9 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 final Repository repo = new SailRepository(new MemoryStore());
                 final RepositoryConnection conn = repo.getConnection();
                 conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
-                final RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
-
-                try {
+                try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
                     RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, layer_Mask);
                 } finally {
-                    statements.close();
                     inputStream.close();
                 }
 //                String beginning = "<?xml version=\"1.0\"?>\n";
@@ -257,14 +254,18 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         // Add the Vertex Type attribute based on subjectToType map
         // Had to do this later to avoid duplicate nodes with "Unknown" Type.
         final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
-        final int vertexTypeAttributeId = AnalyticConcept.VertexAttribute.TYPE.ensure(wg);
+        final int vertexRDFTypeAttributeId = AnalyticConcept.VertexAttribute.RDFTYPES.ensure(wg);
         final int graphVertexCount = wg.getVertexCount();
         for (int position = 0; position < graphVertexCount; position++) {
             final int currentVertexId = wg.getVertex(position);
             final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
             if (subjectToType.containsKey(identifier)) {
                 String value = subjectToType.get(identifier);
-                wg.setStringValue(vertexTypeAttributeId, currentVertexId, value);
+
+                //Set RDF Types
+                wg.setStringValue(vertexRDFTypeAttributeId, currentVertexId, value);
+
+                //TODO- Set the mapped Constellation type
             }
         }
         PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);

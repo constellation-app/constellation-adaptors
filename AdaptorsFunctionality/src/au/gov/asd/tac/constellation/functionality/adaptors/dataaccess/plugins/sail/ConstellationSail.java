@@ -126,8 +126,6 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         }
 
         // TODO: handle node or link delete scenario
-
-
 //        // RDF model to Consty Graph
 //        GraphRecordStore recordStore = new GraphRecordStore();
 //        RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
@@ -154,8 +152,6 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 //        } else {
 //            connection.addInferredStatement(subj, pred, obj, contexts);
 //        }
-
-        
         this.graph = graph;
     }
 
@@ -205,14 +201,18 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 
     @Override
     public void graphClosed(Graph graph) {
+        if (this.graph != null) {
+            this.graph.removeGraphChangeListener(this);
+        }
         this.graph = null;
-        this.graph.removeGraphChangeListener(this);
     }
 
     @Override
     public void newActiveGraph(Graph graph) {
-        this.graph = graph;
-        this.graph.addGraphChangeListener(this);
+        if (graph != null) {
+            this.graph = graph;
+            this.graph.addGraphChangeListener(this);
+        }
     }
 
     /**
@@ -230,8 +230,7 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
             this.model.add(statement);
         }
     }
-    */
-
+     */
     public void printVerboseModel() {
         Model model = getModel();
         LOGGER.log(Level.INFO, "Model size is {0}", model.size());
