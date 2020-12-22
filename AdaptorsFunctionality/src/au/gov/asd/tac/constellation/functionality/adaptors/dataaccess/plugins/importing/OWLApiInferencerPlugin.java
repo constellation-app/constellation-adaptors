@@ -15,9 +15,9 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
+import au.gov.asd.tac.constellation.graph.WritableGraph;
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -33,6 +33,7 @@ import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryP
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,6 @@ import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
@@ -107,54 +107,71 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 
         try {
             final File tempFile = File.createTempFile("TempConstyFile", ".owl");
-//            final IRI iri = IRI.create("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
-//            ontology = manager.loadOntologyFromOntologyDocument(iri);
+            //final IRI iri2 = IRI.create("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
 
+            //TEST
+            // a collection of several RDF statements
+            //FileOutputStream out2 = new FileOutputStream("https://protege.stanford.edu/ontologies/pizza/pizza.owl"); //iri.isIRI()
+//                Model model2 = new LinkedHashModel();;
+//                Rio.write(model2, out2, RDFFormat.RDFXML);
+            java.net.URL documentUrl = new URL("https://protege.stanford.edu/ontologies/pizza/pizza.owl");
+            InputStream inputStream = documentUrl.openStream();
+            Model model2 = Rio.parse(inputStream, documentUrl.toString(), RDFFormat.RDFXML);
+            LOGGER.log(Level.INFO, "Direct Model {0}", model2);
+            LOGGER.log(Level.INFO, "Direct Model size before inferencing is {0}", model2.size());
+
+            //END TEST
+//            ontology = manager.loadOntologyFromOntologyDocument(iri);
             Graph graph = GraphManager.getDefault().getActiveGraph();
 
             //----------------------------Create the model from RDFUtilities (work)
-//            final ReadableGraph readableGraph = graph.getReadableGraph();
-//            try {
-//                final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
-//                LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
-//                //Save the model in a temp file
-//                FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
-//                try {
-//                    Rio.write(graphModel, out, RDFFormat.RDFXML);
-//                } finally {
-//                    out.close();
-//                }
-//
-//            } finally {
-//                readableGraph.release();
-//            }
-            //----------------------------Access the model from the Sail (model returned is empty)
-            final ConstellationSail sail = new ConstellationSail();
-            sail.initialize();
-
-            // new consty graph
-            //final Schema schema = SchemaFactoryUtilities.getSchemaFactory(AnalyticSchemaFactory.ANALYTIC_SCHEMA_ID).createSchema();
-            //final Graph graph = new DualGraph(schema);
-            sail.newActiveGraph(graph);
-
-            // bootstrap the Sail API
-//                final Repository repo = new SailRepository(
-//                        new DedupingInfIerencer(
-//                                new DirectTypeHierarchyInferencer(
-//                                        new SchemaCachingRDFSInferencer(sail, true)
-//                                )
-//                        )
-//                );
-            Model graphModel = sail.getModel();
-            //----------------
-            LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
-            //Save the model in a temp file
-            FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
+            //final GraphWriteMethods readableGraph = graph.getWritableGraph("Create the model from RDFUtilities", true);
+            final WritableGraph writableGraph = graph.getWritableGraph("Create the model from RDFUtilities", true);
             try {
-                Rio.write(graphModel, out, RDFFormat.RDFXML);
+                final Model graphModel = RDFUtilities.getGraphModel(writableGraph);
+                LOGGER.log(Level.INFO, "Model {0}", graphModel);
+                LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
+                //Save the model in a temp file
+                FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
+                try {
+                    Rio.write(graphModel, out, RDFFormat.RDFXML); //model2 to test with the hard coded file
+                } finally {
+                    out.close();
+                }
+            } catch (NullPointerException | IllegalArgumentException e) {
+                LOGGER.warning("Exception : " + e);
+                //TODO DISPLAY AN ERROR AND SKIP PROCESSING FURTHER
             } finally {
-                out.close();
+                //readableGraph..release();
+                writableGraph.commit();
             }
+            //----------------------------Access the model from the Sail (model returned is empty)
+//            final ConstellationSail sail = new ConstellationSail();
+//            sail.initialize();
+//
+//            // new consty graph
+//            //final Schema schema = SchemaFactoryUtilities.getSchemaFactory(AnalyticSchemaFactory.ANALYTIC_SCHEMA_ID).createSchema();
+//            //final Graph graph = new DualGraph(schema);
+//            sail.newActiveGraph(graph);
+//
+//            // bootstrap the Sail API
+////                final Repository repo = new SailRepository(
+////                        new DedupingInfIerencer(
+////                                new DirectTypeHierarchyInferencer(
+////                                        new SchemaCachingRDFSInferencer(sail, true)
+////                                )
+////                        )
+////                );
+//            Model graphModel = sail.getModel();
+//            //----------------
+//            LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
+//            //Save the model in a temp file
+//            FileOutputStream out = new FileOutputStream(tempFile.getPath()); //"/path/to/file.rdf"
+//            try {
+//                Rio.write(graphModel, out, RDFFormat.RDFXML);
+//            } finally {
+//                out.close();
+//            }
             //----------------------------------END -Access the model from the Sail
 
             //Load the ontology from the saved temp file
@@ -301,9 +318,8 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             }
 
             LOGGER.info("-------END-------");
-        } catch (IOException | OWLOntologyStorageException | OWLOntologyCreationException ex) { //OWLOntologyCreationException
-            Exceptions.printStackTrace(ex);
-
+        } catch (IOException | OWLOntologyStorageException | OWLOntologyCreationException e) { //OWLOntologyCreationException
+            LOGGER.warning("Exception : " + e);
         }
         //LOGGER.info(recordStore.toStringVerbose());
         return recordStore;

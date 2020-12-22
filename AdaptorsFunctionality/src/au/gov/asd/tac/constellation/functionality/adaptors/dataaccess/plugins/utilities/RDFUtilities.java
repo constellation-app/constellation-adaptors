@@ -18,6 +18,7 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.u
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
+import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -25,7 +26,9 @@ import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcep
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -49,18 +52,28 @@ public class RDFUtilities {
     private static final int layer_Mask = 3;
 
     public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, int layerMask) {
-        for (Statement statement : repositoryResult) {
-            processNextRecord(recordStore, statement, subjectToType, layerMask);
-        }
+        // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
+        PopulateRecordStore(recordStore, repositoryResult, subjectToType, new HashSet<>(), layerMask);
     }
 
     public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, int layerMask) {
-        while (res.hasNext()) {
-            processNextRecord(recordStore, res.next(), subjectToType, layerMask);
+        // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
+        PopulateRecordStore(recordStore, res, subjectToType, new HashSet<>(), layerMask);
+    }
+
+    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
+        for (Statement statement : repositoryResult) {
+            processNextRecord(recordStore, statement, subjectToType, bNodeStatements, layerMask);
         }
     }
 
-    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, int layerMask) {
+    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
+        while (res.hasNext()) {
+            processNextRecord(recordStore, res.next(), subjectToType, bNodeStatements, layerMask);
+        }
+    }
+
+    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
         LOGGER.info("Processing next record...");
         final Resource subject = statement.getSubject();
         final IRI predicate = statement.getPredicate();
@@ -74,124 +87,131 @@ public class RDFUtilities {
         boolean objectIsIRI = false;
         boolean objectIsBNode = false;
 
-        // PROCESS: Subject
-        // ----------------
-        String subjectName = null;
-        if (subject instanceof Literal) { //Currently the subject can only be a URI or blank node
-            subjectName = ((Literal) subject).getLabel();
-        } else if (subject instanceof IRI) {
-            subjectName = ((IRI) subject).getLocalName();
-        } else if (subject instanceof BNode) {
-            subjectName = ((BNode) subject).stringValue();
+        // Add BNODES in a graph attribute
+        if ((subject instanceof BNode) || (object instanceof BNode)) {
+            bNodeStatements.add(statement);
+        } else {
 
-            if (bnodeToSubject.containsKey(subject.stringValue())) {
-                //subjectName = ((IRI) bnodeToSubject.get(subject.stringValue())).getLocalName();
-                parentIRISubject = bnodeToSubject.get(subject.stringValue());
-                subjectName = ((IRI) parentIRISubject).getLocalName();
+            // PROCESS: Subject
+            // ----------------
+            String subjectName = null;
+            if (subject instanceof Literal) { //Currently the subject can only be a URI or blank node
+                subjectName = ((Literal) subject).getLabel();
+            } else if (subject instanceof IRI) {
+                subjectName = ((IRI) subject).getLocalName();
+//        } else if (subject instanceof BNode) {
+//            subjectName = ((BNode) subject).stringValue();
+//
+//            if (bnodeToSubject.containsKey(subject.stringValue())) {
+//                //subjectName = ((IRI) bnodeToSubject.get(subject.stringValue())).getLocalName();
+//                parentIRISubject = bnodeToSubject.get(subject.stringValue());
+//                subjectName = ((IRI) parentIRISubject).getLocalName();
+//                addAttributes = true;
+//            } else {
+//                //TODO we'll skip these nodes for now, but need to handle/convert them somehow
+//                LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping ( because connected to another BNode):  ", subjectName);//won't hit
+//
+//            }
+            } else {
+                LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
+            }
+
+            // PROCESS: Predicate
+            // ----------------
+            String predicateName = predicate.getLocalName();//predicate.stringValue()
+
+            // PROCESS: Object
+            // ----------------
+            String objectName = null;
+            if (object instanceof Literal) {
+                objectName = ((Literal) object).getLabel();
                 addAttributes = true;
+            } else if (object instanceof IRI) {
+                objectName = ((IRI) object).getLocalName();
+                ((IRI) object).getNamespace();
+                objectIsIRI = true;
+//        } else if (object instanceof BNode) {
+//            objectName = ((BNode) object).stringValue();
+//            objectIsBNode = true;
+//            LOGGER.log(Level.WARNING, "BNode object type: {0}, could be dropping, if no further Bnode with same string in the subject is found", objectName);
             } else {
-                //TODO we'll skip these nodes for now, but need to handle/convert them somehow
-                LOGGER.log(Level.WARNING, "BNode subject type: {0}, dropping ( because connected to another BNode):  ", subjectName);//won't hit
-                //Add them in a graph attribute
-            }
-        } else {
-            LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
-        }
-
-        // PROCESS: Predicate
-        // ----------------
-        String predicateName = predicate.getLocalName();//predicate.stringValue()
-
-        // PROCESS: Object
-        // ----------------
-        String objectName = null;
-        if (object instanceof Literal) {
-            objectName = ((Literal) object).getLabel();
-            addAttributes = true;
-        } else if (object instanceof IRI) {
-            objectName = ((IRI) object).getLocalName();
-            ((IRI) object).getNamespace();
-            objectIsIRI = true;
-        } else if (object instanceof BNode) {
-            objectName = ((BNode) object).stringValue();
-            objectIsBNode = true;
-            LOGGER.log(Level.WARNING, "BNode object type: {0}, could be dropping, if no further Bnode with same string in the subject is found", objectName);
-        } else {
-            LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
-        }
-
-        LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
-        if (objectIsBNode) {
-            if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
-                LOGGER.log(Level.WARNING, "RDF IDENTIFIER = ");
-                bnodeToSubject.put(object.stringValue(), subject);
-            } else if (subject instanceof BNode) {
-                //TODO we'll skip these nodes for now, but need to handle/convert them somehow
-                LOGGER.log(Level.WARNING, "RDF IDENTIFIER = ");
-                bnodeToSubject.put(object.stringValue(), parentIRISubject);//Disjointed BNodes doesn't have a valid parentIRISubject
-            } else {
-                LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER for subject", subject.stringValue());//won't hit
+                LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
             }
 
-        } else if (addAttributes || ("type".equals(predicateName) && subject instanceof IRI)) { // literal object values are added as Vertex properties
-            LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
-            recordStore.add();
-            if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-            } else if (subject instanceof BNode) {
-                //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
-                LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
-            } else {
-                LOGGER.log(Level.WARNING, " Invalid RDF IDENTIFIER for subject", subject.stringValue());
-            }
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + predicateName, statement); //need to handle multiple attributes with the same predicatename
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-        } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
-            recordStore.add();
-            if (subject instanceof IRI) {
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-            } else {//Subject is  a BNode
-                LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
-            }
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-
-            //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
-            String value = object.stringValue(); //objectName;
-            if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
-                value = subjectToType.get(subjectName) + ", " + value;
-            }
-            subjectToType.put(subjectName, value);
-
-            //TODO Map the RDF Type in objectName to Consty type
-        } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
-            {
+            LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
+//        if (objectIsBNode) {
+//            if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
+//                LOGGER.log(Level.WARNING, "RDF IDENTIFIER = ");
+//                bnodeToSubject.put(object.stringValue(), subject);
+//            } else if (subject instanceof BNode) {
+//                //TODO we'll skip these nodes for now, but need to handle/convert them somehow
+//                LOGGER.log(Level.WARNING, "RDF IDENTIFIER = ");
+//                bnodeToSubject.put(object.stringValue(), parentIRISubject);//Disjointed BNodes doesn't have a valid parentIRISubject
+//            } else {
+//                LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER for subject", subject.stringValue());//won't hit
+//            }
+//
+//        } else
+            if (addAttributes || ("type".equals(predicateName) && subject instanceof BNode)) { // literal object values are added as Vertex properties
+                LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                 recordStore.add();
-            }
-            if (!(subject instanceof IRI && predicate instanceof IRI)) {
-                LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
-            }
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
-            recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+                if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                } else if (subject instanceof BNode) {
+                    //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
+                    LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
+                } else {
+                    LOGGER.log(Level.WARNING, " Invalid RDF IDENTIFIER for subject", subject.stringValue());
+                }
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + predicateName, statement); //need to handle multiple attributes with the same predicatename
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+            } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
+                recordStore.add();
+                if (subject instanceof IRI) {
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                } else {//Subject is  a BNode
+                    LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
+                }
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-            if (StringUtils.isNotBlank(objectName)) {
-                recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
-                recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
-                recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+                //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
+                String value = object.stringValue(); //objectName;
+                if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
+                    value = subjectToType.get(subjectName) + ", " + value;
+                }
+                subjectToType.put(subjectName, value);
 
-                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
-                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
-                recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+                //TODO Map the RDF Type in objectName to Consty type
+            } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
+                {
+                    recordStore.add();
+                }
+                if (!(subject instanceof IRI && predicate instanceof IRI)) {
+                    LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
+                }
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+                if (StringUtils.isNotBlank(objectName)) {
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+                }
+            } else {
+                LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
             }
-        } else {
-            LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
         }
     }
 
-    public static Model getGraphModel(final GraphReadMethods graph) {
+    public static Model getGraphModel(final GraphWriteMethods graph) {
         final Model model = new LinkedHashModel();
 
         // statement: vertex X is a thing Y
@@ -207,6 +227,7 @@ public class RDFUtilities {
             final int transactionId = graph.getTransaction(i);
             addTransactionToModel(graph, model, transactionId);
         }
+        addBlankNodesToModel(graph, model);
 
         return model;
     }
@@ -291,6 +312,14 @@ public class RDFUtilities {
         model.add(SimpleValueFactory.getInstance().createStatement(subject, predicate, object));
     }
 
+    public static void addBlankNodesToModel(final GraphWriteMethods graph, Model model) {
+        final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
+        Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
+
+        for (Statement statement : bNodeStatements) {
+            model.add(statement);
+        }
+    }
 //    public static void setGraphModel(Model model) {
 //        graphModel = model;
 //    }

@@ -17,7 +17,6 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.s
 
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
-import au.gov.asd.tac.constellation.graph.ReadableGraph;
 import au.gov.asd.tac.constellation.graph.WritableGraph;
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
 import au.gov.asd.tac.constellation.graph.manager.GraphManagerListener;
@@ -26,6 +25,7 @@ import au.gov.asd.tac.constellation.graph.monitor.GraphChangeListener;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -111,21 +111,23 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
      */
     @Override
     public void graphChanged(GraphChangeEvent constellationEvent) {
-        // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
-        final Graph graph = constellationEvent.getGraph();
-
-        // update the model with changes to the graph
-        final ReadableGraph readableGraph = graph.getReadableGraph();
         try {
-            final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
-            graphModel.getStatements(null, null, null).forEach((statement) -> {
-                store.getExplicitSailSource().sink(getDefaultIsolationLevel()).approve(statement);
-            });
-        } finally {
-            readableGraph.release();
-        }
+            // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
+            final Graph graph = constellationEvent.getGraph();
 
-        // TODO: handle node or link delete scenario
+            // update the model with changes to the graph
+            final WritableGraph writableGraph = graph.getWritableGraph("Update the model with changes to the graph", true);
+            try {
+                final Model graphModel = RDFUtilities.getGraphModel(writableGraph);
+                graphModel.getStatements(null, null, null).forEach((statement) -> {
+                    store.getExplicitSailSource().sink(getDefaultIsolationLevel()).approve(statement);
+                });
+
+            } finally {
+                writableGraph.commit();
+            }
+
+            // TODO: handle node or link delete scenario
 //        // RDF model to Consty Graph
 //        GraphRecordStore recordStore = new GraphRecordStore();
 //        RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
@@ -152,7 +154,10 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 //        } else {
 //            connection.addInferredStatement(subj, pred, obj, contexts);
 //        }
-        this.graph = graph;
+            this.graph = graph;
+        } catch (InterruptedException e) {
+            LOGGER.warning("Exception : " + e);
+        }
     }
 
     /**
@@ -164,7 +169,7 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         final GraphRecordStore recordStore = new GraphRecordStore();
 
         store.getExplicitSailSource().dataset(getDefaultIsolationLevel()).getStatements(null, null, null).stream().forEach((statement) -> {
-            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
+            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), new HashSet<>(), 0);
         });
 
         WritableGraph writableGraph = null;

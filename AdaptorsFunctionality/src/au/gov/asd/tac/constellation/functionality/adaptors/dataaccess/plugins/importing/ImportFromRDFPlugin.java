@@ -46,7 +46,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.rdf4j.RDF4JException;
@@ -109,6 +111,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     }
 
     final Map<String, String> subjectToType = new HashMap<>();
+    Set<Statement> bNodeStatements = new HashSet<>();
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
@@ -153,7 +156,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 final RepositoryConnection conn = repo.getConnection();
                 conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
                 try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
-                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, layer_Mask);
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, bNodeStatements, layer_Mask);
                 } finally {
                     inputStream.close();
                 }
@@ -170,7 +173,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                     //Model res = QueryResults.asModel(evaluate);
                     if (queryResult.hasNext()) {
-                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, bNodeStatements, layer_Mask);
                     } else {
                         LOGGER.info("queryResult IS EMPTY ");
                     }
@@ -234,7 +237,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
         params.addController(INPUT_FILE_URI_PARAMETER_ID, (final PluginParameter<?> master, final Map<String, PluginParameter<?>> parameters, final ParameterChange change) -> {
             if (change == ParameterChange.VALUE) {
-                // If the Rio parder can auto detect the file format, set it and lock the dropdown
+                // If the Rio parser can auto detect the file format, set it and lock the dropdown
                 RDFFormat format = Rio.getParserFormatForFileName(master.getStringValue()).orElse(null);
                 if (format != null) {
                     inputFileFormat.setObjectValue(parameters.get(INPUT_FILE_FORMAT_PARAMETER_ID).getObjectValue());
@@ -268,6 +271,11 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 //TODO- Set the mapped Constellation type
             }
         }
+
+        // Add BNODES in the graph attribute
+        final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);
+        wg.setObjectValue(rdfBlankNodesAttributeId, 0, bNodeStatements);
+
         PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
         PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
     }

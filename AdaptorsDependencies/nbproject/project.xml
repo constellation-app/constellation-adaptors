@@ -111,6 +111,7 @@
                 <package>com.google.common.primitives</package>
                 <package>com.google.common.reflect</package>
                 <package>com.google.common.util.concurrent</package>
+                <package>com.google.common.util.concurrent.internal</package>
                 <package>com.google.common.xml</package>
                 <package>com.google.errorprone.annotations</package>
                 <package>com.google.errorprone.annotations.concurrent</package>
@@ -637,6 +638,38 @@
                 <package>org.apache.zookeeper.util</package>
                 <package>org.apache.zookeeper.version</package>
                 <package>org.apache.zookeeper.version.util</package>
+                <package>org.checkerframework.checker.compilermsgs.qual</package>
+                <package>org.checkerframework.checker.fenum.qual</package>
+                <package>org.checkerframework.checker.formatter</package>
+                <package>org.checkerframework.checker.formatter.qual</package>
+                <package>org.checkerframework.checker.guieffect.qual</package>
+                <package>org.checkerframework.checker.i18n.qual</package>
+                <package>org.checkerframework.checker.i18nformatter</package>
+                <package>org.checkerframework.checker.i18nformatter.qual</package>
+                <package>org.checkerframework.checker.index.qual</package>
+                <package>org.checkerframework.checker.initialization.qual</package>
+                <package>org.checkerframework.checker.interning.qual</package>
+                <package>org.checkerframework.checker.lock.qual</package>
+                <package>org.checkerframework.checker.nullness</package>
+                <package>org.checkerframework.checker.nullness.qual</package>
+                <package>org.checkerframework.checker.optional.qual</package>
+                <package>org.checkerframework.checker.propkey.qual</package>
+                <package>org.checkerframework.checker.regex</package>
+                <package>org.checkerframework.checker.regex.qual</package>
+                <package>org.checkerframework.checker.signature.qual</package>
+                <package>org.checkerframework.checker.signedness</package>
+                <package>org.checkerframework.checker.signedness.qual</package>
+                <package>org.checkerframework.checker.tainting.qual</package>
+                <package>org.checkerframework.checker.units</package>
+                <package>org.checkerframework.checker.units.qual</package>
+                <package>org.checkerframework.common.aliasing.qual</package>
+                <package>org.checkerframework.common.reflection.qual</package>
+                <package>org.checkerframework.common.subtyping.qual</package>
+                <package>org.checkerframework.common.util.report.qual</package>
+                <package>org.checkerframework.common.value.qual</package>
+                <package>org.checkerframework.dataflow.qual</package>
+                <package>org.checkerframework.framework.qual</package>
+                <package>org.checkerframework.framework.util</package>
                 <package>org.codehaus.mojo.animal_sniffer</package>
                 <package>org.codehaus.stax2</package>
                 <package>org.codehaus.stax2.evt</package>
@@ -842,6 +875,7 @@
                 <package>org.jaxen.xom</package>
                 <package>org.locationtech.jts</package>
                 <package>org.locationtech.jts.algorithm</package>
+                <package>org.locationtech.jts.algorithm.construct</package>
                 <package>org.locationtech.jts.algorithm.distance</package>
                 <package>org.locationtech.jts.algorithm.locate</package>
                 <package>org.locationtech.jts.algorithm.match</package>
@@ -858,6 +892,7 @@
                 <package>org.locationtech.jts.index</package>
                 <package>org.locationtech.jts.index.bintree</package>
                 <package>org.locationtech.jts.index.chain</package>
+                <package>org.locationtech.jts.index.hprtree</package>
                 <package>org.locationtech.jts.index.intervalrtree</package>
                 <package>org.locationtech.jts.index.kdtree</package>
                 <package>org.locationtech.jts.index.quadtree</package>
@@ -1028,10 +1063,6 @@
                 <package>uk.ac.manchester.cs.owlapi.modularity</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/animal-sniffer-annotations-1.14-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/animal-sniffer-annotations-1.14-jar.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/apache-mime4j-core-0.7.2-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/apache-mime4j-core-0.7.2-jar.jar</binary-origin>
             </class-path-extension>
@@ -1060,6 +1091,10 @@
                 <binary-origin>release/modules/ext/caffeine-2.6.1-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/checker-qual-2.11.1-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/checker-qual-2.11.1-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/commons-beanutils-1.9.3-jar.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-beanutils-1.9.3-jar.jar</binary-origin>
             </class-path-extension>
@@ -1072,8 +1107,8 @@
                 <binary-origin>release/modules/ext/commons-collections-3.2.2-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-collections4-4.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections4-4.4-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-collections4-4.2-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-collections4-4.2-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-io-2.6-jar.jar</runtime-relative-path>
@@ -1100,8 +1135,12 @@
                 <binary-origin>release/modules/ext/commons-text-1.8-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/error_prone_annotations-2.0.18-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/error_prone_annotations-2.0.18-jar.jar</binary-origin>
+                <runtime-relative-path>ext/error_prone_annotations-2.3.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/error_prone_annotations-2.3.4-jar.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/failureaccess-1.0.1-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/failureaccess-1.0.1-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/fluent-hc-4.5.10-jar.jar</runtime-relative-path>
@@ -1120,8 +1159,8 @@
                 <binary-origin>release/modules/ext/geronimo-stax-api_1.0_spec-1.0.1-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/guava-22.0-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guava-22.0-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/guava-29.0-jre-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/guava-29.0-jre-bundle.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/hppcrt-0.7.5-jar.jar</runtime-relative-path>
@@ -1156,8 +1195,8 @@
                 <binary-origin>release/modules/ext/httpmime-4.5.10-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/j2objc-annotations-1.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/j2objc-annotations-1.1-jar.jar</binary-origin>
+                <runtime-relative-path>ext/j2objc-annotations-1.3-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/j2objc-annotations-1.3-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jackson-annotations-2.10.4-bundle.jar</runtime-relative-path>
@@ -1204,8 +1243,12 @@
                 <binary-origin>release/modules/ext/jsr305-3.0.2-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jts-core-1.15.1-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jts-core-1.15.1-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/jts-core-1.17.1-bundle.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jts-core-1.17.1-bundle.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/lucene-analyzers-common-7.7.2-jar.jar</runtime-relative-path>
@@ -1300,220 +1343,220 @@
                 <binary-origin>release/modules/ext/owlapi-tools-5.1.14-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-http-client-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-http-client-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-http-client-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-http-client-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-http-protocol-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-http-protocol-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-http-protocol-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-http-protocol-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-lucene-spin-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-lucene-spin-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-lucene-spin-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-lucene-spin-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-model-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-model-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-model-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-model-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-query-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-query-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-query-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-query-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryalgebra-evaluation-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryalgebra-evaluation-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryalgebra-evaluation-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryalgebra-evaluation-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryalgebra-geosparql-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryalgebra-geosparql-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryalgebra-geosparql-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryalgebra-geosparql-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryalgebra-model-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryalgebra-model-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryalgebra-model-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryalgebra-model-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryparser-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryparser-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryparser-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryparser-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryparser-serql-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryparser-serql-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryparser-serql-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryparser-serql-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryparser-sparql-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryparser-sparql-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryparser-sparql-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryparser-sparql-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryrender-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryrender-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryrender-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryrender-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryresultio-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryresultio-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryresultio-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryresultio-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryresultio-binary-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryresultio-binary-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryresultio-binary-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryresultio-binary-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryresultio-sparqljson-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryresultio-sparqljson-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryresultio-sparqljson-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryresultio-sparqljson-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryresultio-sparqlxml-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryresultio-sparqlxml-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryresultio-sparqlxml-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryresultio-sparqlxml-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-queryresultio-text-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-queryresultio-text-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-queryresultio-text-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-queryresultio-text-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-contextaware-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-contextaware-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-contextaware-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-contextaware-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-dataset-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-dataset-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-dataset-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-dataset-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-event-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-event-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-event-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-event-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-http-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-http-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-http-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-http-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-manager-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-manager-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-manager-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-manager-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-sail-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-sail-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-sail-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-sail-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-repository-sparql-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-repository-sparql-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-repository-sparql-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-repository-sparql-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-binary-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-binary-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-binary-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-binary-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-datatypes-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-datatypes-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-datatypes-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-datatypes-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-jsonld-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-jsonld-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-jsonld-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-jsonld-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-languages-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-languages-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-languages-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-languages-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-n3-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-n3-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-n3-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-n3-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-nquads-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-nquads-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-nquads-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-nquads-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-ntriples-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-ntriples-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-ntriples-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-ntriples-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-rdfjson-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-rdfjson-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-rdfjson-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-rdfjson-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-rdfxml-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-rdfxml-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-rdfxml-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-rdfxml-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-trig-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-trig-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-trig-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-trig-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-trix-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-trix-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-trix-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-trix-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-rio-turtle-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-rio-turtle-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-rio-turtle-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-rio-turtle-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-base-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-base-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-base-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-base-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-elasticsearch-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-elasticsearch-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-elasticsearch-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-elasticsearch-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-federation-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-federation-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-federation-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-federation-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-inferencer-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-inferencer-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-inferencer-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-inferencer-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-lucene-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-lucene-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-lucene-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-lucene-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-lucene-api-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-lucene-api-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-lucene-api-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-lucene-api-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-memory-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-memory-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-memory-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-memory-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-model-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-model-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-model-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-model-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-nativerdf-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-nativerdf-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-nativerdf-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-nativerdf-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-solr-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-solr-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-solr-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-solr-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sail-spin-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sail-spin-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sail-spin-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sail-spin-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-shacl-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-shacl-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-shacl-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-shacl-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-sparqlbuilder-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-sparqlbuilder-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-sparqlbuilder-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-sparqlbuilder-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-spin-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-spin-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-spin-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-spin-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/rdf4j-util-3.4.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/rdf4j-util-3.4.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/rdf4j-util-3.4.4-jar.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/rdf4j-util-3.4.4-jar.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/s2-geometry-library-java-1.0.0-jar.jar</runtime-relative-path>
