@@ -79,7 +79,7 @@ public class RDFUtilities {
         final IRI predicate = statement.getPredicate();
         final Value object = statement.getObject();
         final Resource context = statement.getContext();
-        Resource parentIRISubject = statement.getPredicate();
+        Resource parentIRISubject = statement.getPredicate(); // TODO: is this needed as we already have predicate with the same value?
 
         LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
 
@@ -270,9 +270,7 @@ public class RDFUtilities {
         //Iterate over multiple values in RDF_TYPE and add multiple entries to the RDF collection
         if (rdfTypes != null) {
             final String[] rdfTypesArray = Arrays.stream(rdfTypes.split(","))
-                    .filter(value
-                            -> value != null && value.length() > 0
-                    )
+                    .filter(value -> value != null && value.length() > 0)
                     .toArray(size -> new String[size]);
 
             //if (rdfTypesArray.length > 0) {
@@ -314,9 +312,9 @@ public class RDFUtilities {
 
     public static void addBlankNodesToModel(final GraphWriteMethods graph, Model model) {
         final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
-        Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
+        final Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
 
-        for (Statement statement : bNodeStatements) {
+        for (final Statement statement : bNodeStatements) {
             model.add(statement);
         }
     }

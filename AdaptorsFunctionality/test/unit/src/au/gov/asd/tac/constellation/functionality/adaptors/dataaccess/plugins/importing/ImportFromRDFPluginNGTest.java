@@ -157,14 +157,11 @@ public class ImportFromRDFPluginNGTest {
         final ImportFromRDFPlugin instance = new ImportFromRDFPlugin();
         final PluginParameters parameters = instance.createParameters();
         parameters.setStringValue(ImportFromRDFPlugin.INPUT_FILE_URI_PARAMETER_ID, "file://" + this.getClass().getResource("./resources/music.ttl").getFile());
-
-        final RecordStore expResult = new GraphRecordStore();
         final RecordStore result = instance.query(query, interaction, parameters);
-//        TODO: instance.edit()
-//        System.out.println(result.toStringVerbose());
 
         final Set<String> expectedIdentifiers = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
-        Set<String> actualIdentifiers = new TreeSet<>();
+        
+        final Set<String> actualIdentifiers = new TreeSet<>();
         actualIdentifiers.add("Bill_Wyman");
         actualIdentifiers.add("Charlie_Watts");
         actualIdentifiers.add("George_Harrison");
@@ -180,8 +177,10 @@ public class ImportFromRDFPluginNGTest {
         actualIdentifiers.add("The_Beatles");
         actualIdentifiers.add("The_Stones");
         actualIdentifiers.add("White_Album");
+        
         assertEquals(expectedIdentifiers, actualIdentifiers);
 
+        // TODO
 //        final Set<String> expectedTypes = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE));
 //        Set<String> actualTypes = new TreeSet<>();
 //        actualTypes.add("Album");
