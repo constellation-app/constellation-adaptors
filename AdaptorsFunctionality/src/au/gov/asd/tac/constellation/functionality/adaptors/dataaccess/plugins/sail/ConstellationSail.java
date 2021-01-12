@@ -111,23 +111,24 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
      */
     @Override
     public void graphChanged(GraphChangeEvent constellationEvent) {
-        try {
-            // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
-            final Graph graph = constellationEvent.getGraph();
-
-            // update the model with changes to the graph
-            final WritableGraph writableGraph = graph.getWritableGraph("Update the model with changes to the graph", true);
+        new Thread(() -> {
             try {
-                final Model graphModel = RDFUtilities.getGraphModel(writableGraph);
-                graphModel.getStatements(null, null, null).forEach((statement) -> {
-                    store.getExplicitSailSource().sink(getDefaultIsolationLevel()).approve(statement);
-                });
+                // TODO: only process the graph if something has changed that is of use, selection is not useful but a data structure or property modification should require the graph to be processed again.
+                final Graph graph = constellationEvent.getGraph();
 
-            } finally {
-                writableGraph.commit();
-            }
+                // update the model with changes to the graph
+                final WritableGraph writableGraph = graph.getWritableGraph("Update the model with changes to the graph", true);
+                try {
+                    final Model graphModel = RDFUtilities.getGraphModel(writableGraph);
+                    graphModel.getStatements(null, null, null).forEach((statement) -> {
+                        store.getExplicitSailSource().sink(getDefaultIsolationLevel()).approve(statement);
+                    });
 
-            // TODO: handle node or link delete scenario
+                } finally {
+                    writableGraph.commit();
+                }
+
+                // TODO: handle node or link delete scenario
 //        // RDF model to Consty Graph
 //        GraphRecordStore recordStore = new GraphRecordStore();
 //        RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), 0);
@@ -154,10 +155,11 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
 //        } else {
 //            connection.addInferredStatement(subj, pred, obj, contexts);
 //        }
-            this.graph = graph;
-        } catch (InterruptedException e) {
-            LOGGER.warning("Exception : " + e);
-        }
+                this.graph = graph;
+            } catch (InterruptedException e) {
+                LOGGER.warning("Exception : " + e);
+            }
+        }).start();
     }
 
     /**
