@@ -248,8 +248,10 @@ public class RDFUtilities {
         final int vertexAttributeCount = graph.getAttributeCount(GraphElementType.VERTEX);
         for (int vertexAttributePosition = 0; vertexAttributePosition < vertexAttributeCount; vertexAttributePosition++) {
             final int vertexAttributeId = graph.getAttribute(GraphElementType.VERTEX, vertexAttributePosition);
-            Statement s = graph.getObjectValue(vertexAttributeId, vertexId);
-            model.add(s);
+            Statement statement = graph.getObjectValue(vertexAttributeId, vertexId);
+            if (statement != null) {
+                model.add(statement);
+            }
         }
     }
 
@@ -314,8 +316,10 @@ public class RDFUtilities {
         final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         final Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
 
-        for (final Statement statement : bNodeStatements) {
-            model.add(statement);
+        if (bNodeStatements != null) {
+            for (final Statement statement : bNodeStatements) {
+                model.add(statement);
+            }
         }
     }
 //    public static void setGraphModel(Model model) {
