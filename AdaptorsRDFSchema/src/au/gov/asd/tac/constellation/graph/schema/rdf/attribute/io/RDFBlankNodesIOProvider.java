@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.schema.visual.attribute.io;
+package au.gov.asd.tac.constellation.graph.schema.rdf.attribute.io;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.schema.visual.attribute.RDFBlankNodesAttributeDescription;
+import au.gov.asd.tac.constellation.graph.schema.rdf.attribute.RDFBlankNodesAttributeDescription;
 import au.gov.asd.tac.constellation.graph.Attribute;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
