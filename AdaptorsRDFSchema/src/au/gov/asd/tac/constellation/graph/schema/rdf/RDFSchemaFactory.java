@@ -134,25 +134,27 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             String label = graph.getStringValue(vertexLabelAttribute, vertexId);
 
             if (type == null || type.isIncomplete()) {
-                type = SchemaVertexTypeUtilities.getDefaultType();
-
+                type = rdfType != null ? rdfType : SchemaVertexTypeUtilities.getDefaultType();
                 type = graph.getSchema().resolveVertexType(type.toString());
+            }
+            
+            if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
+                graph.setObjectValue(vertexTypeAttribute, vertexId, type);
             }
         }
 
         @Override
         public SchemaVertexType resolveVertexType(final String type) {
-            LOGGER.info("called RDF resolve type");
+//            LOGGER.info("called RDF resolve type");
 
             /**
              * TODO: Add logic here to look at the RDF type and figure out the
              * most appropriate Constellation type to use. We could use the
              * VertexDominantCalculator or create an RDF version of it if
              * required.
-             * 
+             *
              * For now just returning unknown as a placeholder.
              */
-
             return SchemaVertexTypeUtilities.getDefaultType();
         }
 
