@@ -21,6 +21,7 @@ import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegi
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
@@ -257,7 +258,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         // Add the Vertex Type attribute based on subjectToType map
         // Had to do this later to avoid duplicate nodes with "Unknown" Type.
         final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
-        final int vertexRDFTypeAttributeId = AnalyticConcept.VertexAttribute.RDFTYPES.ensure(wg);
+        final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
         final int graphVertexCount = wg.getVertexCount();
         for (int position = 0; position < graphVertexCount; position++) {
             final int currentVertexId = wg.getVertex(position);
@@ -273,7 +274,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         }
 
         // Add BNODES in the graph attribute
-        final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);
+        final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);
         wg.setObjectValue(rdfBlankNodesAttributeId, 0, bNodeStatements);
 
         PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
