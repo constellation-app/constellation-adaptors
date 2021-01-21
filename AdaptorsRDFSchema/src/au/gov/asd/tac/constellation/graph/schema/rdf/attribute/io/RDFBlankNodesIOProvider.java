@@ -15,31 +15,33 @@
  */
 package au.gov.asd.tac.constellation.graph.schema.rdf.attribute.io;
 
-import au.gov.asd.tac.constellation.graph.schema.rdf.attribute.RDFBlankNodesAttributeDescription;
 import au.gov.asd.tac.constellation.graph.Attribute;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.attribute.io.AbstractGraphIOProvider;
 import au.gov.asd.tac.constellation.graph.attribute.io.GraphByteReader;
 import au.gov.asd.tac.constellation.graph.attribute.io.GraphByteWriter;
+import au.gov.asd.tac.constellation.graph.schema.rdf.attribute.RDFBlankNodesAttributeDescription;
 import au.gov.asd.tac.constellation.utilities.datastructure.ImmutableObjectCache;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.openide.util.Exceptions;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = AbstractGraphIOProvider.class)
 public class RDFBlankNodesIOProvider extends AbstractGraphIOProvider {
 
-    private static final String ATTRIBUTE_NAME = "blank_node";
-//    private static final String SUBJECT = "subject";
-//    private static final String PREDICATE = "predicate";
-//    private static final String OBJECT = "object";
+    private static final String SUBJECT = "subject";
+    private static final String PREDICATE = "predicate";
+    private static final String OBJECT = "object";
 
     @Override
     public String getName() {
@@ -49,9 +51,22 @@ public class RDFBlankNodesIOProvider extends AbstractGraphIOProvider {
     @Override
     public void readObject(final int attributeId, final int elementId, final JsonNode jnode, final GraphWriteMethods graph, final Map<Integer, Integer> vertexMap, final Map<Integer, Integer> transactionMap, final GraphByteReader byteReader, ImmutableObjectCache cache) throws IOException {
         final Set<Statement> bNodeStatements = new HashSet<>();
-        if (!jnode.isNull() && jnode.isArray()) {
-            for (int i = 0; i < jnode.size(); i++) {
-                bNodeStatements.add((Statement) jnode.get(i).get(ATTRIBUTE_NAME));
+        if (!jnode.isNull() && jnode.isObject()) {
+
+            final ArrayNode blankNodesNode = (ArrayNode) jnode.get("blank_nodes");
+            for (final JsonNode jn : blankNodesNode) {
+                if (!jn.isNull()) {
+                    // TODO: Verify casting of BNodes into IRIs below is okay. It seems to work. (BNodes are not IRIs but both are a Resource or a Value)
+                    // Resource subject
+                    // IRI predicate
+                    // Value object
+                    ValueFactory factory = SimpleValueFactory.getInstance();
+                    IRI subject = factory.createIRI(jn.get(SUBJECT).asText());
+                    IRI predicate = factory.createIRI(jn.get(PREDICATE).asText());
+                    IRI object = factory.createIRI(jn.get(OBJECT).asText());
+                    Statement statement = factory.createStatement(subject, predicate, object);
+                    bNodeStatements.add(statement);
+                }
             }
             graph.setObjectValue(attributeId, elementId, bNodeStatements);
         } else {
@@ -63,59 +78,24 @@ public class RDFBlankNodesIOProvider extends AbstractGraphIOProvider {
     @Override
     public void writeObject(final Attribute attr, final int elementId, final JsonGenerator jsonGenerator, final GraphReadMethods graph, final GraphByteWriter byteWriter, final boolean verbose) throws IOException {
         if (verbose || !graph.isDefaultValue(attr.getId(), elementId)) {
-            //final Set<org.eclipse.rdf4j.model.Statement> bNodeStatements = new HashSet<org.eclipse.rdf4j.model.Statement>();
-
-            //Set<org.eclipse.rdf4j.model.Statement> bn = graph.getObjectValue(attr.getId(), elementId);
             Set<Statement> bn = graph.getObjectValue(attr.getId(), elementId);
 
-            //bNodeStatements.addAll(bn);
-            //final Set<Statement> bNodeStatements = (Set<Statement>) graph.getObjectValue(attr.getId(), elementId);
-            // org.eclipse.rdf4j.sail.memory.model.MemStatement ss = ;
             if (bn == null) {
                 jsonGenerator.writeNullField(attr.getName());
             } else {
-                try {
-                    jsonGenerator.writeArrayFieldStart(attr.getName());
-
-//                for (Statement statement : bn) {
-//                    jsonGenerator.writeStartObject();
-//                    jsonGenerator.writeObjectField(ATTRIBUTE_NAME, statement);
-//                    jsonGenerator.writeEndObject();
-//                }
-                    bn.stream().forEach((st) -> {
-
-                        try {
-                            jsonGenerator.writeStartObject();
-                            jsonGenerator.writeObjectField(ATTRIBUTE_NAME, st);
-                            jsonGenerator.writeEndObject();
-                        } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-                    });
-                } catch (Exception ex) {
-                    Exceptions.printStackTrace(ex);
+                jsonGenerator.writeObjectFieldStart(attr.getName());
+                //Convert to an object array of object, predicate and subject
+                jsonGenerator.writeArrayFieldStart("blank_nodes");
+                for (Statement statement : bn) {
+                    String ss = statement.getSubject().toString();
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeStringField(SUBJECT, ss);
+                    jsonGenerator.writeStringField(PREDICATE, statement.getPredicate().toString());
+                    jsonGenerator.writeStringField(OBJECT, statement.getObject().toString());
+                    jsonGenerator.writeEndObject();
                 }
-                //------------------Try to convert to an object array and try to seperate object , predicate, subject
-//                Object[] statementArray = bNodeStatements.toArray();
-//                for (int i = 0; i < statementArray.length; i++) {
-//                    Statement statement = (Statement) statementArray[i];
-//
-//                    jsonGenerator.writeStartObject();
-//                    jsonGenerator.writeObjectField(ATTRIBUTE_NAME, statement);
-//                    jsonGenerator.writeEndObject();
-//
-////                    final Resource subject = statement.getSubject();
-////                    final IRI predicate = statement.getPredicate();
-////                    final Value object = statement.getObject();
-////                    jsonGenerator.writeObjectFieldStart(ATTRIBUTE_NAME);
-////                    jsonGenerator.writeStringField(SUBJECT, subject.toString());
-////                    jsonGenerator.writeStringField(PREDICATE, predicate.toString());
-////                    jsonGenerator.writeStringField(OBJECT, object.toString());
-////                    jsonGenerator.writeEndObject();
-//                }
-                //------------------
-
                 jsonGenerator.writeEndArray();
+                jsonGenerator.writeEndObject();
             }
         }
     }

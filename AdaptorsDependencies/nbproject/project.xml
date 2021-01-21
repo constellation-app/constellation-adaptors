@@ -79,6 +79,7 @@
                 <package>com.github.jsonldjava.impl</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.annotations</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.base</package>
+                <package>com.github.jsonldjava.shaded.com.google.common.base.internal</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.cache</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.collect</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.escape</package>
@@ -92,7 +93,9 @@
                 <package>com.github.jsonldjava.shaded.com.google.common.primitives</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.reflect</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.util.concurrent</package>
+                <package>com.github.jsonldjava.shaded.com.google.common.util.concurrent.internal</package>
                 <package>com.github.jsonldjava.shaded.com.google.common.xml</package>
+                <package>com.github.jsonldjava.shaded.com.google.thirdparty.publicsuffix</package>
                 <package>com.github.jsonldjava.utils</package>
                 <package>com.google.common.annotations</package>
                 <package>com.google.common.base</package>
@@ -274,20 +277,27 @@
                 <package>org.apache.commons.collections4.trie.analyzer</package>
                 <package>org.apache.commons.io</package>
                 <package>org.apache.commons.io.comparator</package>
+                <package>org.apache.commons.io.file</package>
                 <package>org.apache.commons.io.filefilter</package>
+                <package>org.apache.commons.io.function</package>
                 <package>org.apache.commons.io.input</package>
+                <package>org.apache.commons.io.input.buffer</package>
                 <package>org.apache.commons.io.monitor</package>
                 <package>org.apache.commons.io.output</package>
                 <package>org.apache.commons.io.serialization</package>
                 <package>org.apache.commons.lang3</package>
                 <package>org.apache.commons.lang3.arch</package>
                 <package>org.apache.commons.lang3.builder</package>
+                <package>org.apache.commons.lang3.compare</package>
                 <package>org.apache.commons.lang3.concurrent</package>
+                <package>org.apache.commons.lang3.concurrent.locks</package>
                 <package>org.apache.commons.lang3.event</package>
                 <package>org.apache.commons.lang3.exception</package>
+                <package>org.apache.commons.lang3.function</package>
                 <package>org.apache.commons.lang3.math</package>
                 <package>org.apache.commons.lang3.mutable</package>
                 <package>org.apache.commons.lang3.reflect</package>
+                <package>org.apache.commons.lang3.stream</package>
                 <package>org.apache.commons.lang3.text</package>
                 <package>org.apache.commons.lang3.text.translate</package>
                 <package>org.apache.commons.lang3.time</package>
@@ -373,6 +383,7 @@
                 <package>org.apache.commons.rdf.experimental</package>
                 <package>org.apache.commons.text</package>
                 <package>org.apache.commons.text.diff</package>
+                <package>org.apache.commons.text.io</package>
                 <package>org.apache.commons.text.lookup</package>
                 <package>org.apache.commons.text.matcher</package>
                 <package>org.apache.commons.text.similarity</package>
@@ -712,6 +723,7 @@
                 <package>org.eclipse.rdf4j.lucene.spin</package>
                 <package>org.eclipse.rdf4j.lucene.spin.config</package>
                 <package>org.eclipse.rdf4j.model</package>
+                <package>org.eclipse.rdf4j.model.base</package>
                 <package>org.eclipse.rdf4j.model.datatypes</package>
                 <package>org.eclipse.rdf4j.model.impl</package>
                 <package>org.eclipse.rdf4j.model.util</package>
