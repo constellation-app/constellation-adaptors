@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,7 +157,7 @@ public class RDFUtilities {
                 LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                 recordStore.add();
                 if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 } else if (subject instanceof BNode) {
                     //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
                     LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
@@ -169,7 +170,7 @@ public class RDFUtilities {
             } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
                 if (subject instanceof IRI) {
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 } else {//Subject is  a BNode
                     LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
                 }
@@ -191,12 +192,12 @@ public class RDFUtilities {
                 if (!(subject instanceof IRI && predicate instanceof IRI)) {
                     LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
                 }
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 if (StringUtils.isNotBlank(objectName)) {
-                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
@@ -233,7 +234,7 @@ public class RDFUtilities {
     }
 
     public static String getIRI(final String rdfIdentifier) {
-        if (rdfIdentifier.isBlank()) {
+        if (StringUtils.isBlank(rdfIdentifier)) {
             LOGGER.log(Level.WARNING, "Null rdfIdentifier = BNodes");
             return null;
         } else if (rdfIdentifier.trim().startsWith("http")) {
@@ -258,8 +259,8 @@ public class RDFUtilities {
     public static void addVertexToModel(final GraphReadMethods graph, Model model, int vertexId) {
         // vertex attributes
         //final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
-        final int vertexRDFIdentifierAttributeId = VisualConcept.VertexAttribute.RDFIDENTIFIER.get(graph);
-        final int vertexRDFTypesAttributeId = AnalyticConcept.VertexAttribute.RDFTYPES.get(graph);
+        final int vertexRDFIdentifierAttributeId = RDFConcept.VertexAttribute.RDFIDENTIFIER.get(graph);
+        final int vertexRDFTypesAttributeId = RDFConcept.VertexAttribute.RDFTYPES.get(graph);
         //final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
 
         //final String identifier = graph.getStringValue(vertexIdentifierAttributeId, vertexId);
@@ -291,7 +292,7 @@ public class RDFUtilities {
         //final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
 
         // vertex attributes
-        final int vertexRDFIdentifierAttributeId = VisualConcept.VertexAttribute.RDFIDENTIFIER.get(graph);
+        final int vertexRDFIdentifierAttributeId = RDFConcept.VertexAttribute.RDFIDENTIFIER.get(graph);
         //final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
 
         final int sourceVertexId = graph.getTransactionSourceVertex(transactionId);
@@ -313,7 +314,7 @@ public class RDFUtilities {
     }
 
     public static void addBlankNodesToModel(final GraphWriteMethods graph, Model model) {
-        final int rdfBlankNodesAttributeId = VisualConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
+        final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         final Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
 
         if (bNodeStatements != null) {
