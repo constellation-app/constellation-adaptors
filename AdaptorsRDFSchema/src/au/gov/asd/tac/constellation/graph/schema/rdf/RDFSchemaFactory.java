@@ -1,12 +1,12 @@
 /*
  * Copyright 2010-2021 Australian Signals Directorate
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,6 @@ import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.objects.RawData;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
-import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConceptUtilities;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexTypeUtilities;
@@ -35,8 +34,8 @@ import au.gov.asd.tac.constellation.utilities.icon.ConstellationIcon;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.StringUtils;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -117,29 +116,35 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         public void completeVertex(final GraphWriteMethods graph, final int vertexId) {
             LOGGER.info("called RDF completeVertex()");
 
-            super.completeVertex(graph, vertexId);
-
             final int vertexIdentifierAttribute = VisualConcept.VertexAttribute.IDENTIFIER.ensure(graph);
             final int vertexRDFIdentifierAttribute = RDFConcept.VertexAttribute.RDFIDENTIFIER.ensure(graph);
             final int vertexTypeAttribute = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
-            final int vertexRDFTypeAttribute = RDFConcept.VertexAttribute.RDFTYPES.ensure(graph);
+            final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.RDFTYPES.ensure(graph);
             final int vertexRawAttribute = AnalyticConcept.VertexAttribute.RAW.ensure(graph);
             final int vertexLabelAttribute = VisualConcept.VertexAttribute.LABEL.ensure(graph);
 
             String identifier = graph.getStringValue(vertexIdentifierAttribute, vertexId);
             String rdfIdentifier = graph.getStringValue(vertexRDFIdentifierAttribute, vertexId);
             SchemaVertexType type = graph.getObjectValue(vertexTypeAttribute, vertexId);
-            SchemaVertexType rdfType = graph.getObjectValue(vertexRDFTypeAttribute, vertexId);
+
+            //SchemaVertexType rdfTypes = graph.getObjectValue(vertexRDFTypesAttribute, vertexId);
+            final String rdfTypes = graph.getStringValue(vertexRDFTypesAttribute, vertexId);
+
             RawData raw = graph.getObjectValue(vertexRawAttribute, vertexId);
             String label = graph.getStringValue(vertexLabelAttribute, vertexId);
 
-            if (type == null || type.isIncomplete()) {
-                type = rdfType != null ? rdfType : SchemaVertexTypeUtilities.getDefaultType();
-                type = graph.getSchema().resolveVertexType(type.toString());
-            }
-            
-            if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
-                graph.setObjectValue(vertexTypeAttribute, vertexId, type);
+            if (rdfTypes != null) {
+
+                if (type == null || type.isIncomplete()) {
+//                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
+//                type = graph.getSchema().resolveVertexType(type.toString());
+                    type = resolveVertexType(rdfTypes.toString());
+                }
+
+                if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
+                    graph.setObjectValue(vertexTypeAttribute, vertexId, type);
+                }
+                super.completeVertex(graph, vertexId);
             }
         }
 
@@ -155,11 +160,24 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
              *
              * For now just returning unknown as a placeholder.
              */
+            LOGGER.log(Level.INFO, "TYPE: {0}", type);
+
+            if (type.contains("http://www.co-ode.org/ontologies/pizza/pizza.owl#Country")) {
+                return SchemaVertexTypeUtilities.getType("Country");
+            } else if (type.contains("http://www.w3.org/2002/07/owl#NamedIndividual") || type.contains("http://neo4j.com/voc/music#Artist")) {
+                return SchemaVertexTypeUtilities.getType("Person");
+            } else if (type.contains("http://www.w3.org/2002/07/owl#Class")) {
+                return SchemaVertexTypeUtilities.getType("RDFClass");
+            } else if (type.contains("http://neo4j.com/voc/music#Song")) {
+                return SchemaVertexTypeUtilities.getType("Song");
+            }
+
             return SchemaVertexTypeUtilities.getDefaultType();
         }
 
         @Override
-        public int getVertexAliasAttribute(final GraphReadMethods graph) {
+        public int getVertexAliasAttribute(final GraphReadMethods graph
+        ) {
             return VisualConcept.VertexAttribute.LABEL.get(graph);
         }
     }

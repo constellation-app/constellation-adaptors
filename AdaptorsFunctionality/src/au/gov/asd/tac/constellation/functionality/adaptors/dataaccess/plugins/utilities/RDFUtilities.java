@@ -234,10 +234,11 @@ public class RDFUtilities {
     }
 
     public static String getIRI(final String rdfIdentifier) {
-        if (StringUtils.isBlank(rdfIdentifier)) {
-            LOGGER.log(Level.WARNING, "Null rdfIdentifier = BNodes");
-            return null;
-        } else if (rdfIdentifier.trim().startsWith("http")) {
+//        if (rdfIdentifier != null && StringUtils.isBlank(rdfIdentifier)) {
+//            LOGGER.log(Level.WARNING, "Null or blank rdfIdentifier = BNodes");
+//            return null;
+//        } else
+        if (rdfIdentifier != null && StringUtils.isBlank(rdfIdentifier) && rdfIdentifier.trim().startsWith("http")) {
             return rdfIdentifier;
         } else {
             return "http://consty.local#" + "/" + rdfIdentifier; // TODO: check if the RDF type is defined, if so then use it, otherwise is a http://consty.local#
