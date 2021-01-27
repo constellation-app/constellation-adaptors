@@ -36,7 +36,7 @@ public class RDFIconProvider implements ConstellationIconProvider {
     private static final String INTERNET_CATEGORY = "Internet";
     private static final String MISCELLANEOUS_CATEGORY = "Miscellaneous";
 
-    public static final ConstellationIcon RDFCLASS = new ConstellationIcon.Builder("RDFClass", new FileIconData("modules/ext/icons/rdfclass.png", CODE_NAME_BASE))
+    public static final ConstellationIcon RDFCLASS = new ConstellationIcon.Builder("RDFClass", new FileIconData("modules/ext/icons/cloud.png", CODE_NAME_BASE))
             .addCategory(CLASS_CATEGORY)
             .build();
 //    public static final ConstellationIcon PERSON = new ConstellationIcon.Builder("Person", new FileIconData("modules/ext/icons/person.png", CODE_NAME_BASE))
