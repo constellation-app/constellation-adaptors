@@ -20,9 +20,9 @@ import au.gov.asd.tac.constellation.graph.attribute.StringAttributeDescription;
 import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.VertexTypeAttributeDescription;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
+import au.gov.asd.tac.constellation.graph.schema.rdf.icon.RDFIconProvider;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
 import au.gov.asd.tac.constellation.utilities.color.ConstellationColor;
-import au.gov.asd.tac.constellation.graph.schema.rdf.icon.RDFIconProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -82,26 +82,26 @@ public class RDFConcept extends SchemaConcept {
 
     public static class VertexType {
 
-        public static final SchemaVertexType RDFCLASS = new SchemaVertexType.Builder("RDFClass")
+        public static final SchemaVertexType RDF_CLASS = new SchemaVertexType.Builder("RDF Class")
                 .setDescription("An RDF Class")
                 .setColor(ConstellationColor.CARROT)
-                .setForegroundIcon(RDFIconProvider.RDFCLASS)
+                .setForegroundIcon(RDFIconProvider.RDF_CLASS)
                 .build();
 //        public static final SchemaVertexType RDFGRAPH = new SchemaVertexType.Builder(String.format("%s Graph", BrandingUtilities.APPLICATION_NAME))
 //                .setDescription(String.format("A node representing a %s Graph", BrandingUtilities.APPLICATION_NAME))
 //                .setColor(ConstellationColor.AZURE)
 //                .setForegroundIcon(RDFIconProvider.RDFCLASS)
 //                .build();
-//        public static final SchemaVertexType PERSON = new SchemaVertexType.Builder("Person")
-//                .setDescription("A node representing a person, eg. Joe Bloggs")
-//                .setColor(ConstellationColor.AMETHYST)
-//                .setForegroundIcon(AnalyticIconProvider.PERSON)
-//                .build();
-//        public static final SchemaVertexType COUNTRY = new SchemaVertexType.Builder("Country")
-//                .setDescription("A node representing the name of a country")
-//                .setSuperType(LOCATION)
-//                .setValidationRegex(Pattern.compile("^[a-zA-Z '\\-\\(\\)Åçé]{2,50}$", Pattern.CASE_INSENSITIVE))
-//                .build();
+        public static final SchemaVertexType SONG = new SchemaVertexType.Builder("Song")
+                .setDescription("A node representing a Song, eg. Helter Skelter")
+                .setColor(ConstellationColor.OLIVE)
+                .setForegroundIcon(RDFIconProvider.SONG)
+                .build();
+        public static final SchemaVertexType MUSIC_ALBUM = new SchemaVertexType.Builder("Music Album")
+                .setDescription("A node representing a Music Album, eg. White Album")
+                .setColor(ConstellationColor.BANANA)
+                .setForegroundIcon(RDFIconProvider.MUSIC_ALBUM)
+                .build();
     }
 
     @Override
@@ -109,9 +109,9 @@ public class RDFConcept extends SchemaConcept {
         final List<SchemaVertexType> schemaVertexTypes = new ArrayList<>();
 //        schemaVertexTypes.add(VertexType.RDFGRAPH);
 
-        schemaVertexTypes.add(VertexType.RDFCLASS);
-//        schemaVertexTypes.add(VertexType.PERSON);
-        //  schemaVertexTypes.add(VertexType.COUNTRY);
+        schemaVertexTypes.add(VertexType.RDF_CLASS);
+        schemaVertexTypes.add(VertexType.SONG);
+        schemaVertexTypes.add(VertexType.MUSIC_ALBUM);
         return Collections.unmodifiableList(schemaVertexTypes);
     }
 

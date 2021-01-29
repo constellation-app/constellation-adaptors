@@ -32,23 +32,27 @@ public class RDFIconProvider implements ConstellationIconProvider {
     private static final String CODE_NAME_BASE = "au.gov.asd.tac.constellation.utilities";
 
     private static final String CLASS_CATEGORY = "Class";
-    private static final String DOCUMENT_CATEGORY = "Document";
-    private static final String INTERNET_CATEGORY = "Internet";
+    private static final String MUSIC_CATEGORY = "Music";
     private static final String MISCELLANEOUS_CATEGORY = "Miscellaneous";
 
-    public static final ConstellationIcon RDFCLASS = new ConstellationIcon.Builder("RDFClass", new FileIconData("modules/ext/icons/cloud.png", CODE_NAME_BASE))
+    public static final ConstellationIcon RDF_CLASS = new ConstellationIcon.Builder("RDF Class", new FileIconData("modules/ext/icons/cloud.png", CODE_NAME_BASE))
             .addCategory(CLASS_CATEGORY)
             .build();
-//    public static final ConstellationIcon PERSON = new ConstellationIcon.Builder("Person", new FileIconData("modules/ext/icons/person.png", CODE_NAME_BASE))
-//            .addCategory(DOCUMENT_CATEGORY)
-//            .build();
+    public static final ConstellationIcon SONG = new ConstellationIcon.Builder("Song", new FileIconData("modules/ext/icons/song.png", CODE_NAME_BASE))
+            .addCategory(MUSIC_CATEGORY)
+            .build();
+
+    public static final ConstellationIcon MUSIC_ALBUM = new ConstellationIcon.Builder("Music Album", new FileIconData("modules/ext/icons/music_album.png", CODE_NAME_BASE))
+            .addCategory(MUSIC_CATEGORY)
+            .build();
 
     @Override
     public List<ConstellationIcon> getIcons() {
         List<ConstellationIcon> rdfIcons = new ArrayList<>();
 
-        rdfIcons.add(RDFCLASS);
-        //analyticIcons.add(PERSON);
+        rdfIcons.add(RDF_CLASS);
+        rdfIcons.add(SONG);
+        rdfIcons.add(MUSIC_ALBUM);
 
         return rdfIcons;
     }

@@ -167,9 +167,11 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             } else if (type.contains("http://www.w3.org/2002/07/owl#NamedIndividual") || type.contains("http://neo4j.com/voc/music#Artist")) {
                 return SchemaVertexTypeUtilities.getType("Person");
             } else if (type.contains("http://www.w3.org/2002/07/owl#Class")) {
-                return SchemaVertexTypeUtilities.getType("RDFClass");
+                return SchemaVertexTypeUtilities.getType("RDF Class");
             } else if (type.contains("http://neo4j.com/voc/music#Song")) {
                 return SchemaVertexTypeUtilities.getType("Song");
+            } else if (type.contains("http://neo4j.com/voc/music#Album")) {
+                return SchemaVertexTypeUtilities.getType("Music Album");
             }
 
             return SchemaVertexTypeUtilities.getDefaultType();
