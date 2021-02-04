@@ -288,7 +288,7 @@ public class RDFUtilities {
 
     public static void addTransactionToModel(final GraphReadMethods graph, Model model, int transactionId) {
         // transaction attributes
-        final int transactionRDFIdentifierAttributeId = VisualConcept.TransactionAttribute.RDFIDENTIFIER.get(graph);
+        final int transactionRDFIdentifierAttributeId = RDFConcept.TransactionAttribute.RDFIDENTIFIER.get(graph);
         //final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
         //final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
 
