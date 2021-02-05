@@ -86,7 +86,7 @@ public class RDFUtilities {
 
         boolean addAttributes = false;
         boolean objectIsIRI = false;
-        boolean objectIsBNode = false;
+//        boolean objectIsBNode = false;
 
         // Add BNODES in a graph attribute
         if ((subject instanceof BNode) || (object instanceof BNode)) {
@@ -157,7 +157,7 @@ public class RDFUtilities {
                 LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
                 recordStore.add();
                 if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else if (subject instanceof BNode) {
                     //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
                     LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
@@ -170,7 +170,7 @@ public class RDFUtilities {
             } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
                 if (subject instanceof IRI) {
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else {//Subject is  a BNode
                     LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
                 }
@@ -192,16 +192,16 @@ public class RDFUtilities {
                 if (!(subject instanceof IRI && predicate instanceof IRI)) {
                     LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
                 }
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subject.stringValue());
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 if (StringUtils.isNotBlank(objectName)) {
-                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, object.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(object.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, predicate.stringValue());
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, StringUtils.trim(predicate.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
@@ -234,11 +234,7 @@ public class RDFUtilities {
     }
 
     public static String getIRI(final String rdfIdentifier) {
-//        if (rdfIdentifier != null && StringUtils.isBlank(rdfIdentifier)) {
-//            LOGGER.log(Level.WARNING, "Null or blank rdfIdentifier = BNodes");
-//            return null;
-//        } else
-        if (rdfIdentifier != null && StringUtils.isBlank(rdfIdentifier) && rdfIdentifier.trim().startsWith("http")) {
+        if (rdfIdentifier != null && !StringUtils.isBlank(rdfIdentifier) && rdfIdentifier.trim().startsWith("http")) {
             return rdfIdentifier;
         } else {
             return "http://consty.local#" + "/" + rdfIdentifier; // TODO: check if the RDF type is defined, if so then use it, otherwise is a http://consty.local#
@@ -324,7 +320,23 @@ public class RDFUtilities {
             }
         }
     }
-//    public static void setGraphModel(Model model) {
-//        graphModel = model;
-//    }
+
+    public static void setRDFTypesVertexAttribute(GraphWriteMethods wg, final Map<String, String> subjectToType) {
+        // Add the Vertex RDF_types attribute based on subjectToType map
+        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
+        final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
+        final int graphVertexCount = wg.getVertexCount();
+        for (int position = 0; position < graphVertexCount; position++) {
+            final int currentVertexId = wg.getVertex(position);
+            final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
+            if (subjectToType.containsKey(identifier)) {
+                String value = subjectToType.get(identifier);
+
+                //Set RDF Types
+                wg.setStringValue(vertexRDFTypeAttributeId, currentVertexId, value);
+
+            }
+        }
+    }
 }

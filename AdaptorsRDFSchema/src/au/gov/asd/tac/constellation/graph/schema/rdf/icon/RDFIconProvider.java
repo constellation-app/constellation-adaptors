@@ -41,9 +41,11 @@ public class RDFIconProvider implements ConstellationIconProvider {
     public static final ConstellationIcon SONG = new ConstellationIcon.Builder("Song", new FileIconData("modules/ext/icons/song.png", CODE_NAME_BASE))
             .addCategory(MUSIC_CATEGORY)
             .build();
-
     public static final ConstellationIcon MUSIC_ALBUM = new ConstellationIcon.Builder("Music Album", new FileIconData("modules/ext/icons/music_album.png", CODE_NAME_BASE))
             .addCategory(MUSIC_CATEGORY)
+            .build();
+    public static final ConstellationIcon RDF_TEST = new ConstellationIcon.Builder("RDF Test", new FileIconData("modules/ext/icons/star.png", CODE_NAME_BASE))
+            .addCategory(CLASS_CATEGORY)
             .build();
 
     @Override
@@ -53,6 +55,7 @@ public class RDFIconProvider implements ConstellationIconProvider {
         rdfIcons.add(RDF_CLASS);
         rdfIcons.add(SONG);
         rdfIcons.add(MUSIC_ALBUM);
+        rdfIcons.add(RDF_TEST);
 
         return rdfIcons;
     }

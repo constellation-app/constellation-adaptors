@@ -20,10 +20,8 @@ import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginExecution;
@@ -92,7 +90,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     final private static int layer_Mask = 3;
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
 
-    private static final Logger LOGGER = Logger.getLogger(OWLApiInferencerPlugin.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
 
     static {
         rdfFileFormats.put(RDFFormat.BINARY.getName(), RDFFormat.BINARY);
@@ -223,7 +221,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         final PluginParameter<FileParameterValue> inputFileUriParameter = FileParameterType.build(INPUT_FILE_URI_PARAMETER_ID);
         inputFileUriParameter.setName("Input File");
         inputFileUriParameter.setDescription("RDF file URI");
-//        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
+        inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/jbarrasa/datasets/master/rdf/music.ttl");//file:///tmp/mutic.ttl
 //        inputFileUriParameter.setStringValue("http://eulersharp.sourceforge.net/2003/03swap/countries");
         //inputFileUriParameter.setStringValue("https://raw.githubusercontent.com/stardog-union/pellet/master/examples/src/main/resources/data/university0-0.owl");
         inputFileUriParameter.setStringValue("http://protege.stanford.edu/ontologies/pizza/pizza.owl");
@@ -255,23 +253,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
             PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
-        // Add the Vertex Type attribute based on subjectToType map
-        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
-        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
-        final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
-        final int graphVertexCount = wg.getVertexCount();
-        for (int position = 0; position < graphVertexCount; position++) {
-            final int currentVertexId = wg.getVertex(position);
-            final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
-            if (subjectToType.containsKey(identifier)) {
-                String value = subjectToType.get(identifier);
-
-                //Set RDF Types
-                wg.setStringValue(vertexRDFTypeAttributeId, currentVertexId, value);
-
-                //TODO- Set the mapped Constellation type
-            }
-        }
+        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
 
         // Add BNODES in the graph attribute
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);

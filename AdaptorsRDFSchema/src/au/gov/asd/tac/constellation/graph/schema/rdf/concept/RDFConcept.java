@@ -17,6 +17,7 @@ package au.gov.asd.tac.constellation.graph.schema.rdf.concept;
 
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.attribute.StringAttributeDescription;
+import au.gov.asd.tac.constellation.graph.mergers.ConcatenatedSetGraphAttributeMerger;
 import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.VertexTypeAttributeDescription;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
@@ -54,6 +55,7 @@ public class RDFConcept extends SchemaConcept {
 
         public static final SchemaAttribute RDF_BLANK_NODES = new SchemaAttribute.Builder(GraphElementType.GRAPH, "rdf_blank_nodes", "rdf_blank_nodes")
                 .setDescription("RDF Blank Nodes")
+                .setAttributeMergerId(ConcatenatedSetGraphAttributeMerger.getDefault().getId()) //To append the blank nodes generated while running other plugins. Will it work?
                 .create()
                 .build();
     }
@@ -67,6 +69,7 @@ public class RDFConcept extends SchemaConcept {
 
         public static final SchemaAttribute RDFTYPES = new SchemaAttribute.Builder(GraphElementType.VERTEX, VertexTypeAttributeDescription.ATTRIBUTE_NAME, "RDF_types")
                 .setDescription("The RDF types of the node")
+                .setAttributeMergerId(ConcatenatedSetGraphAttributeMerger.getDefault().getId())//To append the new types inferred/generated while running other plugins
                 .create()
                 .build();
     }
@@ -102,6 +105,11 @@ public class RDFConcept extends SchemaConcept {
                 .setColor(ConstellationColor.BANANA)
                 .setForegroundIcon(RDFIconProvider.MUSIC_ALBUM)
                 .build();
+        public static final SchemaVertexType RDF_TEST = new SchemaVertexType.Builder("RDF Test")
+                .setDescription("A temp node type representing RDF types, eg. Resource, Property")
+                .setColor(ConstellationColor.CYAN)
+                .setForegroundIcon(RDFIconProvider.RDF_TEST)
+                .build();
     }
 
     @Override
@@ -112,6 +120,7 @@ public class RDFConcept extends SchemaConcept {
         schemaVertexTypes.add(VertexType.RDF_CLASS);
         schemaVertexTypes.add(VertexType.SONG);
         schemaVertexTypes.add(VertexType.MUSIC_ALBUM);
+        schemaVertexTypes.add(VertexType.RDF_TEST);
         return Collections.unmodifiableList(schemaVertexTypes);
     }
 

@@ -23,6 +23,8 @@ import au.gov.asd.tac.constellation.graph.schema.SchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.objects.RawData;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
+import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
@@ -31,8 +33,10 @@ import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.utilities.color.ConstellationColor;
 import au.gov.asd.tac.constellation.utilities.icon.AnalyticIconProvider;
 import au.gov.asd.tac.constellation.utilities.icon.ConstellationIcon;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,12 +88,35 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         registeredConcepts.add(SchemaConcept.ConstellationViewsConcept.class);
         registeredConcepts.add(VisualConcept.class);
         registeredConcepts.add(AnalyticConcept.class);
+        registeredConcepts.add(RDFConcept.class);
         return Collections.unmodifiableSet(registeredConcepts);
     }
 
     @Override
     public Schema createSchema() {
         return new RDFSchema(this);
+    }
+
+     @Override
+    public List<SchemaAttribute> getKeyAttributes(final GraphElementType elementType) {
+        final List<SchemaAttribute> keys;
+        switch (elementType) {
+            case VERTEX:
+                keys = Arrays.asList(
+                        RDFConcept.VertexAttribute.RDFIDENTIFIER);
+                break;
+            case TRANSACTION:
+                keys = Arrays.asList(VisualConcept.TransactionAttribute.IDENTIFIER,
+                        AnalyticConcept.TransactionAttribute.TYPE,
+                        TemporalConcept.TransactionAttribute.DATETIME);
+                break;
+            default:
+                keys = Collections.emptyList();
+                break;
+        }
+
+        return Collections.unmodifiableList(keys);
+
     }
 
     protected class RDFSchema extends AnalyticSchema {
@@ -135,11 +162,11 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
             if (rdfTypes != null) {
 
-                if (type == null || type.isIncomplete()) {
+                //if (type == null || type.isIncomplete()) {
 //                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
 //                type = graph.getSchema().resolveVertexType(type.toString());
                     type = resolveVertexType(rdfTypes.toString());
-                }
+                //}
 
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
                     graph.setObjectValue(vertexTypeAttribute, vertexId, type);
@@ -172,6 +199,12 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 return SchemaVertexTypeUtilities.getType("Song");
             } else if (type.contains("http://neo4j.com/voc/music#Album")) {
                 return SchemaVertexTypeUtilities.getType("Music Album");
+             } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
+                     || type.contains("http://neo4j.com/voc/music#Artist")
+                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
+                     || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
+                return SchemaVertexTypeUtilities.getType("RDF Test");
             }
 
             return SchemaVertexTypeUtilities.getDefaultType();
