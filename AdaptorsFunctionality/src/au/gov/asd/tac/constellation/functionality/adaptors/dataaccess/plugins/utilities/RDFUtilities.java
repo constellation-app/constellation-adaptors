@@ -200,8 +200,8 @@ public class RDFUtilities {
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(object.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-
-                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.RDFIDENTIFIER, StringUtils.trim(predicate.stringValue()).toLowerCase());
+					
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.RDFIDENTIFIER, StringUtils.trim(predicate.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
@@ -284,7 +284,7 @@ public class RDFUtilities {
 
     public static void addTransactionToModel(final GraphReadMethods graph, Model model, int transactionId) {
         // transaction attributes
-        final int transactionRDFIdentifierAttributeId = VisualConcept.TransactionAttribute.RDFIDENTIFIER.get(graph);
+        final int transactionRDFIdentifierAttributeId = RDFConcept.TransactionAttribute.RDFIDENTIFIER.get(graph);
         //final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
         //final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
 

@@ -74,12 +74,21 @@ public class RDFConcept extends SchemaConcept {
                 .build();
     }
 
+    public static class TransactionAttribute {
+
+        public static final SchemaAttribute RDFIDENTIFIER = new SchemaAttribute.Builder(GraphElementType.TRANSACTION, StringAttributeDescription.ATTRIBUTE_NAME, "rdf_dentifier")
+                .setDescription("The RDF identifier of the transaction")
+                .create()
+                .build();
+    }
+
     @Override
     public Collection<SchemaAttribute> getSchemaAttributes() {
         final List<SchemaAttribute> schemaAttributes = new ArrayList<>();
         schemaAttributes.add(GraphAttribute.RDF_BLANK_NODES);
         schemaAttributes.add(VertexAttribute.RDFIDENTIFIER);
         schemaAttributes.add(VertexAttribute.RDFTYPES);
+        schemaAttributes.add(TransactionAttribute.RDFIDENTIFIER);
         return Collections.unmodifiableCollection(schemaAttributes);
     }
 
