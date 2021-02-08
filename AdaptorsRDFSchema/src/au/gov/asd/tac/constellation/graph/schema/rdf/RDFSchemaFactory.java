@@ -129,6 +129,8 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         public void newGraph(final GraphWriteMethods graph) {
             super.newGraph(graph);
             ensureKeyAttributes(graph); // TODO: is this check required if its already done in super?
+            
+            final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         }
 
         @Override

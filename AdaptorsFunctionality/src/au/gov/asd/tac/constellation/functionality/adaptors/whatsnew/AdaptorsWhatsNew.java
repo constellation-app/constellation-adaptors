@@ -15,7 +15,7 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.whatsnew;
 
-import au.gov.asd.tac.constellation.functionality.whatsnew.WhatsNewProvider;
+import au.gov.asd.tac.constellation.views.whatsnew.WhatsNewProvider;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

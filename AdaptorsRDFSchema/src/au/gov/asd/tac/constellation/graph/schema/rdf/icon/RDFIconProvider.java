@@ -29,7 +29,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = ConstellationIconProvider.class)
 public class RDFIconProvider implements ConstellationIconProvider {
 
-    private static final String CODE_NAME_BASE = "au.gov.asd.tac.constellation.utilities";
+    private static final String CODE_NAME_BASE = "au.gov.asd.tac.constellation.graph.schema.rdf";
 
     private static final String CLASS_CATEGORY = "Class";
     private static final String MUSIC_CATEGORY = "Music";

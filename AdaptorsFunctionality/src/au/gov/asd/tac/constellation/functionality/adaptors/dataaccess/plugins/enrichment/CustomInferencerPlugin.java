@@ -65,7 +65,8 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
 
     @Override
     public void edit(GraphWriteMethods graph, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
-        GraphRecordStore results = new GraphRecordStore();
+        final GraphRecordStore results = new GraphRecordStore();
+        
         //populate model from query or the whole graph as required
         Model model = RDFUtilities.getGraphModel(graph);
 
