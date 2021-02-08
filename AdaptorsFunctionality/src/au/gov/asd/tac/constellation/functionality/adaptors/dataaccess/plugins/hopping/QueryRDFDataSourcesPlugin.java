@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.hopping;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
@@ -30,7 +31,6 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
-import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +50,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"HOP"})
 @NbBundle.Messages("QueryRDFDataSourcesPlugin=Query an RDF Data Store")
 public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
@@ -120,7 +120,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
 
     @Override
     public String getType() {
-        return DataAccessPluginCoreType.IMPORT;
+        return DataAccessPluginAdaptorType.HOP;
     }
 
     @Override

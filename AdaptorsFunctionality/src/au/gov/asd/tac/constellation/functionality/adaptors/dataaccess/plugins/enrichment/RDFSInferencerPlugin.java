@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing;
+package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.enrichment;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sail.ConstellationSail;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
@@ -35,7 +36,6 @@ import au.gov.asd.tac.constellation.plugins.PluginInteraction;
 import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
-import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +58,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
+@PluginInfo(pluginType = PluginType.IMPORT, tags = {"ENRICH"})
 @NbBundle.Messages("RDFSInferencerPlugin=RDFS Inferencing")
 public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
@@ -106,7 +106,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
     @Override
     public String getType() {
-        return DataAccessPluginCoreType.IMPORT;
+        return DataAccessPluginAdaptorType.ENRICH;
     }
 
     @Override

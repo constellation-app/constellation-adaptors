@@ -27,9 +27,9 @@ public class ConstellationSailManager implements Runnable {
     // TODO: this can be replaced with a "Semantic Web View" and be able to listen to new graphs that are loaded instead of this implementation.
     @Override
     public void run() {
-        ConstellationSail sail = new ConstellationSail();
-        sail.addGraphManagerListener();
-        sail.init();
+//        ConstellationSail sail = new ConstellationSail();
+//        sail.addGraphManagerListener();
+//        sail.init();
     }
 
 }
