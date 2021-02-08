@@ -50,7 +50,7 @@ import org.openide.util.lookup.ServiceProviders;
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"ENRICH"})
-@NbBundle.Messages("CustomInferencerPlugin=Inferring the Data in the graph")
+@NbBundle.Messages("CustomInferencerPlugin=Custom Inferencing")
 public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAccessPlugin {
 
     private static final Logger LOGGER = Logger.getLogger(CustomInferencerPlugin.class.getName());
@@ -69,7 +69,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
         //populate model from query or the whole graph as required
         Model model = RDFUtilities.getGraphModel(graph);
 
-        LOGGER.info("Apply the inferencing rule...");
+        LOGGER.info("Apply the custom inferencing rule...");
 
         final String rule = parameters.getParameters().get(RULE_QUERY_PARAMETER_ID).getStringValue();
         final String match = parameters.getParameters().get(MATCH_QUERY_PARAMETER_ID).getStringValue();
