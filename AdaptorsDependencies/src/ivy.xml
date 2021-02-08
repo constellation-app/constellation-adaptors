@@ -8,21 +8,59 @@
         <conf name="test" description="Test dependencies" visibility="public" extends="runtime"/>
         <conf name="provided" description="Provided dependencies" visibility="public"/>
     </configurations>
-
+    
     <dependencies defaultconf="runtime">
         <dependency org="org.eclipse.rdf4j" name="rdf4j-storage" rev="3.4.4" />
         <dependency org="org.eclipse.rdf4j" name="rdf4j-repository-sail" rev="3.4.4" />
         <dependency org="org.eclipse.rdf4j" name="rdf4j-sail-memory" rev="3.4.4" />
         <dependency org="net.sourceforge.owlapi" name="owlapi-distribution" rev="5.1.14" />
         <dependency org="net.sourceforge.owlapi" name="org.semanticweb.hermit" rev="1.4.5.519" />
+
+        <!-- GAFFER Dependencies -->
+        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="1.12.0">
+            <exclude org="org.apache.hadoop" module="hadoop-common" />
+        </dependency>
+        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="type" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.12.0" />
+        
+        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.10.0">
+            <artifact name="koryphe" type="pom" ext="pom"/>
+        </dependency>        
+        
+        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>
+        
+        <!--Test Dependancies -->     
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
         
         <!-- TODO, remove the unwanted jars -->
         <exclude org="com.fasterxml.jackson.core" module="jackson-annotations"/> 
         <exclude org="com.fasterxml.jackson.core" module="jackson-core"/>
         <exclude org="com.fasterxml.jackson.core" module="jackson-databind"/>
+  
+        <!-- Excludes -->
+        <exclude org="com.google.code.findbugs" module="annotations" />
+        <exclude org="com.google.code.findbugs" module="jsr305" />
+        <exclude org="com.google.guava" module="guava" />
+        <exclude org="com.fasterxml.jackson.core" module="jackson-annotations" />
+        <exclude org="org.slf4j" module="slf4j-log4j12" />
+        <exclude org="commons-io" module="commons-io"/>
+        <exclude org="com.github.jsonld-java" module="jsonld-java"/>
+        <exclude org="org.apache.commons" module="commons-collections4"/>
+        <exclude org="org.apache.commons" module="commons-math3"/>
+        <exclude org="javax.activation" module="javax.activation-api"/>
+        <exclude org="org.apache.geronimo.specs" module="geronimo-activation_1.1_spec"/>
+        <exclude org="org.apache.geronimo.specs" module="geronimo-stax-api_1.0_spec"/>
+        <exclude org="org.locationtech.jts" module="jts-core"/>
+        <exclude org="org.apache.commons" module="commons-lang3"/>
+        <!-- more todo -->
         
         <exclude type="source" ext="jar" conf="*"/>
         <exclude type="javadoc" ext="jar" conf="*"/>
         <exclude type="license" ext="txt" conf="*"/>
+    
     </dependencies>
 </ivy-module>
