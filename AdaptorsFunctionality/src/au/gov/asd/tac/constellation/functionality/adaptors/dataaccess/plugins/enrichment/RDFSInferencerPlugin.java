@@ -20,7 +20,7 @@ import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.sa
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
-import au.gov.asd.tac.constellation.graph.WritableGraph;
+import au.gov.asd.tac.constellation.graph.ReadableGraph;
 import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
@@ -62,45 +62,48 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("RDFSInferencerPlugin=RDFS Inferencing")
 public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    final private static int layer_Mask = 9;
-    final Map<String, String> subjectToType = new HashMap<>();
-    Set<Statement> bNodeStatements = new HashSet<>();
+    private static final int layer_Mask = 9;
+    private final Map<String, String> subjectToType = new HashMap<>();
+    private final Set<Statement> bNodeStatements = new HashSet<>();
+
     private static final Logger LOGGER = Logger.getLogger(RDFSInferencerPlugin.class.getName());
 
     @Override
     protected RecordStore query(RecordStore query, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
 
-        GraphRecordStore inferredRecordStore = new GraphRecordStore();
-        Graph graph = GraphManager.getDefault().getActiveGraph();
-        final WritableGraph writableGraph = graph.getWritableGraph("Create the model for RDFS inferencing", true);
-        Model model = RDFUtilities.getGraphModel(writableGraph);
+        final GraphRecordStore inferredRecordStore = new GraphRecordStore();
+        final Graph graph = GraphManager.getDefault().getActiveGraph();
 
-        LOGGER.info("Apply the RDFS inferencing...");
+        final ReadableGraph readableGraph = graph.getReadableGraph();
+        try {
+            final Model model = RDFUtilities.getGraphModel(readableGraph);
 
-        final ConstellationSail sail = new ConstellationSail();
-        sail.initialize();
-        Graph activeGraph = GraphManager.getDefault().getActiveGraph();
-        sail.newActiveGraph(activeGraph);
+            LOGGER.info("Apply the RDFS inferencing...");
 
-        final Repository repo = new SailRepository(
-                new DedupingInferencer(
-                        new DirectTypeHierarchyInferencer(
-                                new SchemaCachingRDFSInferencer(sail, true)
-                        )
-                )
-        );
+            final ConstellationSail sail = new ConstellationSail();
+            sail.initialize();
+            sail.newActiveGraph(graph);
 
-        try ( RepositoryConnection conn = repo.getConnection()) {
-            conn.add(model);
+            final Repository repo = new SailRepository(
+                    new DedupingInferencer(
+                            new DirectTypeHierarchyInferencer(
+                                    new SchemaCachingRDFSInferencer(sail, true)
+                            )
+                    )
+            );
 
-            try ( RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, bNodeStatements, layer_Mask);
+            try ( RepositoryConnection conn = repo.getConnection()) {
+                conn.add(model);
 
-            } finally {
-                writableGraph.commit();
-                repo.shutDown();
+                // retrieve all RDFS infered statements
+                try ( RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, bNodeStatements, layer_Mask);
+                }
             }
+        } finally {
+            readableGraph.release();
         }
+
         return inferredRecordStore;
     }
 

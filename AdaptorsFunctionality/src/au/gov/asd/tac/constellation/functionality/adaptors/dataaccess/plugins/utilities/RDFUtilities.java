@@ -212,7 +212,7 @@ public class RDFUtilities {
         }
     }
 
-    public static Model getGraphModel(final GraphWriteMethods graph) {
+    public static Model getGraphModel(final GraphReadMethods graph) {
         final Model model = new LinkedHashModel();
 
         // statement: vertex X is a thing Y
@@ -310,8 +310,8 @@ public class RDFUtilities {
         model.add(SimpleValueFactory.getInstance().createStatement(subject, predicate, object));
     }
 
-    public static void addBlankNodesToModel(final GraphWriteMethods graph, Model model) {
-        final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
+    public static void addBlankNodesToModel(final GraphReadMethods graph, Model model) {
+        final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.get(graph);
         final Set<Statement> bNodeStatements = graph.getObjectValue(rdfBlankNodesAttributeId, 0);
 
         if (bNodeStatements != null) {

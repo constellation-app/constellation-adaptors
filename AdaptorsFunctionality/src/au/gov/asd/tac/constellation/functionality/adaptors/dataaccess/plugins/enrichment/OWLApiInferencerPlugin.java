@@ -18,7 +18,7 @@ package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.e
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities.RDFUtilities;
 import au.gov.asd.tac.constellation.graph.Graph;
-import au.gov.asd.tac.constellation.graph.WritableGraph;
+import au.gov.asd.tac.constellation.graph.ReadableGraph;
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -125,10 +125,9 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
             Graph graph = GraphManager.getDefault().getActiveGraph();
 
             //----------------------------Create the model from RDFUtilities (work)
-            //final GraphWriteMethods readableGraph = graph.getWritableGraph("Create the model from RDFUtilities", true);
-            final WritableGraph writableGraph = graph.getWritableGraph("Create the model from RDFUtilities", true);
+            final ReadableGraph readableGraph = graph.getReadableGraph();
             try {
-                final Model graphModel = RDFUtilities.getGraphModel(writableGraph);
+                final Model graphModel = RDFUtilities.getGraphModel(readableGraph);
                 LOGGER.log(Level.INFO, "Model {0}", graphModel);
                 LOGGER.log(Level.INFO, "Model size before inferencing is {0}", graphModel.size());
                 //Save the model in a temp file
@@ -142,8 +141,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
                 LOGGER.warning("Exception : " + e);
                 //TODO DISPLAY AN ERROR AND SKIP PROCESSING FURTHER
             } finally {
-                //readableGraph..release();
-                writableGraph.commit();
+                readableGraph.release();
             }
             //----------------------------Access the model from the Sail (model returned is empty)
 //            final ConstellationSail sail = new ConstellationSail();
