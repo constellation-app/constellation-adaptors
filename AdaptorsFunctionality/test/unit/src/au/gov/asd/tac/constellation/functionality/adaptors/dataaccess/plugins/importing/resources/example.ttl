@@ -1,66 +1,122 @@
-@prefix : <http://foo.org/bar#> .
-@prefix dc: <http://purl.org/dc/terms/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix :     <http://foo.org/bar#> .
+@prefix dc:   <http://purl.org/dc/terms/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix con:  <http://www.constellation-app.com/ns#> .
 
-:Person a rdfs:Class ;
-        rdfs:label "Person" ;
-        rdfs:comment "This represents a person." .
+# Ontology
 
-:Adult a rdfs:Class ;
-        rdfs:label "Adult" ;
-        rdfs:comment "This represents a adult person." ;
-        rdfs:subClassOf :Person .
+:Person
+    a            rdfs:Class ;
+    rdfs:label   "Person" ;
+    rdfs:comment "This represents a person." .
 
-:Man a rdfs:Class ;
-        rdfs:label "Man" ;
-        rdfs:comment "This represents a male adult person." ;
-        rdfs:subClassOf :Adult .
+:Adult
+    a               rdfs:Class ;
+    rdfs:label      "Adult" ;
+    rdfs:comment    "This represents a adult person." ;
+    rdfs:subClassOf :Person .
 
-:Woman a rdfs:Class ;
-        rdfs:label "Woman" ;
-        rdfs:comment "This represents a female adult person." ;
-        rdfs:subClassOf :Adult .
+:Man
+    a               rdfs:Class ;
+    rdfs:label      "Man" ;
+    rdfs:comment    "This represents a male adult person." ;
+    rdfs:subClassOf :Adult .
 
-:Hacker a rdfs:Class ;
-        rdfs:label "Hacker" ;
-        rdfs:comment "This represents a computer hacker." ;
-        rdfs:subClassOf :Adult .
+:Woman
+    a               rdfs:Class ;
+    rdfs:label      "Woman" ;
+    rdfs:comment    "This represents a female adult person." ;
+    rdfs:subClassOf :Adult .
 
-:action a rdf:Property ;
-    rdfs:label "action" ;
+:Hacker
+    a               rdfs:Class ;
+    rdfs:label      "Hacker" ;
+    rdfs:comment    "This represents a computer hacker." ;
+    rdfs:subClassOf :Adult .
+
+:Location
+    a            rdfs:Class ;
+    rdfs:label   "Location" ;
+    rdfs:comment "This represents a geolocation." .
+
+:City
+    a               rdfs:Class ;
+    rdfs:label      "City" ;
+    rdfs:comment    "This represents a city." ;
+    rdfs:subClassOf :Location .
+
+:locatedNear
+    a            rdf:Property ;
+    rdfs:label   "located near" ;
+    rdfs:comment "The place where the 'thing' is near." ;
+    rdfs:range   :Location .
+
+:action
+    a            rdf:Property ;
+    rdfs:label   "action" ;
     rdfs:comment "Do an action!" .
 
-:exchangesKeysWith a rdf:Property ;
-    rdfs:label "exchanges keys with" ;
-    :domainIncludes :Person ;
-    :rangeIncludes :Hacker, :Adult ;
-    rdfs:comment "A Person exchanges keys with a Hacker." ;
+:exchangesKeysWith
+    a                  rdf:Property ;
+    rdfs:label         "exchanges keys with" ;
+    rdfs:domain        :Person ;
+    rdfs:range         :Adult ;
+    rdfs:comment       "A Person exchanges keys with a Hacker." ;
     rdfs:subPropertyOf :action .
 
-:sendsMessageTo a rdf:Property ;
-    rdfs:label "sends message to" ;
-    :domainIncludes :Person ;
-    :rangeIncludes :Person ;
-    rdfs:comment "A Person messages another Person." ;
+:sendsMessageTo
+    a                  rdf:Property ;
+    rdfs:label         "sends message to" ;
+    rdfs:domain        :Person ;
+    rdfs:range         :Person ;
+    rdfs:comment       "A Person messages another Person." ;
     rdfs:subPropertyOf :action .
 
-:age a rdf:Property ;
-        rdfs:label "Age" ;
-        :domainIncludes :Person ;
-        :rangeIncludes xsd:integer ;
-        rdfs:comment "The person's age in years." .
+:age
+    a            rdf:Property ;
+    rdfs:label   "Age" ;
+    rdfs:domain  :Person ;
+    rdfs:range   xsd:integer ;
+    rdfs:comment "The person's age in years." .
 
-:Bob a :Man .
-:Bob :age 25 .
+:ssn
+    a            rdf:Property ;
+    rdfs:label   "Social Security Number" ;
+    rdfs:domain  :Person ;
+    rdfs:range   xsd:integer ;
+    rdfs:comment "The person's private Social Security Number." .
 
-:Alice a :Person .
-:Alice a :Adult .
-:Alice a :Woman .
-:Alice a :Hacker .
-:Alice :age 30 .
+# Graph data
 
-:Bob   :exchangesKeysWith :Alice .
-:Alice :sendsMessageTo    :Bob .
+:Sydney
+    a :City .
+
+:Canberra
+    a :City .
+
+:Bob
+    a            :Man ;
+    :age         25 ;
+    :ssn         11111111111 ;
+    :locatedNear :Sydney .
+
+:Alice
+    a            :Woman, :Hacker ;
+    :age         30 ;
+    :ssn         22222222222 ;
+    :locatedNear :Canberra .
+
+:Bob
+    :exchangesKeysWith :Alice .
+
+:Alice
+    :sendsMessageTo :Bob .
+#
+#:statement1 rdf:type rdf:Statement ;
+#            rdf:subject :Bob ;
+#            rdf:predicate :exchangesKeysWith ;
+#            rdf:object :Alice .
+#:statement1 :dateTime 2020 .

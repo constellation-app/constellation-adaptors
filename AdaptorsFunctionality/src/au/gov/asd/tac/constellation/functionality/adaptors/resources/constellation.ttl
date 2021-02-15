@@ -1,0 +1,397 @@
+# baseURI: http://www.constellation-app.com/ns
+@prefix :          <http://www.constellation-app.com/ns#> .
+
+# Core W3C ontologies (OWL 2 reserved vocabulary)
+@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:       <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:       <http://www.w3.org/2001/XMLSchema#> .
+# Other ontologies .
+@prefix acl:       <http://www.w3.org/ns/auth/acl#> .
+@prefix cc:        <http://creativecommons.org/ns#> .
+@prefix cert:      <http://www.w3.org/ns/auth/cert#> .
+@prefix csvw:      <http://www.w3.org/ns/csvw#> .
+@prefix dc:        <http://purl.org/dc/terms/> .
+@prefix dcam:      <http://purl.org/dc/dcam/> .
+@prefix dcat:      <http://www.w3.org/ns/dcat#> .
+@prefix dctype:    <http://purl.org/dc/dcmitype/> .
+@prefix foaf:      <http://xmlns.com/foaf/0.1/> .
+@prefix ldp:       <http://www.w3.org/ns/ldp#> .
+@prefix posixstat: <http://www.w3.org/ns/posix/stat#> .
+@prefix schema:    <https://schema.org/> .
+@prefix shacl:     <http://www.w3.org/ns/shacl#> .
+@prefix skos:      <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl:    <http://www.w3.org/2008/05/skos-xl#> .
+@prefix solid:     <http://www.w3.org/ns/solid/terms#> .
+@prefix swapdoc:   <http://www.w3.org/2000/10/swap/pim/doc#> .
+@prefix ui:        <http://www.w3.org/ns/ui#> .
+@prefix vann:      <http://purl.org/vocab/vann/> .
+@prefix vcard:     <http://www.w3.org/2006/vcard/ns#> .
+@prefix vs:        <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix ws:        <http://www.w3.org/ns/pim/space#> .
+
+@base <http://www.constellation-app.com/ns> .
+
+<http://www.constellation-app.com/ns>
+    rdf:type       owl:Ontology ;
+    dc:title       "Constellation Ontology"@en ;
+    dc:description """
+The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language.
+    """@en ;
+    owl:versionIRI <:0.1> .
+
+# High-level stuff
+
+#:ConstellationFeature
+#    rdf:type         owl:Class ;
+#    rdfs:label       "Constellation Feature" ;
+#    rdfs:comment     "A feature in the Constellation program." ;
+#    vs:term_status   "stable" ;
+#    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Graph
+    rdf:type         owl:Class ;
+    rdfs:label       "Graph" ;
+    rdfs:comment     "A Constellation graph." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+#    rdf:Bag :GraphElements ;
+
+:GraphElement
+    rdf:type         owl:Class ;
+    rdfs:label       "Graph Elements" ;
+    rdfs:comment     "The nodes and edges that make up the Constellation graph." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Node
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphElement ;
+    rdfs:label       "Node" ;
+    rdfs:comment     "A Constellation node." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Transaction
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphElement ;
+    rdfs:label       "Transaction" ;
+    rdfs:comment     "A Constellation transaction." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+# Attribute definitions
+
+:Attribute
+    rdf:type         owl:Class ;
+    rdfs:label       "Attribute" ;
+    rdfs:comment     "A Constellation attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:GraphAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Graph Attribute" ;
+    rdfs:comment     "A Constellation graph attribute." ;
+    rdfs:domain      :Graph ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Node Attribute" ;
+    rdfs:comment     "A Constellation node attribute." ;
+    rdfs:domain      :Node ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Transaction Attribute" ;
+    rdfs:comment     "A Constellation transaction attribute." ;
+    rdfs:domain      :Transaction ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:SchemaAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Schema Attribute" ;
+    rdfs:comment     "A Constellation schema attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:PrimaryKeyAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Primary Key Attribute" ;
+    rdfs:comment     "A Constellation primary key attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:CustomAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Custom Attribute" ;
+    rdfs:comment     "A Constellation custom attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:HiddenAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Attribute ;
+    rdfs:label       "Hidden Attribute" ;
+    rdfs:comment     "A Constellation hidden attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeSchemaAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeAttribute, :SchemaAttribute ;
+    rdfs:label       "Node Schema Attribute" ;
+    rdfs:comment     "A Constellation node schema attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodePrimaryKeyAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeAttribute, :PrimaryKeyAttribute ;
+    rdfs:label       "Node Primary Key Attribute" ;
+    rdfs:comment     "A Constellation primary key attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeCustomAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeAttribute, :CustomAttribute ;
+    rdfs:label       "Node Custom Attribute" ;
+    rdfs:comment     "A Constellation custom attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeHiddenAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeAttribute, :HiddenAttribute ;
+    rdfs:label       "Node Hidden Attribute" ;
+    rdfs:comment     "A Constellation hidden attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionSchemaAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionAttribute, :SchemaAttribute ;
+    rdfs:label       "Transaction Schema Attribute" ;
+    rdfs:comment     "A Constellation node schema attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionPrimaryKeyAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionAttribute, :PrimaryKeyAttribute ;
+    rdfs:label       "Transaction Primary Key Attribute" ;
+    rdfs:comment     "A Constellation primary key attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionCustomAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionAttribute, :CustomAttribute ;
+    rdfs:label       "Transaction Custom Attribute" ;
+    rdfs:comment     "A Constellation custom attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionHiddenAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionAttribute, :HiddenAttribute ;
+    rdfs:label       "Transaction Hidden Attribute" ;
+    rdfs:comment     "A Constellation hidden attribute." ;
+    rdfs:domain      :GraphElement ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+# Data type properties
+
+:Activity
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionSchemaAttribute ;
+    rdfs:label       "Activity" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:DateTime
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionPrimaryKeyAttribute ;
+    rdfs:label       "DateTime" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:dateTimeStamp ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Identifier
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodePrimaryKeyAttribute, :TransactionPrimaryKeyAttribute ;
+    rdfs:label       "Identifier" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+#:Type
+#:Icon
+#:Color
+
+:Color
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeSchemaAttribute, :TransactionSchemaAttribute ;
+    rdfs:label       "Constellation Node Color" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Amethyst
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Color ;
+    rdfs:label       "Amethyst" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Azure
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Color ;
+    rdfs:label       "Azure" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:Banana
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :Color ;
+    rdfs:label       "Banana" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeType
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeSchemaAttribute ;
+    rdfs:label       "Constellation Node Type" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeTypeCountry
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeType ;
+    rdfs:label       "Country" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:NodeTypeDocument
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :NodeType ;
+    rdfs:label       "Document" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionType
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionPrimaryKeyAttribute ;
+    rdfs:label       "Constellation Data Type" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeBehaviour
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Behaviour" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeCommunication
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Communication" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+
+# Object type properties
+
+:toTransaction
+    rdf:type    rdf:Property ;
+    rdfs:domain :Node ;
+    rdfs:range  :Transaction .
+
+:fromTransaction
+    rdf:type    rdf:Property ;
+    rdfs:domain :Transaction ;
+    rdfs:range  :Node .
+
+# Actual graph instances (testing)
+
+:vertex1
+    a            :Node ;
+    rdfs:label   "Vertex 1" ;
+    rdfs:comment "First vertex." ;
+    :Identifier  "v1" .
+
+:vertex2
+    a            :Node ;
+    rdfs:label   "Vertex 2" ;
+    rdfs:comment "Second vertex." ;
+    :Identifier  "v2" .
+
+:transaction1
+    a            :Transaction ;
+    rdfs:label   "Transaction 1" ;
+    rdfs:comment "Forward direction." ;
+    :Activity    "The Activity" ;
+    :DateTime    "2021-01-01T11:11:11Z"^^xsd:dateTime .
+
+:transaction2
+    a            :Transaction ;
+    rdfs:label   "Transaction 2" ;
+    rdfs:comment "Reverse direction." ;
+    :Activity    "The other Activity" ;
+    :DateTime    "2021-02-02T22:22:22Z"^^xsd:dateTime .
+
+:vertex1
+    :toTransaction :transaction1 .
+
+:transaction1
+    :fromTransaction :vertex2 .
+
+:vertex2
+    :toTransaction :transaction2 .
+
+:transaction2
+    :fromTransaction :vertex1 .
