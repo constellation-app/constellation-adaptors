@@ -38,7 +38,7 @@
     dc:description """
 The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language.
     """@en ;
-    owl:versionIRI <:0.1> .
+    owl:versionIRI <http://www.constellation-app.com/ns/0.1> .
 
 # High-level stuff
 
