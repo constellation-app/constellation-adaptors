@@ -173,8 +173,9 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
                     graph.setObjectValue(vertexTypeAttribute, vertexId, type);
                 }
-                super.completeVertex(graph, vertexId);
+
             }
+             super.completeVertex(graph, vertexId);
         }
 
         @Override
