@@ -59,6 +59,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :GraphElement
     rdf:type         owl:Class ;
+    rdfs:subClassOf  :Graph ;
     rdfs:label       "Graph Elements" ;
     rdfs:comment     "The nodes and edges that make up the Constellation graph." ;
     vs:term_status   "stable" ;
@@ -91,7 +92,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :GraphAttribute
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Attribute ;
+    rdfs:subClassOf  :Attribute, :Graph ;
     rdfs:label       "Graph Attribute" ;
     rdfs:comment     "A Constellation graph attribute." ;
     rdfs:domain      :Graph ;
@@ -100,7 +101,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :NodeAttribute
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Attribute ;
+    rdfs:subClassOf  :Attribute, :Node ;
     rdfs:label       "Node Attribute" ;
     rdfs:comment     "A Constellation node attribute." ;
     rdfs:domain      :Node ;
@@ -109,7 +110,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :TransactionAttribute
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Attribute ;
+    rdfs:subClassOf  :Attribute, :Transaction ;
     rdfs:label       "Transaction Attribute" ;
     rdfs:comment     "A Constellation transaction attribute." ;
     rdfs:domain      :Transaction ;
@@ -145,6 +146,42 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     rdfs:subClassOf  :Attribute ;
     rdfs:label       "Hidden Attribute" ;
     rdfs:comment     "A Constellation hidden attribute." ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:GraphSchemaAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphAttribute, :SchemaAttribute ;
+    rdfs:label       "Graph Schema Attribute" ;
+    rdfs:comment     "A Constellation graph schema attribute." ;
+    rdfs:domain      :Graph ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:GraphPrimaryKeyAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphAttribute, :PrimaryKeyAttribute ;
+    rdfs:label       "Graph Primary Key Attribute" ;
+    rdfs:comment     "A Constellation graph primary key attribute." ;
+    rdfs:domain      :Graph ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:GraphCustomAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphAttribute, :CustomAttribute ;
+    rdfs:label       "Graph Custom Attribute" ;
+    rdfs:comment     "A Constellation graph custom attribute." ;
+    rdfs:domain      :Graph ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:GraphHiddenAttribute
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :GraphAttribute, :HiddenAttribute ;
+    rdfs:label       "Graph Hidden Attribute" ;
+    rdfs:comment     "A Constellation graph hidden attribute." ;
+    rdfs:domain      :Graph ;
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
@@ -222,8 +259,8 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 # Data type properties
 
-:Activity
-    rdf:type         owl:Class ;
+:activity
+    rdf:type         rdf:Property ;
     rdfs:subClassOf  :TransactionSchemaAttribute ;
     rdfs:label       "Activity" ;
     rdfs:comment     "" ;
@@ -231,8 +268,8 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
-:DateTime
-    rdf:type         owl:Class ;
+:dateTime
+    rdf:type         rdf:Property ;
     rdfs:subClassOf  :TransactionPrimaryKeyAttribute ;
     rdfs:label       "DateTime" ;
     rdfs:comment     "" ;
@@ -240,8 +277,8 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
-:Identifier
-    rdf:type         owl:Class ;
+:identifier
+    rdf:type         rdf:Property ;
     rdfs:subClassOf  :NodePrimaryKeyAttribute, :TransactionPrimaryKeyAttribute ;
     rdfs:label       "Identifier" ;
     rdfs:comment     "" ;
@@ -249,14 +286,22 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
+:color
+    rdf:type         rdf:Property ;
+    rdfs:subClassOf  :NodeSchemaAttribute, :TransactionSchemaAttribute ;
+    rdfs:label       "Color" ;
+    rdfs:comment     "" ;
+    rdfs:range       :Colors ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
 #:Type
 #:Icon
 #:Color
 
-:Color
+:Colors
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :NodeSchemaAttribute, :TransactionSchemaAttribute ;
-    rdfs:label       "Constellation Node Color" ;
+    rdfs:label       "Constellation Node Colors" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
     vs:term_status   "stable" ;
@@ -264,7 +309,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :Amethyst
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Color ;
+    rdfs:subClassOf  :Colors ;
     rdfs:label       "Amethyst" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
@@ -273,7 +318,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :Azure
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Color ;
+    rdfs:subClassOf  :Colors ;
     rdfs:label       "Azure" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
@@ -282,7 +327,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :Banana
     rdf:type         owl:Class ;
-    rdfs:subClassOf  :Color ;
+    rdfs:subClassOf  :Colors ;
     rdfs:label       "Banana" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
@@ -292,7 +337,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 :NodeType
     rdf:type         owl:Class ;
     rdfs:subClassOf  :NodeSchemaAttribute ;
-    rdfs:label       "Constellation Node Type" ;
+    rdfs:label       "Node Type" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
     vs:term_status   "stable" ;
@@ -319,7 +364,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 :TransactionType
     rdf:type         owl:Class ;
     rdfs:subClassOf  :TransactionPrimaryKeyAttribute ;
-    rdfs:label       "Constellation Data Type" ;
+    rdfs:label       "Transaction Type" ;
     rdfs:comment     "" ;
     rdfs:range       xsd:string ;
     vs:term_status   "stable" ;
@@ -343,6 +388,77 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
+:TransactionTypeCorrelation
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Correlation" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeCreated
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Created" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeLocation
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Location" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeNetwork
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Network" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeReferenced
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Referenced" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeRelationship
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Relationship" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeSimilarity
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Similarity" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeUnknown
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Unknown" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
 
 # Object type properties
 
@@ -356,42 +472,125 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
     rdfs:domain :Transaction ;
     rdfs:range  :Node .
 
-# Actual graph instances (testing)
 
-:vertex1
-    a            :Node ;
-    rdfs:label   "Vertex 1" ;
+############################################################
+#
+# !!! DELETE content under here once testing complete !!!
+#
+############################################################
+
+
+# Constellation mapping file
+
+@prefix con:  <http://www.constellation-app.com/ns#> .
+
+:Person
+    a               rdfs:Class ;
+    rdfs:subClassOf owl:Thing ;
+    rdfs:subClassOf con:Node ;
+    rdfs:subClassOf :Banana . # The color, not the fruit!
+
+:action
+    a               rdf:Property ;
+    rdfs:subClassOf con:Transaction .
+
+:metWith
+    a               rdf:Property ;
+    rdfs:subClassOf :action, con:TransactionTypeCommunication ; # A transaction.
+    rdfs:label      "Met With" ;
+    con:color       :Azure .
+
+:locatedNear
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeCustomAttribute ; # An attribute, not a transaction!
+    rdfs:domain     :Person ;
+    rdfs:range      :Location ;
+    rdfs:label      "Located Near" .
+
+:age
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeCustomAttribute ;
+    rdfs:label      "Age" ;
+    rdfs:domain     :Person ;
+    rdfs:range      xsd:integer ;
+    rdfs:comment    "The person's age in years." .
+
+:ssn
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeHiddenAttribute ;
+    rdfs:label      "Social Security Number" ;
+    rdfs:domain     :Person ;
+    rdfs:range      xsd:integer ;
+    rdfs:comment    "The person's private Social Security Number." .
+
+:Location
+    a            rdfs:Class ;
+    rdfs:label   "Location" ;
+    rdfs:comment "This represents a geolocation." .
+
+:City
+    a               rdfs:Class ;
+    rdfs:label      "City" ;
+    rdfs:comment    "This represents a city." ;
+    rdfs:subClassOf :Location .
+
+
+# Some graph instances data
+
+:sydney
+    a            :City ;
+    rdfs:label   "Sydney" ;
+    rdfs:comment "Australia's largest city." .
+
+:canberra
+    a            :City ;
+    rdfs:label   "Canberra" ;
+    rdfs:comment "Australia's national capital." .
+
+
+:person1
+    a            :Person ;
+    rdfs:label   "Person 1" ;
     rdfs:comment "First vertex." ;
-    :Identifier  "v1" .
+    :identifier  "v1" ;
+    :locatedNear :sydney ;
+    :age         25 ;
+    :ssn         1111111111 .
 
-:vertex2
-    a            :Node ;
-    rdfs:label   "Vertex 2" ;
+:person2
+    a            :Person ;
+    rdfs:label   "Person 2" ;
     rdfs:comment "Second vertex." ;
-    :Identifier  "v2" .
+    :identifier  "v2" ;
+    :locatedNear :canberra ;
+    :age         42 ;
+    :ssn         2222222222 .
 
 :transaction1
-    a            :Transaction ;
-    rdfs:label   "Transaction 1" ;
+    a            :metWith ;
+    rdfs:label   "Met With 1" ;
     rdfs:comment "Forward direction." ;
-    :Activity    "The Activity" ;
-    :DateTime    "2021-01-01T11:11:11Z"^^xsd:dateTime .
+    :activity    "The Activity" ;
+    :dateTime    "2021-01-01T11:11:11Z"^^xsd:dateTime .
 
 :transaction2
     a            :Transaction ;
     rdfs:label   "Transaction 2" ;
     rdfs:comment "Reverse direction." ;
-    :Activity    "The other Activity" ;
-    :DateTime    "2021-02-02T22:22:22Z"^^xsd:dateTime .
+    :activity    "The other Activity" ;
+    :dateTime    "2021-02-02T22:22:22Z"^^xsd:dateTime .
 
-:vertex1
+
+# Graph inter-relationships
+
+:person1
     :toTransaction :transaction1 .
 
 :transaction1
-    :fromTransaction :vertex2 .
+    :fromTransaction :person2 .
 
-:vertex2
+:person2
     :toTransaction :transaction2 .
 
 :transaction2
-    :fromTransaction :vertex1 .
+    :fromTransaction :person1 .
