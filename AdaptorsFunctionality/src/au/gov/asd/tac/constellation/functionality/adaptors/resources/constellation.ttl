@@ -487,8 +487,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 :Person
     a               rdfs:Class ;
     rdfs:subClassOf owl:Thing ;
-    rdfs:subClassOf con:Node ;
-    rdfs:subClassOf :Banana . # The color, not the fruit!
+    rdfs:subClassOf con:NodeTypeDocument      .
 
 :action
     a               rdf:Property ;
