@@ -167,7 +167,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 //if (type == null || type.isIncomplete()) {
 //                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
 //                type = graph.getSchema().resolveVertexType(type.toString());
-                    type = resolveVertexType(rdfTypes.toString());
+                    type = resolveVertexType(rdfTypes);
                 //}
 
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
@@ -179,36 +179,58 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         }
 
         @Override
-        public SchemaVertexType resolveVertexType(final String type) {
+        public SchemaVertexType resolveVertexType(final String rdfTypes) {
 //            LOGGER.info("called RDF resolve type");
 
             /**
              * TODO: Add logic here to look at the RDF type and figure out the
              * most appropriate Constellation type to use. We could use the
-             * VertexDominantCalculator or create an RDF version of it if
+             * VertexDominanceCalculator or create an RDF version of it if
              * required.
              *
-             * For now just returning unknown as a placeholder.
              */
-            LOGGER.log(Level.INFO, "TYPE: {0}", type);
 
-            if (type.contains("http://www.co-ode.org/ontologies/pizza/pizza.owl#Country")) {
-                return SchemaVertexTypeUtilities.getType("Country");
-            } else if (type.contains("http://www.w3.org/2002/07/owl#NamedIndividual") || type.contains("http://neo4j.com/voc/music#Artist")) {
-                return SchemaVertexTypeUtilities.getType("Person");
-            } else if (type.contains("http://www.w3.org/2002/07/owl#Class")) {
-                return SchemaVertexTypeUtilities.getType("RDF Class");
-            } else if (type.contains("http://neo4j.com/voc/music#Song")) {
-                return SchemaVertexTypeUtilities.getType("Song");
-            } else if (type.contains("http://neo4j.com/voc/music#Album")) {
-                return SchemaVertexTypeUtilities.getType("Music Album");
-             } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
-                     || type.contains("http://neo4j.com/voc/music#Artist")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
-                     || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
-                return SchemaVertexTypeUtilities.getType("RDF Test");
-            }
+
+            LOGGER.log(Level.INFO, "TYPE: {0}", rdfTypes);
+
+            if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypetelephoneidentifier")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName());
+            } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeemail")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeusername")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.USER_NAME.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeonlineidentifier")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeurl")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.URL.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypehostname")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.HOST_NAME.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeonlinelocation")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_LOCATION.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypemachineidentifier")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeipv6")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV6.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeipv4")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV4.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypenetworkidentifier")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeperson")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.PERSON.getName());
+                 } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypeorganisation")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ORGANISATION.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypedocument")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.DOCUMENT.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypegeohash")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.GEOHASH.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypemgrs")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MGRS.getName());
+                } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypecountry")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.COUNTRY.getName());
+                 } else if (rdfTypes.contains("http://www.constellation-app.com/ns#nodetypelocation")) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.LOCATION.getName());
+                 }
+          
 
             return SchemaVertexTypeUtilities.getDefaultType();
         }
