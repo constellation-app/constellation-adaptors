@@ -16,12 +16,10 @@
 package au.gov.asd.tac.constellation.graph.schema.rdf;
 
 import au.gov.asd.tac.constellation.graph.GraphElementType;
-import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.schema.Schema;
 import au.gov.asd.tac.constellation.graph.schema.SchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
-import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.objects.RawData;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
@@ -103,7 +101,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         switch (elementType) {
             case VERTEX:
                 keys = Arrays.asList(
-                        RDFConcept.VertexAttribute.RDFIDENTIFIER);
+                        VisualConcept.VertexAttribute.IDENTIFIER);
                 break;
             case TRANSACTION:
                 keys = Arrays.asList(VisualConcept.TransactionAttribute.IDENTIFIER,
@@ -128,9 +126,8 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         @Override
         public void newGraph(final GraphWriteMethods graph) {
             super.newGraph(graph);
-            ensureKeyAttributes(graph); // TODO: is this check required if its already done in super?
             
-            final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
+            RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         }
 
         @Override
@@ -142,40 +139,33 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         }
 
         @Override
-        public void completeVertex(final GraphWriteMethods graph, final int vertexId) {
+        public void completeVertex(final GraphWriteMethods graph, final int vertexId) {            
             LOGGER.info("called RDF completeVertex()");
 
-            final int vertexIdentifierAttribute = VisualConcept.VertexAttribute.IDENTIFIER.ensure(graph);
-            final int vertexRDFIdentifierAttribute = RDFConcept.VertexAttribute.RDFIDENTIFIER.ensure(graph);
             final int vertexTypeAttribute = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
             final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.RDFTYPES.ensure(graph);
-            final int vertexRawAttribute = AnalyticConcept.VertexAttribute.RAW.ensure(graph);
             final int vertexLabelAttribute = VisualConcept.VertexAttribute.LABEL.ensure(graph);
 
-            String identifier = graph.getStringValue(vertexIdentifierAttribute, vertexId);
-            String rdfIdentifier = graph.getStringValue(vertexRDFIdentifierAttribute, vertexId);
-            SchemaVertexType type = graph.getObjectValue(vertexTypeAttribute, vertexId);
+            final SchemaVertexType type;// = graph.getObjectValue(vertexTypeAttribute, vertexId);
 
             //SchemaVertexType rdfTypes = graph.getObjectValue(vertexRDFTypesAttribute, vertexId);
             final String rdfTypes = graph.getStringValue(vertexRDFTypesAttribute, vertexId);
-
-            RawData raw = graph.getObjectValue(vertexRawAttribute, vertexId);
-            String label = graph.getStringValue(vertexLabelAttribute, vertexId);
-
             if (rdfTypes != null) {
-
                 //if (type == null || type.isIncomplete()) {
 //                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
 //                type = graph.getSchema().resolveVertexType(type.toString());
-                    type = resolveVertexType(rdfTypes.toString());
+                type = resolveVertexType(rdfTypes);
                 //}
-
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
                     graph.setObjectValue(vertexTypeAttribute, vertexId, type);
                 }
 
             }
-             super.completeVertex(graph, vertexId);
+            
+            final String label = graph.getStringValue(vertexLabelAttribute, vertexId);
+            super.completeVertex(graph, vertexId);
+            // restore value overwritten by super
+            graph.setStringValue(vertexLabelAttribute, vertexId, label);
         }
 
         @Override
@@ -211,12 +201,6 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             }
 
             return SchemaVertexTypeUtilities.getDefaultType();
-        }
-
-        @Override
-        public int getVertexAliasAttribute(final GraphReadMethods graph
-        ) {
-            return VisualConcept.VertexAttribute.LABEL.get(graph);
         }
     }
 }

@@ -20,7 +20,7 @@ import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.ut
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
+import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
@@ -57,8 +57,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
     private static final Logger LOGGER = Logger.getLogger(QueryRDFDataSourcesPlugin.class.getName());
     // parameters
     public static final String RDF_DATA_STORE_URI_PARAMETER_ID = PluginParameter.buildId(QueryRDFDataSourcesPlugin.class, "data_store_uri");
-    private static final String SOURCE_RDFIDENTIFIER = GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER;
-    //private static final String SOURCE_IDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER;
+    private static final String SOURCE_IDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER;
     private static int layer_Mask = 5;
 
     final Map<String, String> subjectToType = new HashMap<>();
@@ -83,11 +82,9 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
         String identifier = "";
         query.reset();
         while (query.next()) {
-            identifier = query.get(SOURCE_RDFIDENTIFIER);
+            identifier = query.get(SOURCE_IDENTIFIER);
             if (identifier == null) {
                 continue;
-//                //Try to query with the IDENTIFIER
-//                identifier = query.get(SOURCE_IDENTIFIER);
             }
 
             final String inputFilename = parameters.getParameters().get(RDF_DATA_STORE_URI_PARAMETER_ID).getStringValue();
