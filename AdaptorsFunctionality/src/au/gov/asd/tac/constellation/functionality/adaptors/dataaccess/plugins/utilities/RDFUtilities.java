@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.rdf.RDFSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
@@ -56,6 +57,7 @@ public class RDFUtilities {
     private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
 
     final static Map<String, Resource> bnodeToSubject = new HashMap<>();
+    final static Map<String, String> constellationTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
     private static final int layer_Mask = 3;
 
@@ -174,6 +176,16 @@ public class RDFUtilities {
 //            }
 //
 //        } else
+
+            // Populate the map with Consty Node Types from the mapping file
+            // We might need to add this in a seperate function, when we read from a seperate mapping file
+            String objectStringLowerCase = StringUtils.lowerCase(object.stringValue());
+            if ("subclassof".equals(StringUtils.lowerCase(predicateName))) {
+                if (RDFSchemaFactory.constellationRDFTypes.containsValue(objectStringLowerCase)) {
+                    constellationTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
+                }
+            }
+
             if (addAttributes || ("type".equals(predicateName) && subject instanceof BNode)) { // literal object values are added as Vertex properties
                 if (VERBOSE) {
                     LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
@@ -208,7 +220,7 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-            } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
+            } else if ("type".equals(StringUtils.lowerCase(predicateName))) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
                 if (subject instanceof IRI) {
                     recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
@@ -220,14 +232,16 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-                //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
-                String value = object.stringValue(); //objectName;
-                if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
-                    value = subjectToType.get(subjectName) + ", " + value;
-                }
-                subjectToType.put(subjectName, value);
+                // Set RDF Types
+                // If there are multiple types, they'll be added as a CSV (by the ConcatenatedSetGraphAttributeMerger)
+                // E.g.: "http://www.constellation-app.com/ns#person,http://www.w3.org/2000/01/rdf-schema#resource"
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFTYPES, objectStringLowerCase);
 
-                //TODO Map the RDF Type in objectName to Consty type
+                // Set "Constellation RDF Types" based on "RDF Types" (If there are multiple types, they'll be added as a CSV)
+                if (constellationTypesMap.containsKey(objectStringLowerCase)) {
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES, constellationTypesMap.get(objectStringLowerCase));
+                }
+
             } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
                 {
                     recordStore.add();
@@ -242,7 +256,7 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 if (StringUtils.isNotBlank(objectName)) {
-                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(object.stringValue()).toLowerCase());
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(objectStringLowerCase));
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 

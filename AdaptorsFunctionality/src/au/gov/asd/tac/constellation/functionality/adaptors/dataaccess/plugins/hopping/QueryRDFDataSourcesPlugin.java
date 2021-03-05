@@ -107,7 +107,6 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
 
                 try (GraphQueryResult queryResult = graphQuery.evaluate()) {
                     RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, layer_Mask);
-
                 } catch (RDF4JException e) {
                     LOGGER.log(Level.SEVERE, "An error occured: {0}", e);
                 }
