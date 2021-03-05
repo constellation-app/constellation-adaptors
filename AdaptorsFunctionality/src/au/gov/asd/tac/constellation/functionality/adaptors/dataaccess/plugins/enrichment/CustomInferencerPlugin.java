@@ -33,6 +33,8 @@ import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -61,12 +63,13 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
     private static int layer_Mask = 9;
 
     final Map<String, String> subjectToType = new HashMap<>();
+    final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
     @Override
     public void edit(GraphWriteMethods graph, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
         final GraphRecordStore results = new GraphRecordStore();
-        
+
         //populate model from query or the whole graph as required
         Model model = RDFUtilities.getGraphModel(graph);
 
@@ -88,7 +91,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
             conn.add(model);
 
             try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, layer_Mask);
+                RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, literalToValue, layer_Mask);
             }
 
         } finally {

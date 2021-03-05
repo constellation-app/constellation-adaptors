@@ -25,6 +25,7 @@ import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.IRI;
@@ -48,41 +51,50 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 
 public class RDFUtilities {
 
+    final static boolean VERBOSE = true;
+    final static SimpleValueFactory FACTORY = SimpleValueFactory.getInstance();
+    private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
+
     final static Map<String, Resource> bnodeToSubject = new HashMap<>();
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
     private static final int layer_Mask = 3;
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, int layerMask) {
+    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
-        PopulateRecordStore(recordStore, repositoryResult, subjectToType, new HashSet<>(), layerMask);
+        PopulateRecordStore(recordStore, repositoryResult, subjectToType, literalToValue, new HashSet<>(), layerMask);
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, int layerMask) {
+    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
-        PopulateRecordStore(recordStore, res, subjectToType, new HashSet<>(), layerMask);
+        PopulateRecordStore(recordStore, res, subjectToType, literalToValue, new HashSet<>(), layerMask);
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
+    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
         for (Statement statement : repositoryResult) {
-            processNextRecord(recordStore, statement, subjectToType, bNodeStatements, layerMask);
+            processNextRecord(recordStore, statement, subjectToType, literalToValue, bNodeStatements, layerMask);
         }
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
+    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
         while (res.hasNext()) {
-            processNextRecord(recordStore, res.next(), subjectToType, bNodeStatements, layerMask);
+            processNextRecord(recordStore, res.next(), subjectToType, literalToValue, bNodeStatements, layerMask);
         }
     }
 
-    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, Set<Statement> bNodeStatements, int layerMask) {
-        LOGGER.info("Processing next record...");
+    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
+        if (VERBOSE) {
+            LOGGER.info("Processing next record...");
+        }
+
         final Resource subject = statement.getSubject();
         final IRI predicate = statement.getPredicate();
         final Value object = statement.getObject();
         final Resource context = statement.getContext();
         Resource parentIRISubject = statement.getPredicate(); // TODO: is this needed as we already have predicate with the same value?
 
-        LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
+        if (VERBOSE) {
+            LOGGER.log(Level.INFO, "Saw Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subject, predicate, object, context});
+        }
 
         boolean addAttributes = false;
         boolean objectIsIRI = false;
@@ -114,7 +126,10 @@ public class RDFUtilities {
 //
 //            }
             } else {
-                LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
+                if (VERBOSE) {
+                    LOGGER.log(Level.WARNING, "Unknown subject type: {0}, dropping", subject);
+                }
+
             }
 
             // PROCESS: Predicate
@@ -136,10 +151,16 @@ public class RDFUtilities {
 //            objectIsBNode = true;
 //            LOGGER.log(Level.WARNING, "BNode object type: {0}, could be dropping, if no further Bnode with same string in the subject is found", objectName);
             } else {
-                LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
+                if (VERBOSE) {
+                    LOGGER.log(Level.WARNING, "Unknown object type: {0}, dropping", object);
+                }
+
             }
 
-            LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
+            if (VERBOSE) {
+                LOGGER.log(Level.INFO, "Processing Subject: {0}, Predicate: {1}, Object: {2}, Context: {3}", new Object[]{subjectName, predicateName, objectName, context});
+            }
+
 //        if (objectIsBNode) {
 //            if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
 //                LOGGER.log(Level.WARNING, "RDF IDENTIFIER = ");
@@ -154,26 +175,48 @@ public class RDFUtilities {
 //
 //        } else
             if (addAttributes || ("type".equals(predicateName) && subject instanceof BNode)) { // literal object values are added as Vertex properties
-                LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
+                if (VERBOSE) {
+                    LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
+                }
+
                 recordStore.add();
                 if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
                     recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else if (subject instanceof BNode) {
-                    //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
-                    LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
+                    //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
+                    if (VERBOSE) {
+                        LOGGER.log(Level.WARNING, "Subject is a BNode. Add the triples in an attribute of " + parentIRISubject.stringValue());
+                    }
                 } else {
-                    LOGGER.log(Level.WARNING, " Invalid IDENTIFIER for subject", subject.stringValue());
+                    if (VERBOSE) {
+                        LOGGER.log(Level.WARNING, " Invalid RDF IDENTIFIER for subject", subject.stringValue());
+                    }
                 }
+
+                // ***************************** STORING PREDICATE LITERAL ***********************************
+                // Handling the case of two entries for the same predicate.
+                final String key1 = predicate.toString();
+                final String key2 = StringUtils.trim((subject != null) ? subject.stringValue() : "").toLowerCase();
+
+                String value = (object != null) ? object.toString() : "";
+                if (literalToValue.containsKey(key1, key2)) {
+                    value += SEPARATOR_TERM + (String) literalToValue.get(key1, key2);
+                }
+                literalToValue.put(key1, key2, value);
+
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + key1, value);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + predicateName, statement); //need to handle multiple attributes with the same predicatename
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
             } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
                 final String subjectIdentifier = StringUtils.trim(subject.stringValue()).toLowerCase();
                 if (subject instanceof IRI) {
                     recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else {//Subject is  a BNode
-                    LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
+                    if (VERBOSE) {
+                        LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());
+                    }//or skip overwriting-can it hit hrer?yes  TYPE of BNODES
                 }
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
@@ -191,7 +234,9 @@ public class RDFUtilities {
                     recordStore.add();
                 }
                 if (!(subject instanceof IRI && predicate instanceof IRI)) {
-                    LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
+                    if (VERBOSE) {
+                        LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
+                    }
                 }
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
@@ -201,14 +246,16 @@ public class RDFUtilities {
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(object.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
-					
+
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.RDFIDENTIFIER, StringUtils.trim(predicate.stringValue()).toLowerCase());
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
                 }
             } else {
-                LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
+                if (VERBOSE) {
+                    LOGGER.log(Level.WARNING, "Predicate: {0} not mapped.", predicateName);
+                }
             }
         }
     }
@@ -242,14 +289,42 @@ public class RDFUtilities {
         }
     }
 
-    public static void addNodeAttributes(final GraphReadMethods graph, Model model, int vertexId) {
-        //Loops through all of the Node attributes and add the tripples stored there
+    public static void addNodeAttributes(final GraphReadMethods graph, final Model model, final int vertexId) {
         final int vertexAttributeCount = graph.getAttributeCount(GraphElementType.VERTEX);
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.get(graph);
+
+        //Loops through all of the Node attributes and add the triples stored there, back into the model
         for (int vertexAttributePosition = 0; vertexAttributePosition < vertexAttributeCount; vertexAttributePosition++) {
+            // Grab the subject, predicate and object from RDF_Identifier, AttributeName and AttributeValue respectively.
+            // Create a statement from this, and store that back into the model.
+            // Do not create a null literal object
             final int vertexAttributeId = graph.getAttribute(GraphElementType.VERTEX, vertexAttributePosition);
-            Statement statement = graph.getObjectValue(vertexAttributeId, vertexId);
-            if (statement != null) {
-                model.add(statement);
+            final String vxAttributeName = graph.getAttributeName(vertexAttributeId);
+            final String rdfObject = graph.getStringValue(vertexAttributeId, vertexId);
+
+            // only make a new statement from the attributes whose name is an IRI - meaning it is the predicate.
+            // Tried to "validate" the IRI using instanceof, also createIRI, but none validated it.
+            // TODO: Find a suitable way to ensure the axAttributeName is an IRI. (and not Identifier/Label/Raw etc.)
+            if (vxAttributeName.startsWith("http") && rdfObject != null) {
+                final String rdfIdentifierSubject = graph.getStringValue(vertexIdentifierAttributeId, vertexId);
+                final IRI subject = FACTORY.createIRI(rdfIdentifierSubject);
+                final IRI predicate = FACTORY.createIRI(vxAttributeName);
+                if (rdfObject.contains(SEPARATOR_TERM)) {
+                    // TODO: This is potentially unsafe because it is not guaranteed that the object will not
+                    // contain a comma as part of it's value. Possible solution is to use a different SEPARATOR_TERM,
+                    // or implement multi-valued attributes.
+                    for (final String csvItem : rdfObject.split(SEPARATOR_TERM)) {
+                        final Literal object = FACTORY.createLiteral(csvItem);
+                        model.add(FACTORY.createStatement(subject, predicate, object));
+                    }
+                } else {
+                    final Literal object = FACTORY.createLiteral(rdfObject);
+                    if (VERBOSE) {
+                        LOGGER.log(Level.INFO, "Found IRI Attribute: {0}, {1}, {2}", new Object[]{rdfIdentifierSubject, vxAttributeName, rdfObject});
+                    }
+                    model.add(FACTORY.createStatement(subject, predicate, object));
+                }
+
             }
         }
     }
@@ -264,8 +339,9 @@ public class RDFUtilities {
         //final String source = graph.getStringValue(vertexSourceAttributeId, vertexId);
         final String rdfTypes = graph.getStringValue(vertexRDFTypesAttributeId, vertexId);
 
-        final Resource subject = SimpleValueFactory.getInstance().createIRI(getIRI(identifier));
+        final Resource subject = FACTORY.createIRI(getIRI(identifier));
 
+        addNodeAttributes(graph, model, vertexId);
         //Iterate over multiple values in RDF_TYPE and add multiple entries to the RDF collection
         if (rdfTypes != null) {
             final String[] rdfTypesArray = Arrays.stream(rdfTypes.split(","))
@@ -274,9 +350,9 @@ public class RDFUtilities {
 
             //if (rdfTypesArray.length > 0) {
             for (int i = 0; i < rdfTypesArray.length; i++) {
-                final Value object = SimpleValueFactory.getInstance().createIRI(getIRI(rdfTypesArray[i])); // TODO: this will require a lookup to convert a Consty type to RDF type
+                final Value object = FACTORY.createIRI(getIRI(rdfTypesArray[i])); // TODO: this will require a lookup to convert a Consty type to RDF type
 
-                model.add(SimpleValueFactory.getInstance().createStatement(subject, RDF.TYPE, object));
+                model.add(FACTORY.createStatement(subject, RDF.TYPE, object));
             }
         }
     }
@@ -302,11 +378,11 @@ public class RDFUtilities {
         final String transactionRDFIdentifier = graph.getStringValue(transactionRDFIdentifierAttributeId, transactionId);
         //final String transactionType = graph.getStringValue(transactionTypeAttributeId, transactionId);
 
-        final Resource subject = SimpleValueFactory.getInstance().createIRI(getIRI(sourceIdentifier));
-        final IRI predicate = SimpleValueFactory.getInstance().createIRI(getIRI(transactionRDFIdentifier));
-        final Value object = SimpleValueFactory.getInstance().createIRI(getIRI(destinationIdentifier));
+        final Resource subject = FACTORY.createIRI(getIRI(sourceIdentifier));
+        final IRI predicate = FACTORY.createIRI(getIRI(transactionRDFIdentifier));
+        final Value object = FACTORY.createIRI(getIRI(destinationIdentifier));
 
-        model.add(SimpleValueFactory.getInstance().createStatement(subject, predicate, object));
+        model.add(FACTORY.createStatement(subject, predicate, object));
     }
 
     public static void addBlankNodesToModel(final GraphReadMethods graph, Model model) {
@@ -317,6 +393,37 @@ public class RDFUtilities {
             for (final Statement statement : bNodeStatements) {
                 model.add(statement);
             }
+        }
+    }
+
+    /**
+     * Takes all entries from the literalToValue map and writes the contents to
+     * the correct nodes.
+     *
+     * This was necessary because it did not seem possible to view previous
+     * entries while iterating each statement to check for multiple entries for
+     * each triple?.
+     *
+     * @param wg
+     * @param literalToValue
+     */
+    public static void setLiteralValuesVertexAttribute(final GraphWriteMethods wg, final MultiKeyMap literalToValue) {
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
+        final int graphVertexCount = wg.getVertexCount();
+
+        for (int position = 0; position < graphVertexCount; position++) {
+            final int currentVertexId = wg.getVertex(position);
+            final String RDFidentifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
+
+            literalToValue.forEach((key, value) -> {
+                final String key2 = (String) ((MultiKey) key).getKey(1);
+                if (RDFidentifier.equals(key2)) {
+                    final String key1 = (String) ((MultiKey) key).getKey(0);
+                    // create new attribute that is of the name in key1
+                    final int newAttribute = wg.addAttribute(GraphElementType.VERTEX, "string", key1, "Auto-Generated RDF Predicate IRI", null, null);
+                    wg.setStringValue(newAttribute, currentVertexId, (String) value);
+                }
+            });
         }
     }
 

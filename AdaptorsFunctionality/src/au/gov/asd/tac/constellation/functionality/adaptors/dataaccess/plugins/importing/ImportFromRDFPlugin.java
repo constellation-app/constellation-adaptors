@@ -49,6 +49,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.Statement;
@@ -110,6 +112,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     }
 
     final Map<String, String> subjectToType = new HashMap<>();
+    final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     Set<Statement> bNodeStatements = new HashSet<>();
 
     @Override
@@ -155,7 +158,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 final RepositoryConnection conn = repo.getConnection();
                 conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
                 try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
-                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, bNodeStatements, layer_Mask);
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, bNodeStatements, layer_Mask);
                 } finally {
                     inputStream.close();
                 }
@@ -172,7 +175,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                     //Model res = QueryResults.asModel(evaluate);
                     if (queryResult.hasNext()) {
-                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, bNodeStatements, layer_Mask);
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, bNodeStatements, layer_Mask);
                     } else {
                         LOGGER.info("queryResult IS EMPTY ");
                     }
@@ -249,11 +252,11 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     }
 
     @Override
-    protected void edit(GraphWriteMethods wg, PluginInteraction interaction,
-            PluginParameters parameters) throws InterruptedException, PluginException {
+    protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
         RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
+        RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Add BNODES in the graph attribute
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);

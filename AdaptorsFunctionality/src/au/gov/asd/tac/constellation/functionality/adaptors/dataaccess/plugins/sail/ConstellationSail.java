@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.TreeModel;
@@ -165,9 +167,8 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
     @Deprecated
     public void writeModelToGraph() {
         final GraphRecordStore recordStore = new GraphRecordStore();
-
         store.getExplicitSailSource().dataset(getDefaultIsolationLevel()).getStatements(null, null, null).stream().forEach((statement) -> {
-            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), new HashSet<>(), 0);
+            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), MultiKeyMap.decorate(new LinkedMap()), new HashSet<>(), 0);
         });
 
         WritableGraph writableGraph = null;

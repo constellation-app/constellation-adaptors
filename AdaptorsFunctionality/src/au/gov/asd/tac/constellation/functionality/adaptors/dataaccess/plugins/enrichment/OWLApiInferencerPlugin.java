@@ -43,6 +43,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
@@ -92,6 +94,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 
     final private static int layer_Mask = 9;
 
+    final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
@@ -298,7 +301,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
                     RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
 
                     try {
-                        RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, layer_Mask);
+                        RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, layer_Mask);
                     } finally {
                         statements.close();
                     }

@@ -95,7 +95,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         return new RDFSchema(this);
     }
 
-     @Override
+    @Override
     public List<SchemaAttribute> getKeyAttributes(final GraphElementType elementType) {
         final List<SchemaAttribute> keys;
         switch (elementType) {
@@ -161,7 +161,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 }
 
             }
-            
+
             final String label = graph.getStringValue(vertexLabelAttribute, vertexId);
             super.completeVertex(graph, vertexId);
             // restore value overwritten by super
@@ -170,8 +170,12 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
         @Override
         public SchemaVertexType resolveVertexType(final String type) {
-//            LOGGER.info("called RDF resolve type");
 
+            // read file
+            //
+            // creating schemavertextypes
+            //
+//            LOGGER.info("called RDF resolve type");
             /**
              * TODO: Add logic here to look at the RDF type and figure out the
              * most appropriate Constellation type to use. We could use the
@@ -192,11 +196,11 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 return SchemaVertexTypeUtilities.getType("Song");
             } else if (type.contains("http://neo4j.com/voc/music#Album")) {
                 return SchemaVertexTypeUtilities.getType("Music Album");
-             } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
-                     || type.contains("http://neo4j.com/voc/music#Artist")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
-                     || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
+            } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
+                    || type.contains("http://neo4j.com/voc/music#Artist")
+                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
+                    || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
                 return SchemaVertexTypeUtilities.getType("RDF Test");
             }
 
