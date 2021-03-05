@@ -131,6 +131,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
         super.edit(wg, interaction, parameters);
 
         RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
+        RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Overwrite BNODES in the graph attribute with inferred data
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);
