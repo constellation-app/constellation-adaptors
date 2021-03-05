@@ -169,6 +169,7 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
             } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
+                final String subjectIdentifier = StringUtils.trim(subject.stringValue()).toLowerCase();
                 if (subject instanceof IRI) {
                     recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else {//Subject is  a BNode
@@ -179,10 +180,10 @@ public class RDFUtilities {
 
                 //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
                 String value = object.stringValue(); //objectName;
-                if (subjectToType.containsKey(subjectName) && !value.isBlank()) {
-                    value = subjectToType.get(subjectName) + ", " + value;
+                if (subjectToType.containsKey(subjectIdentifier) && !value.isBlank()) {
+                    value = subjectToType.get(subjectIdentifier) + ", " + value;
                 }
-                subjectToType.put(subjectName, value);
+                subjectToType.put(subjectIdentifier, value);
 
                 //TODO Map the RDF Type in objectName to Consty type
             } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
@@ -322,12 +323,12 @@ public class RDFUtilities {
     public static void setRDFTypesVertexAttribute(GraphWriteMethods wg, final Map<String, String> subjectToType) {
         // Add the Vertex RDF_types attribute based on subjectToType map
         // Had to do this later to avoid duplicate nodes with "Unknown" Type.
-        final int vertexLabelAttributeId = VisualConcept.VertexAttribute.LABEL.ensure(wg);
+        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
         final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
         final int graphVertexCount = wg.getVertexCount();
         for (int position = 0; position < graphVertexCount; position++) {
             final int currentVertexId = wg.getVertex(position);
-            final String label = wg.getStringValue(vertexLabelAttributeId, currentVertexId);
+            final String label = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
             if (subjectToType.containsKey(label)) {
                 String value = subjectToType.get(label);
 
