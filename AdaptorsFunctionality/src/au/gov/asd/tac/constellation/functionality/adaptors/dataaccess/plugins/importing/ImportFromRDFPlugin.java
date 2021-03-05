@@ -39,6 +39,9 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParamet
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import au.gov.asd.tac.constellation.views.layers.state.LayersViewConcept;
+import au.gov.asd.tac.constellation.views.layers.state.LayersViewState;
+import au.gov.asd.tac.constellation.views.layers.utilities.LayersUtilities;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +55,7 @@ import java.util.logging.Logger;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.query.GraphQueryResult;
@@ -89,7 +93,11 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     // parameters
     public static final String INPUT_FILE_URI_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_uri");
     public static final String INPUT_FILE_FORMAT_PARAMETER_ID = PluginParameter.buildId(ImportFromRDFPlugin.class, "input_file_format");
-    final private static int layer_Mask = 3;
+
+    final private static int SCHEMA_LAYER = 1 | (1 << 1);
+    final private static int DATA_LAYER = 1 | (1 << 2);
+    final private static int MAPPING_LAYER = 1 | (1 << 3);
+
     final static Map<String, RDFFormat> rdfFileFormats = new HashMap<>();
 
     private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
@@ -120,6 +128,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
 
         String inputFilename = parameters.getParameters().get(INPUT_FILE_URI_PARAMETER_ID).getStringValue();
         final String inputFileFormat = parameters.getParameters().get(INPUT_FILE_FORMAT_PARAMETER_ID).getStringValue();
+
         final RDFFormat rdfFormat = getRdfFormat(inputFileFormat);
         // if the input uri is a local file, add the file:// protocol and convert the slashes to forward slashes
         final File file = new File(inputFilename);
@@ -136,64 +145,21 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         //TODO Potentially: Seperate query for mapping from RDF to Consty <SPECIFIC MAPPING>
         //TODO Add triples to constellation graph and update display; RDF view?
         //TODO Change the additional INFO logging to DEBUG or remove them once things are working
-        GraphRecordStore recordStore = new GraphRecordStore();
+        final GraphRecordStore recordStore = new GraphRecordStore();
+        final String reverse = StringUtils.reverse(inputFilename);
+        final String inputFileDirectory = StringUtils.reverse(reverse.substring(reverse.indexOf("/"), reverse.length()));
+        final String fileExtension = inputFilename.substring(inputFilename.length() - 4, inputFilename.length());
 
-        try {
-            final URL documentUrl = new URL(inputFilename);
-            final InputStream inputStream = documentUrl.openStream();
+        // SCHEMA - expects constellation_schema.ttl in the same directory as the imported file
+        final String schemaFileName = inputFileDirectory + "constellation_schema.ttl";
+        importFile(schemaFileName, recordStore, format, SCHEMA_LAYER);
 
-            //final RDFFormat format = getRdfFormat(intpuFileFormat);
-            //Model model = Rio.parse(inputStream, baseURI, format);
-            final String baseURI = documentUrl.toString();
+        // DATA - expects <filename.ttl> to be the main imported file
+        importFile(inputFilename, recordStore, format, DATA_LAYER);
 
-            if (FilenameUtils.getExtension(inputFilename).equalsIgnoreCase("owl") && inputFilename.startsWith("http://")) {
-                final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-                final IRI iri = IRI.create(inputFilename);
-                final OWLOntology ontology = manager.loadOntologyFromOntologyDocument(iri);
-
-                final File tempFile = File.createTempFile("TempOwlFile", ".owl");
-                manager.saveOntology(ontology, IRI.create(tempFile.toURI()));
-
-                final Repository repo = new SailRepository(new MemoryStore());
-                final RepositoryConnection conn = repo.getConnection();
-                conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
-                try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
-                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, bNodeStatements, layer_Mask);
-                } finally {
-                    inputStream.close();
-                }
-//                String beginning = "<?xml version=\"1.0\"?>\n";
-//
-//                List<InputStream> streams = Arrays.asList(
-//                        new ByteArrayInputStream(beginning.getBytes()),
-//                        inputStream);
-//                inputStream = new SequenceInputStream(Collections.enumeration(streams));
-//
-            } else {
-
-                try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
-                    //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
-                    //Model res = QueryResults.asModel(evaluate);
-                    if (queryResult.hasNext()) {
-                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, bNodeStatements, layer_Mask);
-                    } else {
-                        LOGGER.info("queryResult IS EMPTY ");
-                    }
-                } catch (RDF4JException ex) {
-                    LOGGER.info("RDF4JException: " + ex);
-                    // handle unrecoverable error
-
-                } finally {
-                    inputStream.close();
-                }
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (OWLOntologyStorageException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (OWLOntologyCreationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        // MAPPING - expects <filename_mapping.ttl> to be in the same directory as the main imported file (filename.ttl)
+        final String mappingFileName = inputFilename.substring(0, inputFilename.length() - 4) + "_mapping" + fileExtension;
+        importFile(mappingFileName, recordStore, format, MAPPING_LAYER);
 
         return recordStore;
     }
@@ -262,7 +228,84 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);
         wg.setObjectValue(rdfBlankNodesAttributeId, 0, bNodeStatements);
 
+        // Set layers state
+        final int layersStateAttributeId = LayersViewConcept.MetaAttribute.LAYERS_VIEW_STATE.ensure(wg);
+        final LayersViewState state = new LayersViewState();
+
+        LayersUtilities.addLayerAt(state, "RDF Schema Layer", 1);
+        LayersUtilities.addLayerAt(state, "RDF Data Layer", 2);
+        LayersUtilities.addLayerAt(state, "RDF Mapping Layer", 3);
+
+        wg.setObjectValue(layersStateAttributeId, 0, state);
+
         PluginExecution.withPlugin(VisualSchemaPluginRegistry.COMPLETE_SCHEMA).executeNow(wg);
         PluginExecutor.startWith(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(wg);
+    }
+
+    /**
+     * Imports the file to the recordstore and draws it on the respective layer
+     *
+     * @param fileName
+     * @param recordStore
+     * @param format
+     * @param layerNumber
+     */
+    private void importFile(final String fileName, final GraphRecordStore recordStore, final RDFFormat format, final int layerNumber) {
+        try {
+            final URL documentUrl = new URL(fileName);
+            final InputStream inputStream = documentUrl.openStream();
+
+            //final RDFFormat format = getRdfFormat(intpuFileFormat);
+            //Model model = Rio.parse(inputStream, baseURI, format);
+            final String baseURI = documentUrl.toString();
+
+            if (FilenameUtils.getExtension(fileName).equalsIgnoreCase("owl") && fileName.startsWith("http://")) {
+                final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+                final IRI iri = IRI.create(fileName);
+                final OWLOntology ontology = manager.loadOntologyFromOntologyDocument(iri);
+
+                final File tempFile = File.createTempFile("TempOwlFile", ".owl");
+                manager.saveOntology(ontology, IRI.create(tempFile.toURI()));
+
+                final Repository repo = new SailRepository(new MemoryStore());
+                final RepositoryConnection conn = repo.getConnection();
+                conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
+                try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, bNodeStatements, layerNumber);
+                } finally {
+                    inputStream.close();
+                }
+//                String beginning = "<?xml version=\"1.0\"?>\n";
+//
+//                List<InputStream> streams = Arrays.asList(
+//                        new ByteArrayInputStream(beginning.getBytes()),
+//                        inputStream);
+//                inputStream = new SequenceInputStream(Collections.enumeration(streams));
+//
+            } else {
+
+                try (GraphQueryResult queryResult = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                    //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+                    //Model res = QueryResults.asModel(evaluate);
+                    if (queryResult.hasNext()) {
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, bNodeStatements, layerNumber);
+                    } else {
+                        LOGGER.info("queryResult IS EMPTY ");
+                    }
+                } catch (RDF4JException ex) {
+                    LOGGER.info("RDF4JException: " + ex);
+                    // handle unrecoverable error
+
+                } finally {
+                    inputStream.close();
+                }
+            }
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (OWLOntologyStorageException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (OWLOntologyCreationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 }

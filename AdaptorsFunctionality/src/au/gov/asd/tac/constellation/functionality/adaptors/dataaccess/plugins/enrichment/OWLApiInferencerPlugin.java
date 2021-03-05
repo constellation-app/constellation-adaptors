@@ -92,7 +92,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
 
     private static final Logger LOGGER = Logger.getLogger(OWLApiInferencerPlugin.class.getName());
 
-    final private static int layer_Mask = 9;
+    final private static int LAYER_MASK = 1 | (1 << 5);
 
     final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     final Map<String, String> subjectToType = new HashMap<>();
@@ -301,7 +301,7 @@ public class OWLApiInferencerPlugin extends RecordStoreQueryPlugin implements Da
                     RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
 
                     try {
-                        RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, layer_Mask);
+                        RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, LAYER_MASK);
                     } finally {
                         statements.close();
                     }
