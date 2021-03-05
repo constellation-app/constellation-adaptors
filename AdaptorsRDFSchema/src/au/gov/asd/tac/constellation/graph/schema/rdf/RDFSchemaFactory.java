@@ -97,7 +97,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         return new RDFSchema(this);
     }
 
-     @Override
+    @Override
     public List<SchemaAttribute> getKeyAttributes(final GraphElementType elementType) {
         final List<SchemaAttribute> keys;
         switch (elementType) {
@@ -129,7 +129,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         public void newGraph(final GraphWriteMethods graph) {
             super.newGraph(graph);
             ensureKeyAttributes(graph); // TODO: is this check required if its already done in super?
-            
+
             final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         }
 
@@ -167,7 +167,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 //if (type == null || type.isIncomplete()) {
 //                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
 //                type = graph.getSchema().resolveVertexType(type.toString());
-                    type = resolveVertexType(rdfTypes.toString());
+                type = resolveVertexType(rdfTypes.toString());
                 //}
 
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
@@ -175,13 +175,17 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 }
 
             }
-             super.completeVertex(graph, vertexId);
+            super.completeVertex(graph, vertexId);
         }
 
         @Override
         public SchemaVertexType resolveVertexType(final String type) {
-//            LOGGER.info("called RDF resolve type");
 
+            // read file
+            //
+            // creating schemavertextypes
+            //
+//            LOGGER.info("called RDF resolve type");
             /**
              * TODO: Add logic here to look at the RDF type and figure out the
              * most appropriate Constellation type to use. We could use the
@@ -202,11 +206,11 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 return SchemaVertexTypeUtilities.getType("Song");
             } else if (type.contains("http://neo4j.com/voc/music#Album")) {
                 return SchemaVertexTypeUtilities.getType("Music Album");
-             } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
-                     || type.contains("http://neo4j.com/voc/music#Artist")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
-                     || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-                     || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
+            } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
+                    || type.contains("http://neo4j.com/voc/music#Artist")
+                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
+                    || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
                 return SchemaVertexTypeUtilities.getType("RDF Test");
             }
 

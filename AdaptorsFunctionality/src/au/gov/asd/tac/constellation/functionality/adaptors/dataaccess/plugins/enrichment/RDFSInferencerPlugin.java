@@ -42,6 +42,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.repository.Repository;
@@ -64,6 +66,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
     private static final int layer_Mask = 9;
     private final Map<String, String> subjectToType = new HashMap<>();
+    final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     private final Set<Statement> bNodeStatements = new HashSet<>();
 
     private static final Logger LOGGER = Logger.getLogger(RDFSInferencerPlugin.class.getName());
@@ -92,12 +95,12 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
                     )
             );
 
-            try ( RepositoryConnection conn = repo.getConnection()) {
+            try (RepositoryConnection conn = repo.getConnection()) {
                 conn.add(model);
 
                 // retrieve all RDFS infered statements
-                try ( RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, bNodeStatements, layer_Mask);
+                try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, literalToValue, bNodeStatements, layer_Mask);
                 }
             }
         } finally {
@@ -128,6 +131,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
         super.edit(wg, interaction, parameters);
 
         RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
+        RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Overwrite BNODES in the graph attribute with inferred data
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);

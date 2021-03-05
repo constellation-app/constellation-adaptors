@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.map.LinkedMap;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.query.GraphQuery;
 import org.eclipse.rdf4j.query.GraphQueryResult;
@@ -61,6 +63,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
     //private static final String SOURCE_IDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER;
     private static int layer_Mask = 5;
 
+    final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
@@ -103,7 +106,7 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
                 GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, qb.toString());
 
                 try (GraphQueryResult queryResult = graphQuery.evaluate()) {
-                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, layer_Mask);
 
                 } catch (RDF4JException e) {
                     LOGGER.log(Level.SEVERE, "An error occured: {0}", e);
