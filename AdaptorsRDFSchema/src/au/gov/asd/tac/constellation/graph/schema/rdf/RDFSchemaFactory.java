@@ -166,6 +166,17 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             super.completeVertex(graph, vertexId);
             // restore value overwritten by super
             graph.setStringValue(vertexLabelAttribute, vertexId, label);
+            for (int i = 0; i < graph.getAttributeCount(GraphElementType.VERTEX); i++) {
+                final int attribute = graph.getAttribute(GraphElementType.VERTEX, i);
+                if (graph.getAttributeName(attribute).contains("prefLabel")) {
+                    final String prefLabel = graph.getStringValue(attribute, vertexId);
+                    if (prefLabel != null) {
+                        // use prefLabel instead
+                        graph.setStringValue(vertexLabelAttribute, vertexId, prefLabel);
+                    }
+                    break;
+                }
+            }
         }
 
         @Override
