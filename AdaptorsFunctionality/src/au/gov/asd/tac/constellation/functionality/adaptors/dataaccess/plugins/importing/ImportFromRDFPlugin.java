@@ -109,7 +109,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         rdfFileFormats.put(RDFFormat.TURTLESTAR.getName(), RDFFormat.TURTLESTAR);
     }
 
-    final Map<String, String> subjectToType = new HashMap<>();
     Set<Statement> bNodeStatements = new HashSet<>();
 
     @Override
@@ -154,8 +153,8 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 final Repository repo = new SailRepository(new MemoryStore());
                 final RepositoryConnection conn = repo.getConnection();
                 conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
-                try (RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
-                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, bNodeStatements, layer_Mask);
+                try ( RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, bNodeStatements, layer_Mask);
                 } finally {
                     inputStream.close();
                 }
@@ -172,7 +171,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                     //Model res = QueryResults.asModel(evaluate);
                     if (queryResult.hasNext()) {
-                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, bNodeStatements, layer_Mask);
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, bNodeStatements, layer_Mask);
                     } else {
                         LOGGER.info("queryResult IS EMPTY ");
                     }
@@ -252,8 +251,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     protected void edit(GraphWriteMethods wg, PluginInteraction interaction,
             PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
-
-        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
 
         // Add BNODES in the graph attribute
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);

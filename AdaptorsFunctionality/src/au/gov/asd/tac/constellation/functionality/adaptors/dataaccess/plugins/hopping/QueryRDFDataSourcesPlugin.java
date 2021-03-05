@@ -61,7 +61,6 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
     //private static final String SOURCE_IDENTIFIER = GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER;
     private static int layer_Mask = 5;
 
-    final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
 //    @Override
@@ -102,8 +101,8 @@ public class QueryRDFDataSourcesPlugin extends RecordStoreQueryPlugin implements
 
                 GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, qb.toString());
 
-                try (GraphQueryResult queryResult = graphQuery.evaluate()) {
-                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, layer_Mask);
+                try ( GraphQueryResult queryResult = graphQuery.evaluate()) {
+                    RDFUtilities.PopulateRecordStore(recordStore, queryResult, layer_Mask);
 
                 } catch (RDF4JException e) {
                     LOGGER.log(Level.SEVERE, "An error occured: {0}", e);

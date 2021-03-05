@@ -25,7 +25,6 @@ import au.gov.asd.tac.constellation.graph.monitor.GraphChangeEvent;
 import au.gov.asd.tac.constellation.graph.monitor.GraphChangeListener;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -167,7 +166,7 @@ public class ConstellationSail extends AbstractNotifyingSail implements Federate
         final GraphRecordStore recordStore = new GraphRecordStore();
 
         store.getExplicitSailSource().dataset(getDefaultIsolationLevel()).getStatements(null, null, null).stream().forEach((statement) -> {
-            RDFUtilities.processNextRecord(recordStore, statement, new HashMap<>(), new HashSet<>(), 0);
+            RDFUtilities.processNextRecord(recordStore, statement, new HashSet<>(), 0);
         });
 
         WritableGraph writableGraph = null;

@@ -37,9 +37,7 @@ import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.model.Model;
@@ -63,7 +61,6 @@ import org.openide.util.lookup.ServiceProviders;
 public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
     private static final int layer_Mask = 9;
-    private final Map<String, String> subjectToType = new HashMap<>();
     private final Set<Statement> bNodeStatements = new HashSet<>();
 
     private static final Logger LOGGER = Logger.getLogger(RDFSInferencerPlugin.class.getName());
@@ -97,7 +94,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
                 // retrieve all RDFS infered statements
                 try ( RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, bNodeStatements, layer_Mask);
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, bNodeStatements, layer_Mask);
                 }
             }
         } finally {
@@ -126,8 +123,6 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
     protected void edit(GraphWriteMethods wg, PluginInteraction interaction,
             PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
-
-        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
 
         // Overwrite BNODES in the graph attribute with inferred data
         final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(wg);

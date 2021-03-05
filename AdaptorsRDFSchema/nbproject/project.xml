@@ -72,6 +72,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>au.gov.asd.tac.constellation.graph.schema.rdf</package>
                 <package>au.gov.asd.tac.constellation.graph.schema.rdf.concept</package>
                 <package>au.gov.asd.tac.constellation.graph.schema.rdf.icon</package>
             </public-packages>

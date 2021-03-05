@@ -60,7 +60,6 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
 
     private static int layer_Mask = 9;
 
-    final Map<String, String> subjectToType = new HashMap<>();
     final Map<String, String> bnodeToSubject = new HashMap<>();
 
     @Override
@@ -87,8 +86,8 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
         try (RepositoryConnection conn = repo.getConnection()) {
             conn.add(model);
 
-            try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, layer_Mask);
+            try ( RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
+                RDFUtilities.PopulateRecordStore(results, repositoryResult, layer_Mask);
             }
 
         } finally {
