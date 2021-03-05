@@ -1,0 +1,86 @@
+# baseURI: http://www.constellation-app.com/ns
+@prefix :          <http://www.constellation-app.com/ns#> .
+
+# Core W3C ontologies (OWL 2 reserved vocabulary)
+@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:       <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:       <http://www.w3.org/2001/XMLSchema#> .
+# Other ontologies .
+@prefix acl:       <http://www.w3.org/ns/auth/acl#> .
+@prefix cc:        <http://creativecommons.org/ns#> .
+@prefix cert:      <http://www.w3.org/ns/auth/cert#> .
+@prefix csvw:      <http://www.w3.org/ns/csvw#> .
+@prefix dc:        <http://purl.org/dc/terms/> .
+@prefix dcam:      <http://purl.org/dc/dcam/> .
+@prefix dcat:      <http://www.w3.org/ns/dcat#> .
+@prefix dctype:    <http://purl.org/dc/dcmitype/> .
+@prefix foaf:      <http://xmlns.com/foaf/0.1/> .
+@prefix ldp:       <http://www.w3.org/ns/ldp#> .
+@prefix posixstat: <http://www.w3.org/ns/posix/stat#> .
+@prefix schema:    <https://schema.org/> .
+@prefix shacl:     <http://www.w3.org/ns/shacl#> .
+@prefix skos:      <http://www.w3.org/2004/02/skos/core#> .
+@prefix skosxl:    <http://www.w3.org/2008/05/skos-xl#> .
+@prefix solid:     <http://www.w3.org/ns/solid/terms#> .
+@prefix swapdoc:   <http://www.w3.org/2000/10/swap/pim/doc#> .
+@prefix ui:        <http://www.w3.org/ns/ui#> .
+@prefix vann:      <http://purl.org/vocab/vann/> .
+@prefix vcard:     <http://www.w3.org/2006/vcard/ns#> .
+@prefix vs:        <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix ws:        <http://www.w3.org/ns/pim/space#> .
+
+@base <http://www.constellation-app.com/ns> .
+
+
+@prefix con:  <http://www.constellation-app.com/ns#> .
+
+:Person
+    a               rdfs:Class ;
+    rdfs:subClassOf owl:Thing .
+
+:action
+    a               rdf:Property ;
+    rdfs:subClassOf con:Transaction .
+
+:metWith
+    a               rdf:Property ;
+    rdfs:subClassOf :action, con:TransactionTypeCommunication ; # A transaction.
+    rdfs:label      "Met With" ;
+    rdfs:domain     Person ;
+    rdfs:range      Person ;
+    con:color       :Azure .
+
+:locatedNear
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeCustomAttribute ; # An attribute, not a transaction!
+    rdfs:domain     :Person ;
+    rdfs:range      :Location ;
+    rdfs:label      "Located Near" .
+
+:age
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeCustomAttribute ;
+    rdfs:label      "Age" ;
+    rdfs:domain     :Person ;
+    rdfs:range      xsd:integer ;
+    rdfs:comment    "The person's age in years." .
+
+:ssn
+    a               rdf:Property ;
+    rdfs:subClassOf con:NodeHiddenAttribute ;
+    rdfs:label      "Social Security Number" ;
+    rdfs:domain     :Person ;
+    rdfs:range      xsd:integer ;
+    rdfs:comment    "The person's private Social Security Number." .
+
+:Location
+    a            rdfs:Class ;
+    rdfs:label   "Location" ;
+    rdfs:comment "This represents a geolocation." .
+
+:City
+    a               rdfs:Class ;
+    rdfs:label      "City" ;
+    rdfs:comment    "This represents a city." ;
+    rdfs:subClassOf :Location .
