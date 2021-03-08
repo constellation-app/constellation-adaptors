@@ -47,8 +47,8 @@
     a               rdf:Property ;
     rdfs:subClassOf :action, con:TransactionTypeCommunication ; # A transaction.
     rdfs:label      "Met With" ;
-    rdfs:domain     Person ;
-    rdfs:range      Person ;
+    rdfs:domain     :Person ;
+    rdfs:range      :Person ;
     con:color       :Azure .
 
 :locatedNear
