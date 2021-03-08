@@ -501,7 +501,7 @@ The Constellation RDF vocabulary, described using W3C RDF Schema and the Web Ont
 
 :locatedNear
     a               rdf:Property ;
-    rdfs:subClassOf con:NodeCustomAttribute ; # An attribute, not a transaction!
+    rdfs:subClassOf con:TransactionTypeLocation ;
     rdfs:domain     :Person ;
     rdfs:range      :Location ;
     rdfs:label      "Located Near" .
