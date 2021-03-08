@@ -15,7 +15,6 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
-import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
@@ -23,6 +22,7 @@ import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.graph.schema.rdf.RDFSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
@@ -51,37 +51,47 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 
 public class RDFUtilities {
 
-    final static boolean VERBOSE = true;
-    final static SimpleValueFactory FACTORY = SimpleValueFactory.getInstance();
+    private static final Logger LOGGER = Logger.getLogger(RDFUtilities.class.getName());
+    
+    static final boolean VERBOSE = true;
+    static final SimpleValueFactory FACTORY = SimpleValueFactory.getInstance();
     private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
 
-    final static Map<String, Resource> bnodeToSubject = new HashMap<>();
-    private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
+    static final Map<String, Resource> bnodeToSubject = new HashMap<>();
+    static final Map<String, String> constellationTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
     private static final int layer_Mask = 3;
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
+    public static void PopulateRecordStore(final GraphRecordStore recordStore, final RepositoryResult<Statement> repositoryResult, 
+            final MultiKeyMap literalToValue, final int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
-        PopulateRecordStore(recordStore, repositoryResult, subjectToType, literalToValue, new HashSet<>(), layerMask);
+        PopulateRecordStore(recordStore, repositoryResult, literalToValue, new HashSet<>(), layerMask);
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
+    public static void PopulateRecordStore(final GraphRecordStore recordStore, final GraphQueryResult res, 
+            final MultiKeyMap literalToValue, final int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
-        PopulateRecordStore(recordStore, res, subjectToType, literalToValue, new HashSet<>(), layerMask);
+        PopulateRecordStore(recordStore, res, literalToValue, new HashSet<>(), layerMask);
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
-        for (Statement statement : repositoryResult) {
-            processNextRecord(recordStore, statement, subjectToType, literalToValue, bNodeStatements, layerMask);
+    public static void PopulateRecordStore(final GraphRecordStore recordStore, final RepositoryResult<Statement> repositoryResult, 
+            final MultiKeyMap literalToValue, final Set<Statement> bNodeStatements, 
+            final int layerMask) {
+        for (final Statement statement : repositoryResult) {
+            processNextRecord(recordStore, statement, literalToValue, bNodeStatements, layerMask);
         }
     }
 
-    public static void PopulateRecordStore(GraphRecordStore recordStore, GraphQueryResult res, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
+    public static void PopulateRecordStore(final GraphRecordStore recordStore, final GraphQueryResult res, 
+            final MultiKeyMap literalToValue, final Set<Statement> bNodeStatements, 
+            final int layerMask) {
         while (res.hasNext()) {
-            processNextRecord(recordStore, res.next(), subjectToType, literalToValue, bNodeStatements, layerMask);
+            processNextRecord(recordStore, res.next(), literalToValue, bNodeStatements, layerMask);
         }
     }
 
-    public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
+    public static void processNextRecord(final GraphRecordStore recordStore, final Statement statement, 
+            final MultiKeyMap literalToValue, final Set<Statement> bNodeStatements, 
+            final int layerMask) {
         if (VERBOSE) {
             LOGGER.info("Processing next record...");
         }
@@ -174,6 +184,15 @@ public class RDFUtilities {
 //            }
 //
 //        } else
+
+            // Populate the map with Consty Node Types from the mapping file
+            // We might need to add this in a seperate function, when we read from a seperate mapping file
+            final String objectStringLowerCase = StringUtils.lowerCase(object.stringValue());
+            if ("subclassof".equalsIgnoreCase(predicateName) 
+                    && RDFSchemaFactory.constellationRDFTypes.containsValue(objectStringLowerCase)) {
+                constellationTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
+            }
+
             if (addAttributes || ("type".equals(predicateName) && subject instanceof BNode)) { // literal object values are added as Vertex properties
                 if (VERBOSE) {
                     LOGGER.log(Level.INFO, "Adding Literal \"{0}\"", objectName);
@@ -208,9 +227,8 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-            } else if ("type".equals(predicateName)) {//TODO need to handle TYPE of BNODES seperately here
+            } else if ("type".equals(StringUtils.lowerCase(predicateName))) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
-                final String subjectIdentifier = StringUtils.trim(subject.stringValue()).toLowerCase();
                 if (subject instanceof IRI) {
                     recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
                 } else {//Subject is  a BNode
@@ -220,15 +238,16 @@ public class RDFUtilities {
                 }
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+                
+                // Set RDF Types
+                // If there are multiple types, they'll be added as a CSV (by the ConcatenatedSetGraphAttributeMerger)
+                // E.g.: "http://www.constellation-app.com/ns#person,http://www.w3.org/2000/01/rdf-schema#resource"
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFTYPES, objectStringLowerCase);
 
-                //If there are multiple types, add them CSV (E.g.: "ind:The_Beatles a music:Band, music:Artist ;")
-                String value = object.stringValue(); //objectName;
-                if (subjectToType.containsKey(subjectIdentifier) && !value.isBlank()) {
-                    value = subjectToType.get(subjectIdentifier) + ", " + value;
+                // Set "Constellation RDF Types" based on "RDF Types" (If there are multiple types, they'll be added as a CSV)
+                if (constellationTypesMap.containsKey(objectStringLowerCase)) {
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES, constellationTypesMap.get(objectStringLowerCase));
                 }
-                subjectToType.put(subjectIdentifier, value);
-
-                //TODO Map the RDF Type in objectName to Consty type
             } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
                 {
                     recordStore.add();
@@ -243,7 +262,7 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
                 if (StringUtils.isNotBlank(objectName)) {
-                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(object.stringValue()).toLowerCase());
+                    recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, StringUtils.trim(objectStringLowerCase));
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.LABEL, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
@@ -424,25 +443,6 @@ public class RDFUtilities {
                     wg.setStringValue(newAttribute, currentVertexId, (String) value);
                 }
             });
-        }
-    }
-
-    public static void setRDFTypesVertexAttribute(GraphWriteMethods wg, final Map<String, String> subjectToType) {
-        // Add the Vertex RDF_types attribute based on subjectToType map
-        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
-        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
-        final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
-        final int graphVertexCount = wg.getVertexCount();
-        for (int position = 0; position < graphVertexCount; position++) {
-            final int currentVertexId = wg.getVertex(position);
-            final String label = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
-            if (subjectToType.containsKey(label)) {
-                String value = subjectToType.get(label);
-
-                //Set RDF Types
-                wg.setStringValue(vertexRDFTypeAttributeId, currentVertexId, value);
-
-            }
         }
     }
 }
