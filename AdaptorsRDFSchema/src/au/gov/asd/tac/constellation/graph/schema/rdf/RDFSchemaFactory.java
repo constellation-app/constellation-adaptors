@@ -172,7 +172,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES.ensure(graph);
             final int vertexLabelAttribute = VisualConcept.VertexAttribute.LABEL.ensure(graph);
 
-            SchemaVertexType type;// = graph.getObjectValue(vertexTypeAttribute, vertexId);
+            SchemaVertexType type = graph.getObjectValue(vertexTypeAttribute, vertexId);
 
             //SchemaVertexType constellationrdfType = graph.getObjectValue(vertexRDFTypesAttribute, vertexId);
             final String constellationrdfType = graph.getStringValue(vertexRDFTypesAttribute, vertexId);
@@ -186,17 +186,21 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                 }
             }
 
-            final String label = graph.getStringValue(vertexLabelAttribute, vertexId);
+            final String label = graph.getStringValue(vertexLabelAttribute, vertexId).split("<")[0];
             super.completeVertex(graph, vertexId);
+            final String typeLabel = new StringBuilder("<")
+                                .append(type != null ? type.getName() : "Unknown")
+                                .append(">")
+                                .toString();
             // restore value overwritten by super
-            graph.setStringValue(vertexLabelAttribute, vertexId, label);
+            graph.setStringValue(vertexLabelAttribute, vertexId, label + typeLabel);
             for (int i = 0; i < graph.getAttributeCount(GraphElementType.VERTEX); i++) {
                 final int attribute = graph.getAttribute(GraphElementType.VERTEX, i);
                 if (graph.getAttributeName(attribute).contains("prefLabel")) {
                     final String prefLabel = graph.getStringValue(attribute, vertexId);
                     if (prefLabel != null) {
                         // use prefLabel instead
-                        graph.setStringValue(vertexLabelAttribute, vertexId, prefLabel);
+                        graph.setStringValue(vertexLabelAttribute, vertexId, prefLabel + typeLabel);
                     }
                     break;
                 }
