@@ -22,6 +22,7 @@ import au.gov.asd.tac.constellation.graph.schema.SchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.utilities.VertexDominanceCalculator;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -209,54 +211,15 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             //
             // creating schemavertextypes
             //
-//            LOGGER.info("called RDF resolve type");
-            /**
-             * TODO: Add logic here to look at the RDF type and figure out the
-             * most appropriate Constellation type to use. We could use the
-             * VertexDominanceCalculator or create an RDF version of it if
-             * required.
-             *
-             */
             LOGGER.log(Level.INFO, "TYPE: {0}", constellationrdfType);
-
-            if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.USER_NAME.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.USER_NAME.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.URL.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.URL.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.HOST_NAME.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.HOST_NAME.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_LOCATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_LOCATION.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV6.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV6.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV4.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV4.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.PERSON.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.PERSON.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ORGANISATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ORGANISATION.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.DOCUMENT.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.DOCUMENT.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.GEOHASH.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.GEOHASH.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MGRS.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MGRS.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.COUNTRY.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.COUNTRY.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.LOCATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.LOCATION.getName());
+            
+            final VertexDominanceCalculator domCalc = Lookup.getDefault().lookup(VertexDominanceCalculator.class);
+            final List<SchemaVertexType> types = domCalc.getTypePriority();
+            for (final SchemaVertexType type : types) {
+                if (constellationrdfType.contains(constellationRDFTypes.get(type.getName()))) {
+                    return SchemaVertexTypeUtilities.getType(type.getName());
+                }
             }
-
             return SchemaVertexTypeUtilities.getDefaultType();
         }
     }
