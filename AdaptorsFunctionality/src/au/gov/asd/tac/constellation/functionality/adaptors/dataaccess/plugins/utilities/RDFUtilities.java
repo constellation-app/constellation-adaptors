@@ -55,9 +55,9 @@ public class RDFUtilities {
     private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
 
     final static Map<String, Resource> bnodeToSubject = new HashMap<>();
-    private static final Logger LOGGER = Logger.getLogger(RDFUtilities.class.getName());
     final static Map<String, String> constellationVertexTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
     final static Map<String, String> constellationTransactionTypesMap = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger(RDFUtilities.class.getName());
 
     public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
