@@ -214,7 +214,7 @@ public class ImportFromRDFPluginNGTest {
         // 3) convert the graph into a model
         // 4) load the model into an in RDF4J memory model
         {
-            System.out.println("4) load the model into an in RDF4J memory model");
+            LOGGER.info("4) load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
 
             try ( RepositoryConnection conn = repo.getConnection()) {
@@ -224,7 +224,7 @@ public class ImportFromRDFPluginNGTest {
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
-                        System.out.println("raw triples: " + st);
+                        LOGGER.info("raw triples: " + st);
                     }
                 }
             } finally {
@@ -234,7 +234,7 @@ public class ImportFromRDFPluginNGTest {
 
         // 5.1) apply the RDFS class rules
         {
-            System.out.println("5.1) apply the RDFS class rules");
+            LOGGER.info("5.1) apply the RDFS class rules");
             final Repository repo = new SailRepository(new DirectTypeHierarchyInferencer(new MemoryStore()));
 
             try ( RepositoryConnection conn = repo.getConnection()) {
@@ -244,7 +244,7 @@ public class ImportFromRDFPluginNGTest {
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
-                        System.out.println("direct type inference: " + st);
+                        LOGGER.info("direct type inference: " + st);
                     }
                 }
 
@@ -297,7 +297,7 @@ public class ImportFromRDFPluginNGTest {
 
         // 5.2) apply the custom inferencing rules
         {
-            System.out.println("5.2) apply custom inferencing");
+            LOGGER.info("5.2) apply custom inferencing");
             String pre = "PREFIX : <http://foo.org/bar#>\n";
             String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
                     + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
@@ -312,7 +312,7 @@ public class ImportFromRDFPluginNGTest {
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
-                        System.out.println("custom inference: " + st);
+                        LOGGER.info("custom inference: " + st);
                     }
                 }
 
@@ -334,7 +334,7 @@ public class ImportFromRDFPluginNGTest {
 
         // 5.3) apply the SHACL inferencing rules
         {
-            System.out.println("5.3) apply shacl inferencing");
+            LOGGER.info("5.3) apply shacl inferencing");
             final Repository repo = new SailRepository(new ShaclSail(new MemoryStore()));
             repo.init();
             try ( RepositoryConnection conn = repo.getConnection()) {
@@ -368,12 +368,12 @@ public class ImportFromRDFPluginNGTest {
                     Throwable cause = exception.getCause();
                     if (cause instanceof ShaclSailValidationException) {
                         ValidationReport validationReport = ((ShaclSailValidationException) cause).getValidationReport();
-                        System.out.println("validationReport=" + validationReport);
+                        LOGGER.info("validationReport=" + validationReport);
 
                         Model validationReportModel = ((ShaclSailValidationException) cause).validationReportAsModel();
                         //Rio.write(validationReportModel, System.out, RDFFormat.TURTLE);
                         for (Statement st : validationReportModel.getStatements(null, null, null)) {
-                            System.out.println("validationReportModel: " + st);
+                            LOGGER.info("validationReportModel: " + st);
                         }
                     }
                     fail(exception.toString());
@@ -382,7 +382,7 @@ public class ImportFromRDFPluginNGTest {
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
-                        System.out.println("shacl inference: " + st);
+                        LOGGER.info("shacl inference: " + st);
                     }
                 }
 
@@ -407,12 +407,12 @@ public class ImportFromRDFPluginNGTest {
                     assertTrue(cause instanceof ShaclSailValidationException, "Exception wrong type: " + cause.toString());
                     if (cause instanceof ShaclSailValidationException) {
                         ValidationReport validationReport = ((ShaclSailValidationException) cause).getValidationReport();
-                        System.out.println("validationReport=" + validationReport);
+                        LOGGER.info("validationReport=" + validationReport);
 
                         Model validationReportModel = ((ShaclSailValidationException) cause).validationReportAsModel();
                         //Rio.write(validationReportModel, System.out, RDFFormat.TURTLE);
                         for (Statement st : validationReportModel.getStatements(null, null, null)) {
-                            System.out.println("validationReportModel: " + st);
+                            LOGGER.info("validationReportModel: " + st);
                         }
                     }
                 }
@@ -490,7 +490,7 @@ public class ImportFromRDFPluginNGTest {
             // add it to a consty graph using RDFUtilities.PopulateRecordStore()
             // convert the graph into a model
             // load the model into an in RDF4J memory model
-            System.out.println("load the model into an in RDF4J memory model");
+            LOGGER.info("load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
             try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
@@ -500,9 +500,9 @@ public class ImportFromRDFPluginNGTest {
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         rawCount++;
-                        //System.out.println("db contains: " + st);
+                        //LOGGER.info("db contains: " + st);
                     }
-                    System.out.println("db raw count: " + rawCount);
+                    LOGGER.info("db raw count: " + rawCount);
                 }
             } finally {
                 repo.shutDown();
@@ -521,9 +521,9 @@ public class ImportFromRDFPluginNGTest {
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         inferenceCount++;
-                        //System.out.println("db now contains: " + st);
+                        //LOGGER.info("db now contains: " + st);
                     }
-                    System.out.println("after inference count: " + inferenceCount);
+                    LOGGER.info("after inference count: " + inferenceCount);
                 }
             }
         }
@@ -578,14 +578,14 @@ public class ImportFromRDFPluginNGTest {
                 int count = 0;
                 for (Statement st : result) {
                     count++;
-                    //System.out.println("db contains: " + st);
+                    //LOGGER.info("db contains: " + st);
                 }
-                System.out.println("inference count: " + count);
+                LOGGER.info("inference count: " + count);
             }
             /*
             try (RepositoryResult<Statement> result = conn.getStatements(null, RDF.TYPE, null)) {
                 for (Statement st : result) {
-                    System.out.println(RDF.TYPE + ": " + st);
+                    LOGGER.info(RDF.TYPE + ": " + st);
                 }
             }
              */
@@ -941,7 +941,7 @@ public class ImportFromRDFPluginNGTest {
             manager = OWLManager.createOWLOntologyManager();
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             assertNotNull(ontology);
-            System.out.println("Ontology: " + ontology);
+            LOGGER.info("Ontology: " + ontology);
         }
 
         // read the data into a model
@@ -952,10 +952,10 @@ public class ImportFromRDFPluginNGTest {
 //
 //            OWLOntology o = manager.loadOntologyFromOntologyDocument(inputStream);
 //            assertNotNull(o);
-//            System.out.println("Data: " + o);
+//            LOGGER.info("Data: " + o);
 //            ontology.addAxioms(o.axioms());
 //        }
-//        System.out.println("Combined: " + ontology);
+//        LOGGER.info("Combined: " + ontology);
         // get and configure a reasoner (HermiT)
         OWLReasonerFactory reasonerFactory = new ReasonerFactory();
         ConsoleProgressMonitor progressMonitor = new ConsoleProgressMonitor();
@@ -994,7 +994,7 @@ public class ImportFromRDFPluginNGTest {
         int count = 0;
         for (OWLNamedIndividual ind : individuals) {
             count++;
-            System.out.println("------------------------------------");
+            LOGGER.info("------------------------------------");
 
             // get the info about this specific individual
             Set<OWLLiteral> names = reasoner.getDataPropertyValues(ind, studentName);
@@ -1004,34 +1004,34 @@ public class ImportFromRDFPluginNGTest {
 
             // we know there is a single name for each person so we can get that value directly
             String name = names.iterator().next().getLiteral();
-            System.out.println("Name:     " + name);
+            LOGGER.info("Name:     " + name);
 
             // we know there is a single name for each person so we can get that value directly
             String emailAddr = emailAddrs.iterator().next().getLiteral();
-            System.out.println("Email:    " + emailAddr);
+            LOGGER.info("Email:    " + emailAddr);
 
             // at least one direct type is guaranteed to exist for each individual
             OWLClass type = types.iterator().next().getRepresentativeElement();
-            System.out.println("Type:     " + type.getIRI().getShortForm());
-            System.out.print("Types:   ");
+            LOGGER.info("Type:     " + type.getIRI().getShortForm());
+            LOGGER.info("    Types:   ");
             for (Node<OWLClass> typeNode : types) {
-                System.out.print(" " + typeNode.getRepresentativeElement().getIRI().getShortForm());
+                LOGGER.info("    " + typeNode.getRepresentativeElement().getIRI().getShortForm());
             }
-            System.out.println();
+            LOGGER.info("");
 
             // there may be zero or more homepages so check first if there are any found
             if (courses.isEmpty()) {
-                System.out.print("Courses:  None");
+                LOGGER.info("    Courses:  None");
             } else {
-                System.out.print("Courses: ");
+                LOGGER.info("    Courses: ");
                 for (Node<OWLNamedIndividual> course : courses) {
-                    System.out.print(" " + course.getRepresentativeElement().getIRI().getShortForm());
+                    LOGGER.info("    " + course.getRepresentativeElement().getIRI().getShortForm());
                 }
             }
-            System.out.println();
+            LOGGER.info("");
         }
-        System.out.println("------------------------------------");
-        System.out.println("Query 6:  " + count); // This is equiv to LUBM Query 6
+        LOGGER.info("------------------------------------");
+        LOGGER.info("Query 6:  " + count); // This is equiv to LUBM Query 6
         assertEquals(count, 678); // 532 + 146 is the correct answer. Awesome!
 
         // Test serialising the ontology back to triples
@@ -1357,7 +1357,7 @@ public class ImportFromRDFPluginNGTest {
         // TODO: how can you apply an inferencing rule to the new sail connection?
         // apply the custom inferencing rules
         {
-            System.out.println("5.2) apply custom inferencing");
+            LOGGER.info("5.2) apply custom inferencing");
             String pre = "PREFIX : <http://foo.org/bar#>\n";
             String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
                     + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
@@ -1369,7 +1369,7 @@ public class ImportFromRDFPluginNGTest {
                 // let's check that our data is actually in the database
                 try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
-                        System.out.println("custom inference: " + st);
+                        LOGGER.info("custom inference: " + st);
                     }
                 }
 
@@ -1451,7 +1451,7 @@ public class ImportFromRDFPluginNGTest {
             // let's check that our data is actually in the database
             try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                 for (Statement st : result) {
-                    System.out.println("custom inference: " + st);
+                    LOGGER.info("custom inference: " + st);
                 }
             }
 
@@ -1480,8 +1480,139 @@ public class ImportFromRDFPluginNGTest {
             assertEquals(statement4.getSubject().stringValue(), "http://foo.org/bar#Alice");
             assertEquals(statement4.getPredicate().stringValue(), "http://foo.org/bar#sendsMessageTo");
             assertEquals(statement4.getObject().stringValue(), "http://foo.org/bar#Bob");
+        }
 
-            conn.close();
+        repo.shutDown();
+    }
+
+    /**
+     * Following http://sparql-playground.sib.swiss/ and examples from this
+     * tutorial. Using question 206 in this case.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCustomInferenceWithSparqlPlayground206Example() throws IOException {
+        final Model model = new LinkedHashModel();
+        final String baseURI = "http://foo.org/bar#";
+
+        // read the onology into a model
+        final URL documentUrl = getClass().getResource("./resources/sparql_playground_data.ttl");
+        final InputStream inputStream = documentUrl.openStream();
+        final RDFFormat format = RDFFormat.TURTLE;
+        loadTriples(model, inputStream, baseURI, format);
+
+        String pre = "PREFIX : <http://foo.org/bar#> \n"
+                + "PREFIX dbo: <http://dbpedia.org/ontology/> \n"
+                + "PREFIX dbp: <http://dbpedia.org/property/> \n"
+                + "PREFIX dbpedia: <http://dbpedia.org/resource/> \n"
+                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+                + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n"
+                + "PREFIX tto: <http://example.org/tuto/ontology#> \n"
+                + "PREFIX ttr: <http://example.org/tuto/resource#> \n"
+                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n";
+        String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
+                + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
+        String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
+                + "WHERE { ?p :relatesTo :Cryptography }";
+
+        final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+        try ( RepositoryConnection conn = repo.getConnection()) {
+            conn.add(model);
+            // let's check that our data is actually in the database
+            try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
+                for (Statement st : result) {
+                    LOGGER.info("custom inference: " + st);
+                }
+            }
+        }
+
+        try ( RepositoryConnection conn = repo.getConnection()) {
+            String queryString = "select ?person ?pet where {\n"
+                    + " ?person rdf:type dbo:Person .\n"
+                    + "	?person tto:pet ?pet .\n"
+                    + "}";
+            TupleQuery tupleQuery = conn.prepareTupleQuery(pre + queryString);
+            try ( TupleQueryResult result = tupleQuery.evaluate()) {
+                while (result.hasNext()) {
+                    BindingSet bindingSet = result.next();
+                    Value person = bindingSet.getValue("person");
+                    Value pet = bindingSet.getValue("pet");
+                    LOGGER.info("person = " + person + ", pet = " + pet);
+                }
+            }
+        }
+
+        repo.shutDown();
+    }
+
+    @Test
+    public void testCustomInferenceWithConstellationSimpleExample() throws IOException {
+        final Model model = new LinkedHashModel();
+        final String baseURI = "http://foo.org/bar#";
+
+        // read the onology into a model
+        final URL documentUrl = getClass().getResource("./resources/constellation_simple.ttl");
+        final InputStream inputStream = documentUrl.openStream();
+        final RDFFormat format = RDFFormat.TURTLE;
+        loadTriples(model, inputStream, baseURI, format);
+
+        String pre = "PREFIX :          <http://www.constellation-app.com/ns#> \n"
+                + "PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+                + "PREFIX rdfs:      <http://www.w3.org/2000/01/rdf-schema#> \n"
+                + "PREFIX owl:       <http://www.w3.org/2002/07/owl#> \n"
+                + "PREFIX xsd:       <http://www.w3.org/2001/XMLSchema#> \n"
+                + "PREFIX acl:       <http://www.w3.org/ns/auth/acl#> \n"
+                + "PREFIX cc:        <http://creativecommons.org/ns#> \n"
+                + "PREFIX cert:      <http://www.w3.org/ns/auth/cert#> \n"
+                + "PREFIX csvw:      <http://www.w3.org/ns/csvw#> \n"
+                + "PREFIX dc:        <http://purl.org/dc/terms/> \n"
+                + "PREFIX dcam:      <http://purl.org/dc/dcam/> \n"
+                + "PREFIX dcat:      <http://www.w3.org/ns/dcat#> \n"
+                + "PREFIX dctype:    <http://purl.org/dc/dcmitype/> \n"
+                + "PREFIX foaf:      <http://xmlns.com/foaf/0.1/> \n"
+                + "PREFIX ldp:       <http://www.w3.org/ns/ldp#> \n"
+                + "PREFIX posixstat: <http://www.w3.org/ns/posix/stat#> \n"
+                + "PREFIX schema:    <https://schema.org/> \n"
+                + "PREFIX shacl:     <http://www.w3.org/ns/shacl#> \n"
+                + "PREFIX skos:      <http://www.w3.org/2004/02/skos/core#> \n"
+                + "PREFIX skosxl:    <http://www.w3.org/2008/05/skos-xl#> \n"
+                + "PREFIX solid:     <http://www.w3.org/ns/solid/terms#> \n"
+                + "PREFIX swapdoc:   <http://www.w3.org/2000/10/swap/pim/doc#> \n"
+                + "PREFIX ui:        <http://www.w3.org/ns/ui#> \n"
+                + "PREFIX vann:      <http://purl.org/vocab/vann/> \n"
+                + "PREFIX vcard:     <http://www.w3.org/2006/vcard/ns#> \n"
+                + "PREFIX vs:        <http://www.w3.org/2003/06/sw-vocab-status/ns#> \n"
+                + "PREFIX ws:        <http://www.w3.org/ns/pim/space#> \n";
+
+        String rule = pre + "CONSTRUCT { ?p :relatesTo :Living } WHERE "
+                + "{ { :Person :locatedNear :City } }";
+        String match = pre + "CONSTRUCT { ?p :relatesTo :Living } "
+                + "WHERE { ?p :relatesTo :Living }";
+
+        final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+        try ( RepositoryConnection conn = repo.getConnection()) {
+            conn.add(model);
+            // let's check that our data is actually in the database
+            try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
+                for (Statement st : result) {
+                    LOGGER.info("custom inference: " + st);
+                }
+            }
+        }
+
+        try ( RepositoryConnection conn = repo.getConnection()) {
+            String queryString = "select ?thing where {\n"
+                    + "  ?thing :locatedNear :canberra .\n"
+                    + "}";
+            TupleQuery tupleQuery = conn.prepareTupleQuery(pre + queryString);
+            try ( TupleQueryResult result = tupleQuery.evaluate()) {
+                while (result.hasNext()) {
+                    BindingSet bindingSet = result.next();
+                    Value person = bindingSet.getValue("thing");
+                    LOGGER.log(Level.INFO, "thing = {0}", person);
+                }
+            }
         }
 
         repo.shutDown();
