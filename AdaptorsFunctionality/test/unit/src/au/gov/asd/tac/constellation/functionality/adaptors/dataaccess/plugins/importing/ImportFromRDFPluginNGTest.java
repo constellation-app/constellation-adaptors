@@ -160,7 +160,7 @@ public class ImportFromRDFPluginNGTest {
         final RecordStore result = instance.query(query, interaction, parameters);
 
         final Set<String> expectedIdentifiers = new TreeSet(result.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
-        
+
         final Set<String> actualIdentifiers = new TreeSet<>();
         actualIdentifiers.add("Bill_Wyman");
         actualIdentifiers.add("Charlie_Watts");
@@ -177,7 +177,7 @@ public class ImportFromRDFPluginNGTest {
         actualIdentifiers.add("The_Beatles");
         actualIdentifiers.add("The_Stones");
         actualIdentifiers.add("White_Album");
-        
+
         assertEquals(expectedIdentifiers, actualIdentifiers);
 
         // TODO
@@ -217,12 +217,12 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("4) load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
 
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         System.out.println("raw triples: " + st);
                     }
@@ -237,22 +237,22 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("5.1) apply the RDFS class rules");
             final Repository repo = new SailRepository(new DirectTypeHierarchyInferencer(new MemoryStore()));
 
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         System.out.println("direct type inference: " + st);
                     }
                 }
 
                 // what type is Bob? This should be easy.
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#Bob"),
                         SESAME.DIRECTTYPE,
-                        null);) {
+                        null)) {
                     assertTrue(result.hasNext());
                     Statement st = result.next();
                     assertEquals(st.getObject().stringValue(), "http://foo.org/bar#Man");
@@ -260,10 +260,10 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // what type is Alice? This is harder because there are multiple options.
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#Alice"),
                         SESAME.DIRECTTYPE,
-                        null);) {
+                        null)) {
                     assertTrue(result.hasNext());
                     assertEquals(result.next().getObject().stringValue(), "http://foo.org/bar#Woman");
                     assertTrue(result.hasNext());
@@ -272,20 +272,20 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // what type is the action exchangesKeysWith'?
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#exchangesKeysWith"),
                         SESAME.DIRECTTYPE,
-                        null);) {
+                        null)) {
                     assertTrue(result.hasNext());
                     assertEquals(result.next().getObject().stringValue(), RDF.PROPERTY.toString());
                     assertFalse(result.hasNext());
                 }
 
                 // what type is the attribute 'age'?
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         VF.createIRI("http://foo.org/bar#age"),
                         SESAME.DIRECTTYPE,
-                        null);) {
+                        null)) {
                     assertTrue(result.hasNext());
                     assertEquals(result.next().getObject().stringValue(), RDF.PROPERTY.toString());
                     assertFalse(result.hasNext());
@@ -305,22 +305,22 @@ public class ImportFromRDFPluginNGTest {
                     + "WHERE { ?p :relatesTo :Cryptography }";
 
             final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         System.out.println("custom inference: " + st);
                     }
                 }
 
                 // check the new triples are added
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         null,
                         VF.createIRI("http://foo.org/bar#relatesTo"),
-                        VF.createIRI("http://foo.org/bar#Cryptography"));) {
+                        VF.createIRI("http://foo.org/bar#Cryptography"))) {
                     assertTrue(result.hasNext());
                     assertEquals(result.next().getSubject().stringValue(), "http://foo.org/bar#sendsMessageTo");
                     assertTrue(result.hasNext());
@@ -337,7 +337,7 @@ public class ImportFromRDFPluginNGTest {
             System.out.println("5.3) apply shacl inferencing");
             final Repository repo = new SailRepository(new ShaclSail(new MemoryStore()));
             repo.init();
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // start a transaction
                 conn.begin();
 
@@ -380,7 +380,7 @@ public class ImportFromRDFPluginNGTest {
                 }
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         System.out.println("shacl inference: " + st);
                     }
@@ -425,7 +425,7 @@ public class ImportFromRDFPluginNGTest {
     }
 
     private void loadTriples(Model model, InputStream inputStream, String baseURI, RDFFormat format) throws IOException {
-        try (GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
+        try ( GraphQueryResult res = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
             while (res.hasNext()) {
                 //LOGGER.info("Processing next record...");
 
@@ -492,12 +492,12 @@ public class ImportFromRDFPluginNGTest {
             // load the model into an in RDF4J memory model
             System.out.println("load the model into an in RDF4J memory model");
             final Repository repo = new SailRepository(new MemoryStore());
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         rawCount++;
                         //System.out.println("db contains: " + st);
@@ -513,12 +513,12 @@ public class ImportFromRDFPluginNGTest {
         {
             // apply the RDFS inferencing rules
             final Repository repo = new SailRepository(new SchemaCachingRDFSInferencer(new MemoryStore(), true));
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // add the model
                 conn.add(model);
 
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         inferenceCount++;
                         //System.out.println("db now contains: " + st);
@@ -569,12 +569,12 @@ public class ImportFromRDFPluginNGTest {
                         new DirectTypeHierarchyInferencer(
                                 new SchemaCachingRDFSInferencer(
                                         new MemoryStore(), true))));
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
 
             // let's check that our data is actually in the database
-            try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+            try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                 int count = 0;
                 for (Statement st : result) {
                     count++;
@@ -583,7 +583,7 @@ public class ImportFromRDFPluginNGTest {
                 System.out.println("inference count: " + count);
             }
             /*
-            try (RepositoryResult<Statement> result = conn.getStatements(null, RDF.TYPE, null);) {
+            try (RepositoryResult<Statement> result = conn.getStatements(null, RDF.TYPE, null)) {
                 for (Statement st : result) {
                     System.out.println(RDF.TYPE + ": " + st);
                 }
@@ -1084,7 +1084,7 @@ public class ImportFromRDFPluginNGTest {
                                 new SchemaCachingRDFSInferencer(sail, true))));
 
         // Add records via RDF4J connection
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         } finally {
@@ -1230,7 +1230,7 @@ public class ImportFromRDFPluginNGTest {
         }
 
         // setting up the connection first time adds some baseline triples
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
         }
 
@@ -1251,7 +1251,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(141, sail.getModel().size());
 
         // Add records via RDF4J connection
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         }
@@ -1327,7 +1327,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(0, sail.getModel().size());
 
         // setting up the connection first time adds some baseline triples
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             Assert.isTrue(repo.isInitialized());
         }
 
@@ -1347,7 +1347,7 @@ public class ImportFromRDFPluginNGTest {
         Assert.equals(2, model.size());
 
         // Add records via RDF4J connection
-        try (RepositoryConnection conn = repo.getConnection()) {
+        try ( RepositoryConnection conn = repo.getConnection()) {
             // add the model
             conn.add(model);
         }
@@ -1365,19 +1365,19 @@ public class ImportFromRDFPluginNGTest {
                     + "WHERE { ?p :relatesTo :Cryptography }";
 
 //            final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
-            try (RepositoryConnection conn = repo.getConnection()) {
+            try ( RepositoryConnection conn = repo.getConnection()) {
                 // let's check that our data is actually in the database
-                try (RepositoryResult<Statement> result = conn.getStatements(null, null, null);) {
+                try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
                     for (Statement st : result) {
                         System.out.println("custom inference: " + st);
                     }
                 }
 
                 // check the new triples are added
-                try (RepositoryResult<Statement> result = conn.getStatements(
+                try ( RepositoryResult<Statement> result = conn.getStatements(
                         null,
                         sail.getValueFactory().createIRI("http://foo.org/bar#relatesTo"),
-                        sail.getValueFactory().createIRI("http://foo.org/bar#Cryptography"));) {
+                        sail.getValueFactory().createIRI("http://foo.org/bar#Cryptography"))) {
 //                    assertTrue(result.hasNext());
 //                    assertEquals(result.next().getSubject().stringValue(), "http://foo.org/bar#sendsMessageTo");
 //                    assertTrue(result.hasNext());
@@ -1414,6 +1414,77 @@ public class ImportFromRDFPluginNGTest {
             return count.get();
         }
 
+    }
+
+    /**
+     * testCustomInferenceWithBobAndAliceExample proves custom inferencing
+     * working using an RDF4J model. This is a good benchmark test that we can
+     * use to prove our own custom inferencing working without the Constellation
+     * schema or RecordStore. See
+     * https://rdf4j.org/documentation/programming/repository/#custom-inferencing
+     * for details on where the inferencing was taken from.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCustomInferenceWithBobAndAliceExample() throws IOException {
+        final Model model = new LinkedHashModel();
+        final String baseURI = "http://foo.org/bar#";
+
+        // read the onology into a model
+        final URL documentUrl = getClass().getResource("./resources/simple.ttl");
+        final InputStream inputStream = documentUrl.openStream();
+        final RDFFormat format = RDFFormat.TURTLE;
+        loadTriples(model, inputStream, baseURI, format);
+
+        Assert.equals(2, model.size());
+
+        String pre = "PREFIX : <http://foo.org/bar#>\n";
+        String rule = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } WHERE "
+                + "{ { :Bob ?p :Alice } UNION { :Alice ?p :Bob } }";
+        String match = pre + "CONSTRUCT { ?p :relatesTo :Cryptography } "
+                + "WHERE { ?p :relatesTo :Cryptography }";
+
+        final Repository repo = new SailRepository(new CustomGraphQueryInferencer(new MemoryStore(), QueryLanguage.SPARQL, rule, match));
+        try ( RepositoryConnection conn = repo.getConnection()) {
+            conn.add(model);
+            // let's check that our data is actually in the database
+            try ( RepositoryResult<Statement> result = conn.getStatements(null, null, null)) {
+                for (Statement st : result) {
+                    System.out.println("custom inference: " + st);
+                }
+            }
+
+            // let's run it again and do some assertions
+            final RepositoryResult<Statement> result = conn.getStatements(null, null, null);
+            assertTrue(result.hasNext());
+            final Statement statement1 = result.next();
+            assertEquals(statement1.getSubject().stringValue(), "http://foo.org/bar#sendsMessageTo");
+            assertEquals(statement1.getPredicate().stringValue(), "http://foo.org/bar#relatesTo"); // <-- inteference worked!
+            assertEquals(statement1.getObject().stringValue(), "http://foo.org/bar#Cryptography"); // <-- inteference worked!
+
+            assertTrue(result.hasNext());
+            final Statement statement2 = result.next();
+            assertEquals(statement2.getSubject().stringValue(), "http://foo.org/bar#exchangesKeysWith");
+            assertEquals(statement2.getPredicate().stringValue(), "http://foo.org/bar#relatesTo"); // <-- inteference worked!
+            assertEquals(statement2.getObject().stringValue(), "http://foo.org/bar#Cryptography"); // <-- inteference worked!
+
+            assertTrue(result.hasNext());
+            final Statement statement3 = result.next();
+            assertEquals(statement3.getSubject().stringValue(), "http://foo.org/bar#Bob");
+            assertEquals(statement3.getPredicate().stringValue(), "http://foo.org/bar#exchangesKeysWith");
+            assertEquals(statement3.getObject().stringValue(), "http://foo.org/bar#Alice");
+
+            assertTrue(result.hasNext());
+            final Statement statement4 = result.next();
+            assertEquals(statement4.getSubject().stringValue(), "http://foo.org/bar#Alice");
+            assertEquals(statement4.getPredicate().stringValue(), "http://foo.org/bar#sendsMessageTo");
+            assertEquals(statement4.getObject().stringValue(), "http://foo.org/bar#Bob");
+
+            conn.close();
+        }
+
+        repo.shutDown();
     }
 
 }
