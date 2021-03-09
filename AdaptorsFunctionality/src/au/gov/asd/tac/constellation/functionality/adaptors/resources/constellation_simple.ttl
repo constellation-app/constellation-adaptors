@@ -46,7 +46,7 @@
 
 :locatedNear
     a               rdf:Property ;
-    rdfs:subClassOf :NodeCustomAttribute ;    
+    rdfs:subClassOf con:TransactionTypeLocation ; 
     rdfs:label      "Located Near" .
 
 :Country
@@ -57,6 +57,18 @@
     a               rdfs:Class ;    
     rdfs:comment    "This represents a city." ;
     rdfs:subClassOf :NodeTypeLocation .
+	
+:toTransaction
+	rdfs:subClassOf con:TransactionTypeCommunication ; 
+    rdf:type    rdf:Property ;
+    rdfs:domain :Node ;
+    rdfs:range  :Transaction .
+
+:fromTransaction
+	rdfs:subClassOf con:TransactionTypeCommunication ; 
+    rdf:type    rdf:Property ;
+    rdfs:domain :Transaction ;
+    rdfs:range  :Node .
 
 # Some graph instances data
 
@@ -79,15 +91,17 @@
     a            :Person ;
     rdfs:label   "Person 1" ;
     rdfs:comment "First vertex." ; 
+	:toTransaction :person2 ;
     :locatedNear :sydney .
 
 :person2
     a            :Person ;
     rdfs:label   "Person 2" ;
     rdfs:comment "Second vertex." ;
+	:fromTransaction :person1 ;
     :locatedNear :canberra .
 
-# Types
+# Node Types
 
 :NodeTypePerson
     rdf:type         rdfs:Class ;   
@@ -107,5 +121,43 @@
     rdf:type         rdfs:Class ;   
     rdfs:label       "NodeTypeCountry" ;
     rdfs:comment     "" ;   
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+	
+# Transaction Types
+
+:TransactionTypeCommunication
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Communication" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeCorrelation
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Correlation" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeCreated
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Created" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
+    vs:term_status   "stable" ;
+    rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
+
+:TransactionTypeLocation
+    rdf:type         owl:Class ;
+    rdfs:subClassOf  :TransactionType ;
+    rdfs:label       "Location" ;
+    rdfs:comment     "" ;
+    rdfs:range       xsd:string ;
     vs:term_status   "stable" ;
     rdfs:isDefinedBy <http://www.constellation-app.com/ns> .
