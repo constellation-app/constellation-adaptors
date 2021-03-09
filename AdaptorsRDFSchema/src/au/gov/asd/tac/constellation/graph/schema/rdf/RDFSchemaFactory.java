@@ -26,6 +26,8 @@ import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcep
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
+import au.gov.asd.tac.constellation.graph.schema.type.SchemaTransactionType;
+import au.gov.asd.tac.constellation.graph.schema.type.SchemaTransactionTypeUtilities;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
 import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexTypeUtilities;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
@@ -58,27 +60,40 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
     private static final Logger LOGGER = Logger.getLogger(RDFSchemaFactory.class.getName());
 
-    final public static Map<String, String> constellationRDFTypes = new HashMap<>();
+    final public static Map<String, String> constellationVertexRDFTypes = new HashMap<>();
+    final public static Map<String, String> constellationTransactionRDFTypes = new HashMap<>();
 
     static {
-        constellationRDFTypes.put(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypetelephoneidentifier");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName(), "http://www.constellation-app.com/ns#nodetypeemail");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.USER_NAME.getName(), "http://www.constellation-app.com/ns#nodetypeusername");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypeonlineidentifier");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.URL.getName(), "http://www.constellation-app.com/ns#nodetypeurl");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.HOST_NAME.getName(), "http://www.constellation-app.com/ns#nodetypehostname");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.ONLINE_LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypeonlinelocation");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypemachineidentifier");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.IPV6.getName(), "http://www.constellation-app.com/ns#nodetypeipv6");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.IPV4.getName(), "http://www.constellation-app.com/ns#nodetypeipv4");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypenetworkidentifier");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.PERSON.getName(), "http://www.constellation-app.com/ns#nodetypeperson");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.ORGANISATION.getName(), "http://www.constellation-app.com/ns#nodetypeorganisation");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.DOCUMENT.getName(), "http://www.constellation-app.com/ns#nodetypedocument");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.GEOHASH.getName(), "http://www.constellation-app.com/ns#nodetypegeohash");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.MGRS.getName(), "http://www.constellation-app.com/ns#nodetypemgrs");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.COUNTRY.getName(), "http://www.constellation-app.com/ns#nodetypecountry");
-        constellationRDFTypes.put(AnalyticConcept.VertexType.LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypelocation");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypetelephoneidentifier");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName(), "http://www.constellation-app.com/ns#nodetypeemail");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.USER_NAME.getName(), "http://www.constellation-app.com/ns#nodetypeusername");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypeonlineidentifier");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.URL.getName(), "http://www.constellation-app.com/ns#nodetypeurl");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.HOST_NAME.getName(), "http://www.constellation-app.com/ns#nodetypehostname");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.ONLINE_LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypeonlinelocation");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypemachineidentifier");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.IPV6.getName(), "http://www.constellation-app.com/ns#nodetypeipv6");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.IPV4.getName(), "http://www.constellation-app.com/ns#nodetypeipv4");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypenetworkidentifier");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.PERSON.getName(), "http://www.constellation-app.com/ns#nodetypeperson");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.ORGANISATION.getName(), "http://www.constellation-app.com/ns#nodetypeorganisation");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.DOCUMENT.getName(), "http://www.constellation-app.com/ns#nodetypedocument");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.GEOHASH.getName(), "http://www.constellation-app.com/ns#nodetypegeohash");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.MGRS.getName(), "http://www.constellation-app.com/ns#nodetypemgrs");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.COUNTRY.getName(), "http://www.constellation-app.com/ns#nodetypecountry");
+        constellationVertexRDFTypes.put(AnalyticConcept.VertexType.LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypelocation");
+    }
+
+    static {
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.COMMUNICATION.getName(), "http://www.constellation-app.com/ns#transactiontypecommunication");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.CORRELATION.getName(), "http://www.constellation-app.com/ns#transactiontypecorrelation");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.LOCATION.getName(), "http://www.constellation-app.com/ns#transactiontypelocation");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.NETWORK.getName(), "http://www.constellation-app.com/ns#transactiontypenetwork");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.RELATIONSHIP.getName(), "http://www.constellation-app.com/ns#transactiontyperelationship");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.BEHAVIOUR.getName(), "http://www.constellation-app.com/ns#transactiontypebehaviour");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.SIMILARITY.getName(), "http://www.constellation-app.com/ns#transactiontypesimilarity");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.CREATED.getName(), "http://www.constellation-app.com/ns#transactiontypecreated");
+        constellationTransactionRDFTypes.put(AnalyticConcept.TransactionType.REFERENCED.getName(), "http://www.constellation-app.com/ns#transactiontypereferenced");
     }
 
     @Override
@@ -205,45 +220,100 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
             LOGGER.log(Level.INFO, "TYPE: {0}", constellationrdfType);
 
-            if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName()))) {
+            if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.USER_NAME.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.USER_NAME.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.USER_NAME.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.URL.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.URL.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.URL.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.HOST_NAME.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.HOST_NAME.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.HOST_NAME.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_LOCATION.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ONLINE_LOCATION.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_LOCATION.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV6.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.IPV6.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV6.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV4.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.IPV4.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV4.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.PERSON.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.PERSON.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.PERSON.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ORGANISATION.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ORGANISATION.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ORGANISATION.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.DOCUMENT.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.DOCUMENT.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.DOCUMENT.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.GEOHASH.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.GEOHASH.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.GEOHASH.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MGRS.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.MGRS.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MGRS.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.COUNTRY.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.COUNTRY.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.COUNTRY.getName());
-            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.LOCATION.getName()))) {
+            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.LOCATION.getName()))) {
                 return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.LOCATION.getName());
             }
 
             return SchemaVertexTypeUtilities.getDefaultType();
+        }
+
+
+        @Override
+        public void newTransaction(final GraphWriteMethods graph, final int transactionId) {
+            super.newTransaction(graph, transactionId);
+
+            graph.validateKey(GraphElementType.TRANSACTION, transactionId, false);
+            completeTransaction(graph, transactionId);
+        }
+
+        @Override
+        public void completeTransaction(final GraphWriteMethods graph, final int transactionId) {
+            final int transactionTypeAttribute = AnalyticConcept.TransactionAttribute.TYPE.ensure(graph);
+            final int transactionRDFTypesAttribute = RDFConcept.TransactionAttribute.CONSTELLATIONRDFTYPES.ensure(graph);
+
+            SchemaTransactionType type = graph.getObjectValue(transactionTypeAttribute, transactionId);
+
+            final String constellationrdfType = graph.getStringValue(transactionRDFTypesAttribute, transactionId);
+
+            if (constellationrdfType != null) {
+                type = resolveTransactionType(constellationrdfType);
+
+                if (type != null && type != SchemaTransactionTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(transactionTypeAttribute, transactionId))) {
+                    graph.setObjectValue(transactionTypeAttribute, transactionId, type);
+                }
+            }
+            super.completeTransaction(graph, transactionId);
+
+        }
+
+        @Override
+        public SchemaTransactionType resolveTransactionType(final String constellationrdfType) {
+
+            if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.COMMUNICATION.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.COMMUNICATION.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.CORRELATION.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.CORRELATION.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.LOCATION.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.LOCATION.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.NETWORK.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.NETWORK.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.RELATIONSHIP.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.RELATIONSHIP.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.BEHAVIOUR.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.BEHAVIOUR.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.SIMILARITY.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.SIMILARITY.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.CREATED.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.CREATED.getName());
+            } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.REFERENCED.getName()))) {
+                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.REFERENCED.getName());
+            }
+
+            return SchemaTransactionTypeUtilities.getDefaultType();
         }
 
         @Override
