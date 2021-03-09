@@ -60,7 +60,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
     public static final String RULE_QUERY_PARAMETER_ID = PluginParameter.buildId(CustomInferencerPlugin.class, "rule_query");
     public static final String MATCH_QUERY_PARAMETER_ID = PluginParameter.buildId(CustomInferencerPlugin.class, "match_query");
 
-    private static int layer_Mask = 9;
+    private static int LAYER_MASK = 1 | (1 << 6);
 
     final Map<String, String> subjectToType = new HashMap<>();
     final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
@@ -91,7 +91,7 @@ public class CustomInferencerPlugin extends SimpleEditPlugin implements DataAcce
             conn.add(model);
 
             try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, literalToValue, layer_Mask);
+                RDFUtilities.PopulateRecordStore(results, repositoryResult, subjectToType, literalToValue, LAYER_MASK);
             }
 
         } finally {
