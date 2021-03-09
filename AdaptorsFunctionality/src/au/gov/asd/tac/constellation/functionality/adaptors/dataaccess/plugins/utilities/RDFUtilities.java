@@ -189,7 +189,7 @@ public class RDFUtilities {
             final String objectStringLowerCase = StringUtils.trim(object.stringValue()).toLowerCase();
             final String predicateStringLowerCase = StringUtils.trim(predicate.stringValue()).toLowerCase();
 
-            if ("subclassof".equals(StringUtils.lowerCase(predicateName))) {
+            if ("subclassof".equalsIgnoreCase(predicateName)) {
                 if (RDFSchemaFactory.constellationVertexRDFTypes.containsValue(objectStringLowerCase)) {
                     constellationVertexTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
                 }
