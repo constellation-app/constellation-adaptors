@@ -366,6 +366,10 @@ public class RDFUtilities {
         final Resource subject = FACTORY.createIRI(getIRI(rdfIdentifier));
 
         addNodeAttributes(graph, model, vertexId);
+        addRDFTypesToModel(rdfTypes, subject, model);
+    }
+
+    public static void addRDFTypesToModel(final String rdfTypes, final Resource subject, final Model model) {
         //Iterate over multiple values in RDF_TYPE and add multiple entries to the RDF collection
         if (rdfTypes != null) {
             final String[] rdfTypesArray = Arrays.stream(rdfTypes.split(","))
@@ -384,29 +388,24 @@ public class RDFUtilities {
     public static void addTransactionToModel(final GraphReadMethods graph, Model model, int transactionId) {
         // transaction attributes
         final int transactionRDFIdentifierAttributeId = RDFConcept.TransactionAttribute.RDFIDENTIFIER.get(graph);
-        //final int transactionTypeAttributeId = AnalyticConcept.TransactionAttribute.TYPE.get(graph);
-        //final int transactionSourceAttributeId = AnalyticConcept.TransactionAttribute.SOURCE.get(graph);
-
+        final int transactionRDFTypesAttributeId = RDFConcept.TransactionAttribute.RDFTYPES.get(graph);
         // vertex attributes
         final int vertexRDFIdentifierAttributeId = RDFConcept.VertexAttribute.RDFIDENTIFIER.get(graph);
-        //final int vertexSourceAttributeId = AnalyticConcept.VertexAttribute.SOURCE.get(graph);
 
         final int sourceVertexId = graph.getTransactionSourceVertex(transactionId);
         final int destinationVertexId = graph.getTransactionDestinationVertex(transactionId);
-
         final String sourceRDFIdentifier = graph.getStringValue(vertexRDFIdentifierAttributeId, sourceVertexId);
-        //final String sourceSource = graph.getStringValue(vertexSourceAttributeId, sourceVertexId);
         final String destinationRDFIdentifier = graph.getStringValue(vertexRDFIdentifierAttributeId, destinationVertexId);
-        //final String destinationSource = graph.getStringValue(vertexSourceAttributeId, destinationVertexId);
-        //final String transactionSource = graph.getStringValue(transactionSourceAttributeId, transactionId);
         final String transactionRDFIdentifier = graph.getStringValue(transactionRDFIdentifierAttributeId, transactionId);
-        //final String transactionType = graph.getStringValue(transactionTypeAttributeId, transactionId);
+
+        final String rdfTypes = graph.getStringValue(transactionRDFTypesAttributeId, transactionId);
 
         final Resource subject = FACTORY.createIRI(getIRI(sourceRDFIdentifier));
         final IRI predicate = FACTORY.createIRI(getIRI(transactionRDFIdentifier));
         final Value object = FACTORY.createIRI(getIRI(destinationRDFIdentifier));
 
         model.add(FACTORY.createStatement(subject, predicate, object));
+        addRDFTypesToModel(rdfTypes, subject, model);
     }
 
     public static void addBlankNodesToModel(final GraphReadMethods graph, Model model) {
@@ -448,25 +447,6 @@ public class RDFUtilities {
                     wg.setStringValue(newAttribute, currentVertexId, (String) value);
                 }
             });
-        }
-    }
-
-    public static void setRDFTypesVertexAttribute(GraphWriteMethods wg, final Map<String, String> subjectToType) {
-        // Add the Vertex RDF_types attribute based on subjectToType map
-        // Had to do this later to avoid duplicate nodes with "Unknown" Type.
-        final int vertexIdentifierAttributeId = VisualConcept.VertexAttribute.IDENTIFIER.ensure(wg);
-        final int vertexRDFTypeAttributeId = RDFConcept.VertexAttribute.RDFTYPES.ensure(wg);
-        final int graphVertexCount = wg.getVertexCount();
-        for (int position = 0; position < graphVertexCount; position++) {
-            final int currentVertexId = wg.getVertex(position);
-            final String identifier = wg.getStringValue(vertexIdentifierAttributeId, currentVertexId);
-            if (subjectToType.containsKey(identifier)) {
-                String value = subjectToType.get(identifier);
-
-                //Set RDF Types
-                wg.setStringValue(vertexRDFTypeAttributeId, currentVertexId, value);
-
-            }
         }
     }
 }
