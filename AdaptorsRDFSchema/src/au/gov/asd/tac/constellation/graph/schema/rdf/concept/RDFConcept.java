@@ -62,11 +62,6 @@ public class RDFConcept extends SchemaConcept {
 
     public static class VertexAttribute {
 
-        public static final SchemaAttribute RDFIDENTIFIER = new SchemaAttribute.Builder(GraphElementType.VERTEX, StringAttributeDescription.ATTRIBUTE_NAME, "rdf_identifier")
-                .setDescription("The RDF identifier of the node")
-                .create()
-                .build();
-
         public static final SchemaAttribute RDFTYPES = new SchemaAttribute.Builder(GraphElementType.VERTEX, VertexTypeAttributeDescription.ATTRIBUTE_NAME, "RDF_types")
                 .setDescription("The RDF types of the node")
                 .setAttributeMergerId(ConcatenatedSetGraphAttributeMerger.ID)//To append the new types inferred/generated while running other plugins
@@ -104,7 +99,6 @@ public class RDFConcept extends SchemaConcept {
     public Collection<SchemaAttribute> getSchemaAttributes() {
         final List<SchemaAttribute> schemaAttributes = new ArrayList<>();
         schemaAttributes.add(GraphAttribute.RDF_BLANK_NODES);
-        schemaAttributes.add(VertexAttribute.RDFIDENTIFIER);
         schemaAttributes.add(VertexAttribute.RDFTYPES);
         schemaAttributes.add(TransactionAttribute.RDFIDENTIFIER);
         return Collections.unmodifiableCollection(schemaAttributes);

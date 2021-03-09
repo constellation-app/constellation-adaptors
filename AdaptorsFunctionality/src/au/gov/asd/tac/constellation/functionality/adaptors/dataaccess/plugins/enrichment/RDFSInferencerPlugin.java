@@ -100,7 +100,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
                 // retrieve all RDFS infered statements
                 try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, literalToValue, bNodeStatements, LAYER_MASK);
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, literalToValue, bNodeStatements, LAYER_MASK);
                 }
             }
         } finally {
@@ -130,7 +130,6 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
             PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
-        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
         RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Overwrite BNODES in the graph attribute with inferred data
