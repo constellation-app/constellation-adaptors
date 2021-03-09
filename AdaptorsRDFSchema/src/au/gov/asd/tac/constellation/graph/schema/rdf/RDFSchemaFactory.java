@@ -21,7 +21,6 @@ import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.schema.Schema;
 import au.gov.asd.tac.constellation.graph.schema.SchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
-import au.gov.asd.tac.constellation.graph.schema.analytic.attribute.objects.RawData;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
@@ -35,8 +34,10 @@ import au.gov.asd.tac.constellation.utilities.icon.AnalyticIconProvider;
 import au.gov.asd.tac.constellation.utilities.icon.ConstellationIcon;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +57,29 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
     private static final ConstellationColor ICON_COLOR = ConstellationColor.PURPLE;
 
     private static final Logger LOGGER = Logger.getLogger(RDFSchemaFactory.class.getName());
+
+    final public static Map<String, String> constellationRDFTypes = new HashMap<>();
+
+    static {
+        constellationRDFTypes.put(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypetelephoneidentifier");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName(), "http://www.constellation-app.com/ns#nodetypeemail");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.USER_NAME.getName(), "http://www.constellation-app.com/ns#nodetypeusername");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypeonlineidentifier");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.URL.getName(), "http://www.constellation-app.com/ns#nodetypeurl");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.HOST_NAME.getName(), "http://www.constellation-app.com/ns#nodetypehostname");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.ONLINE_LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypeonlinelocation");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypemachineidentifier");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.IPV6.getName(), "http://www.constellation-app.com/ns#nodetypeipv6");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.IPV4.getName(), "http://www.constellation-app.com/ns#nodetypeipv4");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName(), "http://www.constellation-app.com/ns#nodetypenetworkidentifier");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.PERSON.getName(), "http://www.constellation-app.com/ns#nodetypeperson");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.ORGANISATION.getName(), "http://www.constellation-app.com/ns#nodetypeorganisation");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.DOCUMENT.getName(), "http://www.constellation-app.com/ns#nodetypedocument");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.GEOHASH.getName(), "http://www.constellation-app.com/ns#nodetypegeohash");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.MGRS.getName(), "http://www.constellation-app.com/ns#nodetypemgrs");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.COUNTRY.getName(), "http://www.constellation-app.com/ns#nodetypecountry");
+        constellationRDFTypes.put(AnalyticConcept.VertexType.LOCATION.getName(), "http://www.constellation-app.com/ns#nodetypelocation");
+    }
 
     @Override
     public String getName() {
@@ -143,41 +167,27 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
         @Override
         public void completeVertex(final GraphWriteMethods graph, final int vertexId) {
-            final int vertexIdentifierAttribute = VisualConcept.VertexAttribute.IDENTIFIER.ensure(graph);
-            final int vertexRDFIdentifierAttribute = RDFConcept.VertexAttribute.RDFIDENTIFIER.ensure(graph);
             final int vertexTypeAttribute = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
-            final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.RDFTYPES.ensure(graph);
-            final int vertexRawAttribute = AnalyticConcept.VertexAttribute.RAW.ensure(graph);
-            final int vertexLabelAttribute = VisualConcept.VertexAttribute.LABEL.ensure(graph);
+            final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES.ensure(graph);
 
-            String identifier = graph.getStringValue(vertexIdentifierAttribute, vertexId);
-            String rdfIdentifier = graph.getStringValue(vertexRDFIdentifierAttribute, vertexId);
             SchemaVertexType type = graph.getObjectValue(vertexTypeAttribute, vertexId);
 
-            //SchemaVertexType rdfTypes = graph.getObjectValue(vertexRDFTypesAttribute, vertexId);
-            final String rdfTypes = graph.getStringValue(vertexRDFTypesAttribute, vertexId);
+            //SchemaVertexType constellationrdfType = graph.getObjectValue(vertexRDFTypesAttribute, vertexId);
+            final String constellationrdfType = graph.getStringValue(vertexRDFTypesAttribute, vertexId);
 
-            RawData raw = graph.getObjectValue(vertexRawAttribute, vertexId);
-            String label = graph.getStringValue(vertexLabelAttribute, vertexId);
 
-            if (rdfTypes != null) {
-
-                //if (type == null || type.isIncomplete()) {
-//                type = rdfTypes != null ? rdfTypes : SchemaVertexTypeUtilities.getDefaultType();
-//                type = graph.getSchema().resolveVertexType(type.toString());
-                type = resolveVertexType(rdfTypes.toString());
-                //}
+            if (constellationrdfType != null) {
+                type = resolveVertexType(constellationrdfType);
 
                 if (type != null && type != SchemaVertexTypeUtilities.getDefaultType() && !type.equals(graph.getObjectValue(vertexTypeAttribute, vertexId))) {
                     graph.setObjectValue(vertexTypeAttribute, vertexId, type);
                 }
-
             }
             super.completeVertex(graph, vertexId);
         }
 
         @Override
-        public SchemaVertexType resolveVertexType(final String type) {
+        public SchemaVertexType resolveVertexType(final String constellationrdfType) {
             // read file
             //
             // creating schemavertextypes
@@ -186,29 +196,51 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             /**
              * TODO: Add logic here to look at the RDF type and figure out the
              * most appropriate Constellation type to use. We could use the
-             * VertexDominantCalculator or create an RDF version of it if
+             * VertexDominanceCalculator or create an RDF version of it if
              * required.
              *
-             * For now just returning unknown as a placeholder.
              */
-            LOGGER.log(Level.INFO, "TYPE: {0}", type);
 
-            if (type.contains("http://www.co-ode.org/ontologies/pizza/pizza.owl#Country")) {
-                return SchemaVertexTypeUtilities.getType("Country");
-            } else if (type.contains("http://www.w3.org/2002/07/owl#NamedIndividual") || type.contains("http://neo4j.com/voc/music#Artist")) {
-                return SchemaVertexTypeUtilities.getType("Person");
-            } else if (type.contains("http://www.w3.org/2002/07/owl#Class")) {
-                return SchemaVertexTypeUtilities.getType("RDF Class");
-            } else if (type.contains("http://neo4j.com/voc/music#Song")) {
-                return SchemaVertexTypeUtilities.getType("Song");
-            } else if (type.contains("http://neo4j.com/voc/music#Album")) {
-                return SchemaVertexTypeUtilities.getType("Music Album");
-            } else if (type.contains("http://www.w3.org/2002/07/owl#AnnotationProperty")
-                    || type.contains("http://neo4j.com/voc/music#Artist")
-                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Class")
-                    || type.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
-                    || type.contains("http://www.w3.org/2000/01/rdf-schema#Resource")) {
-                return SchemaVertexTypeUtilities.getType("RDF Test");
+
+
+            LOGGER.log(Level.INFO, "TYPE: {0}", constellationrdfType);
+
+            if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.USER_NAME.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.USER_NAME.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.URL.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.URL.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.HOST_NAME.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.HOST_NAME.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ONLINE_LOCATION.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_LOCATION.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV6.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV6.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.IPV4.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV4.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.PERSON.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.PERSON.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.ORGANISATION.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ORGANISATION.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.DOCUMENT.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.DOCUMENT.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.GEOHASH.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.GEOHASH.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.MGRS.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MGRS.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.COUNTRY.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.COUNTRY.getName());
+            } else if (constellationrdfType.contains(constellationRDFTypes.get(AnalyticConcept.VertexType.LOCATION.getName()))) {
+                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.LOCATION.getName());
             }
 
             return SchemaVertexTypeUtilities.getDefaultType();
