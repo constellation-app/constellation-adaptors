@@ -21,7 +21,6 @@ import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.LayersConcept;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.RDFSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
@@ -56,8 +55,9 @@ public class RDFUtilities {
     private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
 
     final static Map<String, Resource> bnodeToSubject = new HashMap<>();
+    final static Map<String, String> constellationVertexTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
+    final static Map<String, String> constellationTransactionTypesMap = new HashMap<>();
     private static final Logger LOGGER = Logger.getLogger(RDFUtilities.class.getName());
-    final static Map<String, String> constellationTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
 
     public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
@@ -170,13 +170,18 @@ public class RDFUtilities {
 //            }
 //
 //        } else
-
             // Populate the map with Consty Node Types from the mapping file
             // We might need to add this in a seperate function, when we read from a seperate mapping file
-            String objectStringLowerCase = StringUtils.lowerCase(object.stringValue());
+            String subjectStringLowerCase = StringUtils.trim(subject.stringValue()).toLowerCase();
+            String objectStringLowerCase = StringUtils.trim(object.stringValue()).toLowerCase();
+            String predicateStringLowerCase = StringUtils.trim(predicate.stringValue()).toLowerCase();
+
             if ("subclassof".equals(StringUtils.lowerCase(predicateName))) {
-                if (RDFSchemaFactory.constellationRDFTypes.containsValue(objectStringLowerCase)) {
-                    constellationTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
+                if (RDFSchemaFactory.constellationVertexRDFTypes.containsValue(objectStringLowerCase)) {
+                    constellationVertexTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
+                }
+                if (RDFSchemaFactory.constellationTransactionRDFTypes.containsValue(objectStringLowerCase)) {
+                    constellationTransactionTypesMap.put(StringUtils.lowerCase(subject.stringValue()), objectStringLowerCase);
                 }
             }
 
@@ -187,7 +192,7 @@ public class RDFUtilities {
 
                 recordStore.add();
                 if (subject instanceof IRI) {//Currently the subject can only be a URI or blank node- if they ever support Literals, need to change this
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subjectStringLowerCase);
                 } else if (subject instanceof BNode) {
                     //recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.RDFIDENTIFIER, parentIRISubject.stringValue());//or skip overwriting
                     if (VERBOSE) {
@@ -217,7 +222,7 @@ public class RDFUtilities {
             } else if ("type".equals(StringUtils.lowerCase(predicateName))) {//TODO need to handle TYPE of BNODES seperately here
                 recordStore.add();
                 if (subject instanceof IRI) {
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subjectStringLowerCase);
                 } else {//Subject is  a BNode
                     if (VERBOSE) {
                         LOGGER.log(Level.WARNING, "Subject is  a BNode. Added the triples above in an attribute of " + parentIRISubject.stringValue());
@@ -232,8 +237,8 @@ public class RDFUtilities {
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFTYPES, objectStringLowerCase);
 
                 // Set "Constellation RDF Types" based on "RDF Types" (If there are multiple types, they'll be added as a CSV)
-                if (constellationTypesMap.containsKey(objectStringLowerCase)) {
-                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES, constellationTypesMap.get(objectStringLowerCase));
+                if (constellationVertexTypesMap.containsKey(objectStringLowerCase)) {
+                    recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES, constellationVertexTypesMap.get(objectStringLowerCase));
                 }
 
             } else if (objectIsIRI) { //subject.stringValue().startsWith("http") &&  predicate.stringValue().startsWith("http")) {
@@ -245,7 +250,7 @@ public class RDFUtilities {
                         LOGGER.log(Level.WARNING, "Invalid RDF IDENTIFIER. Subject: " + subject.stringValue() + " or Predicate: " + predicate.stringValue());
                     }
                 }
-                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, StringUtils.trim(subject.stringValue()).toLowerCase());
+                recordStore.set(GraphRecordStoreUtilities.SOURCE + RDFConcept.VertexAttribute.RDFIDENTIFIER, subjectStringLowerCase);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, subjectName);
                 recordStore.set(GraphRecordStoreUtilities.SOURCE + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
@@ -254,10 +259,20 @@ public class RDFUtilities {
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, objectName);
                     recordStore.set(GraphRecordStoreUtilities.DESTINATION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
 
-                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.RDFIDENTIFIER, StringUtils.trim(predicate.stringValue()).toLowerCase());
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.RDFIDENTIFIER, predicateStringLowerCase);
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, predicateName);
-                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
                     recordStore.set(GraphRecordStoreUtilities.TRANSACTION + LayersConcept.VertexAttribute.LAYER_MASK, Integer.toString(layerMask));
+
+                    //recordStore.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.TYPE, AnalyticConcept.TransactionType.CORRELATION);//TODO FIX TYPE
+                    // Set RDF Types
+                    // If there are multiple types, they'll be added as CSV (by the ConcatenatedSetGraphAttributeMerger)
+                    recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.RDFTYPES, objectStringLowerCase);
+
+                    // Set "Constellation RDF Types" based on "RDF Types" (If there are multiple types, they'll be added as CSV)
+                    if (constellationTransactionTypesMap.containsKey(predicateStringLowerCase)) {
+                        recordStore.set(GraphRecordStoreUtilities.TRANSACTION + RDFConcept.TransactionAttribute.CONSTELLATIONRDFTYPES,
+                                constellationTransactionTypesMap.get(predicateStringLowerCase));
+                    }
                 }
             } else {
                 if (VERBOSE) {
