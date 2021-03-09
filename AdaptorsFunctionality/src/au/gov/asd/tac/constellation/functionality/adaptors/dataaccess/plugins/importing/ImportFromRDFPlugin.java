@@ -57,7 +57,6 @@ import java.util.logging.Logger;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.rdf4j.RDF4JException;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.query.GraphQueryResult;
@@ -126,7 +125,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
         rdfFileFormats.put(RDFFormat.TURTLESTAR.getName(), RDFFormat.TURTLESTAR);
     }
 
-    final Map<String, String> subjectToType = new HashMap<>();
     final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     Set<Statement> bNodeStatements = new HashSet<>();
 
@@ -272,7 +270,6 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
     protected void edit(GraphWriteMethods wg, PluginInteraction interaction, PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
-        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
         RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Add BNODES in the graph attribute
@@ -325,7 +322,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                 final RepositoryConnection conn = repo.getConnection();
                 conn.add(tempFile, tempFile.toURI().toString(), RDFFormat.RDFXML);
                 try ( RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true)) {
-                    RDFUtilities.PopulateRecordStore(recordStore, statements, subjectToType, literalToValue, bNodeStatements, layerNumber);
+                    RDFUtilities.PopulateRecordStore(recordStore, statements, literalToValue, bNodeStatements, layerNumber);
                 } finally {
                     inputStream.close();
                 }
@@ -342,7 +339,7 @@ public class ImportFromRDFPlugin extends RecordStoreQueryPlugin implements DataA
                     //try (GraphQueryResult evaluate = QueryResults.parseGraphBackground(inputStream, baseURI, format)) {
                     //Model res = QueryResults.asModel(evaluate);
                     if (queryResult.hasNext()) {
-                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, subjectToType, literalToValue, bNodeStatements, layerNumber);
+                        RDFUtilities.PopulateRecordStore(recordStore, queryResult, literalToValue, bNodeStatements, layerNumber);
                     } else {
                         LOGGER.warning("queryResult IS EMPTY ");
                     }

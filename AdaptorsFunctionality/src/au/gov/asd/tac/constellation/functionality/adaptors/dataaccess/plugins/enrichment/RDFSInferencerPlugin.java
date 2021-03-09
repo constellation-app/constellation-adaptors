@@ -37,9 +37,7 @@ import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.commons.collections.map.LinkedMap;
@@ -65,7 +63,6 @@ import org.openide.util.lookup.ServiceProviders;
 public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
     private static final int LAYER_MASK = 1 | (1 << 4);
-    private final Map<String, String> subjectToType = new HashMap<>();
     final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     private final Set<Statement> bNodeStatements = new HashSet<>();
 
@@ -100,7 +97,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
                 // retrieve all RDFS infered statements
                 try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, literalToValue, bNodeStatements, LAYER_MASK);
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, literalToValue, bNodeStatements, LAYER_MASK);
                 }
             }
         } finally {
@@ -130,7 +127,6 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
             PluginParameters parameters) throws InterruptedException, PluginException {
         super.edit(wg, interaction, parameters);
 
-        RDFUtilities.setRDFTypesVertexAttribute(wg, subjectToType);
         RDFUtilities.setLiteralValuesVertexAttribute(wg, literalToValue);
 
         // Overwrite BNODES in the graph attribute with inferred data

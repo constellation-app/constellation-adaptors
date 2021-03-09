@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.graph.schema.SchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.AnalyticSchemaFactory;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
+import au.gov.asd.tac.constellation.graph.schema.analytic.utilities.VertexDominanceCalculator;
 import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
 import au.gov.asd.tac.constellation.graph.schema.concept.SchemaConcept;
 import au.gov.asd.tac.constellation.graph.schema.rdf.concept.RDFConcept;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -142,7 +144,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         switch (elementType) {
             case VERTEX:
                 keys = Arrays.asList(
-                        RDFConcept.VertexAttribute.RDFIDENTIFIER);
+                        VisualConcept.VertexAttribute.IDENTIFIER);
                 break;
             case TRANSACTION:
                 keys = Arrays.asList(VisualConcept.TransactionAttribute.IDENTIFIER,
@@ -167,9 +169,8 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         @Override
         public void newGraph(final GraphWriteMethods graph) {
             super.newGraph(graph);
-            ensureKeyAttributes(graph); // TODO: is this check required if its already done in super?
-
-            final int rdfBlankNodesAttributeId = RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
+            
+            RDFConcept.GraphAttribute.RDF_BLANK_NODES.ensure(graph);
         }
 
         @Override
@@ -184,6 +185,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         public void completeVertex(final GraphWriteMethods graph, final int vertexId) {
             final int vertexTypeAttribute = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
             final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES.ensure(graph);
+            final int vertexLabelAttribute = VisualConcept.VertexAttribute.LABEL.ensure(graph);
 
             SchemaVertexType type = graph.getObjectValue(vertexTypeAttribute, vertexId);
 
@@ -198,7 +200,26 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
                     graph.setObjectValue(vertexTypeAttribute, vertexId, type);
                 }
             }
+
+            final String label = graph.getStringValue(vertexLabelAttribute, vertexId).split("<")[0];
             super.completeVertex(graph, vertexId);
+            final String typeLabel = new StringBuilder("<")
+                                .append(type != null ? type.getName() : "Unknown")
+                                .append(">")
+                                .toString();
+            // restore value overwritten by super
+            graph.setStringValue(vertexLabelAttribute, vertexId, label + typeLabel);
+            for (int i = 0; i < graph.getAttributeCount(GraphElementType.VERTEX); i++) {
+                final int attribute = graph.getAttribute(GraphElementType.VERTEX, i);
+                if (graph.getAttributeName(attribute).contains("prefLabel")) {
+                    final String prefLabel = graph.getStringValue(attribute, vertexId);
+                    if (prefLabel != null) {
+                        // use prefLabel instead
+                        graph.setStringValue(vertexLabelAttribute, vertexId, prefLabel + typeLabel);
+                    }
+                    break;
+                }
+            }
         }
 
         @Override
@@ -207,61 +228,18 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
             //
             // creating schemavertextypes
             //
-//            LOGGER.info("called RDF resolve type");
-            /**
-             * TODO: Add logic here to look at the RDF type and figure out the
-             * most appropriate Constellation type to use. We could use the
-             * VertexDominanceCalculator or create an RDF version of it if
-             * required.
-             *
-             */
-
-
-
             LOGGER.log(Level.INFO, "TYPE: {0}", constellationrdfType);
-
-            if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.TELEPHONE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.EMAIL_ADDRESS.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.USER_NAME.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.USER_NAME.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.URL.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.URL.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.HOST_NAME.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.HOST_NAME.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ONLINE_LOCATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ONLINE_LOCATION.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MACHINE_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.IPV6.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV6.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.IPV4.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.IPV4.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.NETWORK_IDENTIFIER.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.PERSON.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.PERSON.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.ORGANISATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.ORGANISATION.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.DOCUMENT.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.DOCUMENT.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.GEOHASH.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.GEOHASH.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.MGRS.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.MGRS.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.COUNTRY.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.COUNTRY.getName());
-            } else if (constellationrdfType.contains(constellationVertexRDFTypes.get(AnalyticConcept.VertexType.LOCATION.getName()))) {
-                return SchemaVertexTypeUtilities.getType(AnalyticConcept.VertexType.LOCATION.getName());
+            
+            final VertexDominanceCalculator domCalc = Lookup.getDefault().lookup(VertexDominanceCalculator.class);
+            final List<SchemaVertexType> types = domCalc.getTypePriority();
+            for (final SchemaVertexType type : types) {
+                if (constellationrdfType.contains(constellationVertexRDFTypes.get(type.getName()))) {
+                    return type;
+                }
             }
-
             return SchemaVertexTypeUtilities.getDefaultType();
         }
-
-
+        
         @Override
         public void newTransaction(final GraphWriteMethods graph, final int transactionId) {
             super.newTransaction(graph, transactionId);
@@ -294,31 +272,30 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
         public SchemaTransactionType resolveTransactionType(final String constellationrdfType) {
 
             if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.COMMUNICATION.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.COMMUNICATION.getName());
+                return AnalyticConcept.TransactionType.COMMUNICATION;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.CORRELATION.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.CORRELATION.getName());
+                return AnalyticConcept.TransactionType.CORRELATION;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.LOCATION.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.LOCATION.getName());
+                return AnalyticConcept.TransactionType.LOCATION;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.NETWORK.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.NETWORK.getName());
+                return AnalyticConcept.TransactionType.NETWORK;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.RELATIONSHIP.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.RELATIONSHIP.getName());
+                return AnalyticConcept.TransactionType.RELATIONSHIP;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.BEHAVIOUR.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.BEHAVIOUR.getName());
+                return AnalyticConcept.TransactionType.BEHAVIOUR;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.SIMILARITY.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.SIMILARITY.getName());
+                return AnalyticConcept.TransactionType.SIMILARITY;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.CREATED.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.CREATED.getName());
+                return AnalyticConcept.TransactionType.CREATED;
             } else if (constellationrdfType.contains(constellationTransactionRDFTypes.get(AnalyticConcept.TransactionType.REFERENCED.getName()))) {
-                return SchemaTransactionTypeUtilities.getType(AnalyticConcept.TransactionType.REFERENCED.getName());
+                return AnalyticConcept.TransactionType.REFERENCED;
             }
 
             return SchemaTransactionTypeUtilities.getDefaultType();
         }
 
         @Override
-        public int getVertexAliasAttribute(final GraphReadMethods graph
-        ) {
+        public int getVertexAliasAttribute(final GraphReadMethods graph) {
             return VisualConcept.VertexAttribute.LABEL.get(graph);
         }
     }
