@@ -15,6 +15,7 @@
  */
 package au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.utilities;
 
+import au.gov.asd.tac.constellation.functionality.adaptors.dataaccess.plugins.importing.ImportFromRDFPlugin;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
@@ -50,14 +51,15 @@ import org.eclipse.rdf4j.repository.RepositoryResult;
 
 public class RDFUtilities {
 
-    final static boolean VERBOSE = false;
+    final static boolean VERBOSE = true;
     final static SimpleValueFactory FACTORY = SimpleValueFactory.getInstance();
     private final static String SEPARATOR_TERM = SeparatorConstants.COMMA;
 
     final static Map<String, Resource> bnodeToSubject = new HashMap<>();
     final static Map<String, String> constellationVertexTypesMap = new HashMap<>(); //Might need to change this when Constellation Sail is used, as it directly calls 'processNextRecord'
     final static Map<String, String> constellationTransactionTypesMap = new HashMap<>();
-    private static final Logger LOGGER = Logger.getLogger(RDFUtilities.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ImportFromRDFPlugin.class.getName());
+    private static final int layer_Mask = 3;
 
     public static void PopulateRecordStore(GraphRecordStore recordStore, RepositoryResult<Statement> repositoryResult, Map<String, String> subjectToType, MultiKeyMap literalToValue, int layerMask) {
         // TODO- need to remove this if the bNodeStatements are added into the graph attribute by other plugins
@@ -82,6 +84,10 @@ public class RDFUtilities {
     }
 
     public static void processNextRecord(GraphRecordStore recordStore, Statement statement, Map<String, String> subjectToType, MultiKeyMap literalToValue, Set<Statement> bNodeStatements, int layerMask) {
+        if (VERBOSE) {
+            LOGGER.info("Processing next record...");
+        }
+
         final Resource subject = statement.getSubject();
         final IRI predicate = statement.getPredicate();
         final Value object = statement.getObject();

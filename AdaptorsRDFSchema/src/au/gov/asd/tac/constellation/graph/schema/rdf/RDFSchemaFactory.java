@@ -182,6 +182,7 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
         @Override
         public void completeVertex(final GraphWriteMethods graph, final int vertexId) {
+            LOGGER.info("called RDF completeVertex()");
             final int vertexTypeAttribute = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
             final int vertexRDFTypesAttribute = RDFConcept.VertexAttribute.CONSTELLATIONRDFTYPES.ensure(graph);
 
@@ -203,6 +204,8 @@ public class RDFSchemaFactory extends AnalyticSchemaFactory {
 
         @Override
         public SchemaVertexType resolveVertexType(final String constellationrdfType) {
+//            LOGGER.info("called RDF resolve type");
+
             // read file
             //
             // creating schemavertextypes

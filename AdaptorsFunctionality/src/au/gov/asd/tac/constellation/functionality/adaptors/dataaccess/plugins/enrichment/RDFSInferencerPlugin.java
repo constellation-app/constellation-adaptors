@@ -64,7 +64,7 @@ import org.openide.util.lookup.ServiceProviders;
 @NbBundle.Messages("RDFSInferencerPlugin=RDFS Inferencing")
 public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
-    private static final int LAYER_MASK = 1 | (1 << 4);
+    private static final int layer_Mask = 9;
     private final Map<String, String> subjectToType = new HashMap<>();
     final MultiKeyMap literalToValue = MultiKeyMap.decorate(new LinkedMap());
     private final Set<Statement> bNodeStatements = new HashSet<>();
@@ -100,7 +100,7 @@ public class RDFSInferencerPlugin extends RecordStoreQueryPlugin implements Data
 
                 // retrieve all RDFS infered statements
                 try (RepositoryResult<Statement> repositoryResult = conn.getStatements(null, null, null);) {
-                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, literalToValue, bNodeStatements, LAYER_MASK);
+                    RDFUtilities.PopulateRecordStore(inferredRecordStore, repositoryResult, subjectToType, literalToValue, bNodeStatements, layer_Mask);
                 }
             }
         } finally {
