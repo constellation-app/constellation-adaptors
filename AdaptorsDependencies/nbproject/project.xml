@@ -394,140 +394,140 @@
                 <package>uk.gov.gchq.koryphe.util</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/avro-1.7.7-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/avro-1.7.7-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/avro-1.7.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/avro-1.7.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cache-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cache-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/cache-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cache-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/common-util-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/common-util-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/common-util-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/common-util-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-codec-1.6-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-codec-1.6-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-codec-1.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-codec-1.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-compress-1.4.1-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-compress-1.4.1-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-compress-1.4.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-compress-1.4.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-csv-1.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-csv-1.4-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-csv-1.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-csv-1.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-io-2.4-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-io-2.4-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-io-2.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-io-2.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-lang3-3.3.2-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang3-3.3.2-jar.jar</binary-origin>
+                <runtime-relative-path>ext/commons-lang3-3.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang3-3.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/core-1.10.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/core-1.10.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/core-1.10.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/core-1.10.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/data-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/data-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/data-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/data-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/exception-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/exception-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/exception-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/exception-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/fast-classpath-scanner-2.10.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/fast-classpath-scanner-2.10.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/fast-classpath-scanner-2.10.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/fast-classpath-scanner-2.10.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/fastutil-6.5.7-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/fastutil-6.5.7-jar.jar</binary-origin>
+                <runtime-relative-path>ext/fastutil-6.5.7.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/fastutil-6.5.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/hamcrest-all-1.3-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/hamcrest-all-1.3-jar.jar</binary-origin>
+                <runtime-relative-path>ext/hamcrest-all-1.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/hamcrest-all-1.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-2.6.5-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-core-2.6.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-asl-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-asl-1.9.13-jar.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-core-asl-1.9.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-asl-1.9.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-databind-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-databind-2.6.5-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-databind-2.6.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-databind-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-datatype-jsr310-2.6.5-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-datatype-jsr310-2.6.5-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-datatype-jsr310-2.6.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-datatype-jsr310-2.6.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jackson-mapper-asl-1.9.13-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-mapper-asl-1.9.13-jar.jar</binary-origin>
+                <runtime-relative-path>ext/jackson-mapper-asl-1.9.13.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-mapper-asl-1.9.13.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/javassist-3.19.0-GA-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/javassist-3.19.0-GA-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/javassist-3.19.0-GA.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javassist-3.19.0-GA.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/json-20180813-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/json-20180813-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/json-20180813.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/json-20180813.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/memory-0.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/memory-0.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/memory-0.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/memory-0.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/mockito-all-1.10.19-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/mockito-all-1.10.19-jar.jar</binary-origin>
+                <runtime-relative-path>ext/mockito-all-1.10.19.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/mockito-all-1.10.19.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/operation-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/operation-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/operation-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/operation-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/paranamer-2.6-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/paranamer-2.6-jar.jar</binary-origin>
+                <runtime-relative-path>ext/paranamer-2.6.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/paranamer-2.6.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/reflections-0.9.10-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/reflections-0.9.10-jar.jar</binary-origin>
+                <runtime-relative-path>ext/reflections-0.9.10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/reflections-0.9.10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/serialisation-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/serialisation-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/serialisation-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/serialisation-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/sketches-core-0.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-core-0.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/sketches-core-0.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-core-0.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/sketches-library-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-library-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/sketches-library-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-library-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/slf4j-api-1.7.25-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/slf4j-api-1.7.25-jar.jar</binary-origin>
+                <runtime-relative-path>ext/slf4j-api-1.7.25.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/slf4j-api-1.7.25.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/snappy-java-1.1.2.4-bundle.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/snappy-java-1.1.2.4-bundle.jar</binary-origin>
+                <runtime-relative-path>ext/snappy-java-1.1.2.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/snappy-java-1.1.2.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/stream-2.7.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/stream-2.7.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/stream-2.7.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/stream-2.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/type-1.12.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/type-1.12.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/type-1.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/type-1.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/xz-1.0-jar.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/xz-1.0-jar.jar</binary-origin>
+                <runtime-relative-path>ext/xz-1.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xz-1.0.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
