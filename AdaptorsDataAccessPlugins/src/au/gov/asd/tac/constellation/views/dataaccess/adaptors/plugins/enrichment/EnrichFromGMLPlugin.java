@@ -52,7 +52,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "ENRICHMENT"})
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"ENRICH"})
 @Messages("EnrichFromGMLPlugin=Enrich From GML File")
 public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 

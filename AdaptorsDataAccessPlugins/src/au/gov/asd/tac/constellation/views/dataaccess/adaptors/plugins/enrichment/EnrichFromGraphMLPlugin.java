@@ -62,7 +62,7 @@ import org.w3c.dom.NodeList;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "ENRICHMENT"})
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"ENRICH"})
 @Messages("EnrichFromGraphMLPlugin=Enrich From GraphML File")
 public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 

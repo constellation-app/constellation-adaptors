@@ -53,7 +53,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "EXTEND"})
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"EXTEND"})
 @Messages("ExtendFromGDELTPlugin=Extend From GDELT Knowledge Graph")
 public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 

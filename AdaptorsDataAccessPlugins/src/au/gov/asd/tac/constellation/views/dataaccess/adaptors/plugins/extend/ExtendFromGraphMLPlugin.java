@@ -65,7 +65,7 @@ import org.w3c.dom.NodeList;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "EXTEND"})
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"EXTEND"})
 @Messages("ExtendFromGraphMLPlugin=Extend From GraphML File")
 public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 

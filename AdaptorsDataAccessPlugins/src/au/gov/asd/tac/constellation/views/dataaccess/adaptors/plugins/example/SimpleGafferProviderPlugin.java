@@ -21,7 +21,9 @@ import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
+import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
+import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
@@ -47,6 +49,7 @@ import org.openide.util.lookup.ServiceProviders;
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)
 })
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"IMPORT", "SEARCH"})
 @Messages("SimpleGafferProviderPlugin=Gaffer Simple Query Options")
 public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
