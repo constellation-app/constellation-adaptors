@@ -1,7 +1,5 @@
-package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing;
-
 /*
- * Copyright 2010-2019 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +13,8 @@ package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTImportingUtilities;
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTRelationshipTypes;
+package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing;
+
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.plugins.Plugin;
@@ -33,11 +30,13 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParamete
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTImportingUtilities;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTRelationshipTypes;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;

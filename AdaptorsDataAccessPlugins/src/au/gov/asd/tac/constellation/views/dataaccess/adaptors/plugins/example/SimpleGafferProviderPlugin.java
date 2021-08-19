@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParamet
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
-import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.DataAccessPluginAdaptorType;
+import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
