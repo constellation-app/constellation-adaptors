@@ -1,15 +1,5 @@
-package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities;
-
-import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.DATA_TAG;
-import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.KEY_TAG;
-import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.NAME_TYPE_DELIMITER;
-import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import java.util.HashMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 /*
- * Copyright 2010-2019 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +13,16 @@ import org.w3c.dom.NodeList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities;
+
+import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.DATA_TAG;
+import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.KEY_TAG;
+import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.NAME_TYPE_DELIMITER;
+import java.util.HashMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 /**
  *
  * @author canis_majoris

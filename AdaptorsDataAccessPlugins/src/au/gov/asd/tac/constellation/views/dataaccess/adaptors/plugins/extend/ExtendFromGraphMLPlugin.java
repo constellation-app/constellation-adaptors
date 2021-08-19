@@ -1,7 +1,5 @@
-package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend;
-
 /*
- * Copyright 2010-2019 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,8 @@ package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend;
+
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;

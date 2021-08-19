@@ -1,9 +1,5 @@
-package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities;
-
-import java.time.ZonedDateTime;
-
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +13,9 @@ import java.time.ZonedDateTime;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities;
+
+import java.time.ZonedDateTime;
 
 /**
  * This utility class assists formatting the GDELT timestamps for querying

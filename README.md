@@ -14,10 +14,10 @@ for maps, adaptors for systems like elastic search, Data Access Plugins etc.
 
 # List of Adaptors
 
-## Adaptors Functionality
+## Adaptors Data Access Plugins
 
 A collection of Data Access View plugins that you can use to import, enrich and 
-hop using a GraphML or Pajek file formats.
+extend using  GDELT, GML, GraphML, or Pajek file formats.
 
 ## Adaptors Map View
 
