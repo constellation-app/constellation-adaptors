@@ -15,9 +15,6 @@ package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTExtendingUtilities;
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTRelationshipTypes;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -35,11 +32,13 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParamete
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTExtendingUtilities;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTRelationshipTypes;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
@@ -54,7 +53,7 @@ import org.openide.util.lookup.ServiceProviders;
 @ServiceProviders({
     @ServiceProvider(service = DataAccessPlugin.class),
     @ServiceProvider(service = Plugin.class)})
-@PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "EXTEND"})
+@PluginInfo(pluginType = PluginType.SEARCH, tags = {"EXTEND"})
 @Messages("ExtendFromGDELTPlugin=Extend From GDELT Knowledge Graph")
 public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
