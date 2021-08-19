@@ -1,7 +1,5 @@
-package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment;
-
 /*
- * Copyright 2010-2019 Australian Signals Directorate
+ * Copyright 2010-2021 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +13,8 @@ package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichmen
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GraphMLUtilities;
+package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment;
+
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
@@ -34,6 +33,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.F
 import au.gov.asd.tac.constellation.utilities.xml.XmlUtilities;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
+import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GraphMLUtilities;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
