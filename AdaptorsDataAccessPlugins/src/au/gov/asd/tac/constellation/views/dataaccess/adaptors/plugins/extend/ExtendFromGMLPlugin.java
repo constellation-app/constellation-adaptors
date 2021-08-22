@@ -95,7 +95,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         file.setName("GML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to hop on incoming transactions
          */
@@ -104,7 +104,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         in.setDescription("Returns nodes adjacent on Incoming Transactions");
         in.setBooleanValue(true);
         params.addParameter(in);
-        
+
         /**
          * A boolean option for whether to hop on outgoing transactions
          */
@@ -113,7 +113,7 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         out.setDescription("Returns nodes adjacent on Outgoing Transactions");
         out.setBooleanValue(true);
         params.addParameter(out);
-        
+
         return params;
     }
 
@@ -128,15 +128,15 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean incoming = parameters.getParameters().get(INCOMING_PARAMETER_ID).getBooleanValue();
         final boolean outgoing = parameters.getParameters().get(OUTGOING_PARAMETER_ID).getBooleanValue();
-        
+
         BufferedReader in = null;
         String line;
         boolean edge = false;
         final HashMap<String, String> edgeKV = new HashMap<>();
-        
+
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
-        
+
             try {
                 // Open file and loop through lines
                 in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
@@ -146,22 +146,19 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                         edge = true;
                         edgeKV.clear();
                         edgeKV.put(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
-                    }
-                    else if (line.startsWith(START_TAG)) {
+                    } else if (line.startsWith(START_TAG)) {
                         //do nothing
-                    }
-                    else if (line.startsWith(END_TAG)) {
+                    } else if (line.startsWith(END_TAG)) {
                         edge = false;
-                        if ((incoming && labels.contains(edgeKV.get(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER))) ||
-                            (outgoing && labels.contains(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER))) {
+                        if ((incoming && labels.contains(edgeKV.get(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER)))
+                                || (outgoing && labels.contains(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER))) {
                             edgeRecords.add();
                             edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                             for (final String key : edgeKV.keySet()) {
                                 edgeRecords.set(key, edgeKV.get(key));
                             }
                         }
-                    }
-                    else {
+                    } else {
                         if (edge) {
                             try {
                                 final String key = line.split(" ")[0].trim();
@@ -177,10 +174,10 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                                         edgeKV.put(GraphRecordStoreUtilities.TRANSACTION + key, value);
                                         break;
                                 }
-                            }  catch (final ArrayIndexOutOfBoundsException ex) {
+                            } catch (final ArrayIndexOutOfBoundsException ex) {
                             }
                         }
-                    }  
+                    }
                 }
 
             } catch (final FileNotFoundException ex) {
@@ -193,14 +190,14 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                         in.close();
                     } catch (final IOException ex) {
                         interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                    } 
+                    }
                 }
             }
         }
-        
+
         final RecordStore result = new GraphRecordStore();
         result.add(edgeRecords);
-        
+
         interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }

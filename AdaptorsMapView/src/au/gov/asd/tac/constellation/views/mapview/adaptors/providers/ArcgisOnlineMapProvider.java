@@ -21,7 +21,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * ArcGIS Online map.
- * 
+ *
  * @author cygnus_x-1
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 6)

@@ -20,22 +20,22 @@ import java.util.List;
 
 /**
  * A list of entity types used for GDELT Importing
- * 
+ *
  * @author canis-majoris-42
  */
 public enum GDELTEntityTypes {
     Person,
-    Organisation, 
-    Theme, 
+    Organisation,
+    Theme,
     Location,
-    Source, 
+    Source,
     URL;
-    
+
     public static List<String> getValues() {
         return Arrays.asList(
-               Arrays.stream(GDELTEntityTypes.values()) // create stream of enum values
-               .map(e -> e.toString())  // convert enum stream to String stream
-               .toArray(String[]::new)
+                Arrays.stream(GDELTEntityTypes.values()) // create stream of enum values
+                        .map(e -> e.toString()) // convert enum stream to String stream
+                        .toArray(String[]::new)
         );
     }
 }

@@ -22,12 +22,12 @@ import processing.core.PImage;
 
 /**
  * OpenTopoMap map.
- * 
+ *
  * @author cygnus_x-1
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 3)
 public class OpenTopoMapProvider extends MapProvider {
-    
+
     @Override
     public String getName() {
         return "OpenTopoMap";
@@ -37,7 +37,7 @@ public class OpenTopoMapProvider extends MapProvider {
     public int zoomLevels() {
         return 17;
     }
-    
+
     @Override
     public PImage getTile(Coordinate coordinate) {
         return null;
@@ -47,7 +47,7 @@ public class OpenTopoMapProvider extends MapProvider {
     public String[] getTileUrls(Coordinate coordinate) {
         // TODO: supply a special user agent string or this will be blocked
         final String url = String.format(
-                "https://tile.opentopomap.org/%s.png", 
+                "https://tile.opentopomap.org/%s.png",
                 getZoomString(coordinate));
         return new String[]{url};
     }

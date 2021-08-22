@@ -91,7 +91,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         file.setName("GML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         return params;
     }
 
@@ -104,14 +104,14 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
          * Initialize variables
          */
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
-        
+
         BufferedReader in = null;
         String line;
         boolean node = false;
         boolean retrieveAttributes = false;
 
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
-        
+
         try {
             // Open file and loop through lines
             in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
@@ -119,15 +119,12 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                 line = line.trim();
                 if (line.startsWith(NODE_TAG)) {
                     node = true;
-                }
-                else if (line.startsWith(START_TAG)) {
+                } else if (line.startsWith(START_TAG)) {
                     //do nothing
-                }
-                else if (line.startsWith(END_TAG)) {
+                } else if (line.startsWith(END_TAG)) {
                     node = false;
                     retrieveAttributes = false;
-                }
-                else {
+                } else {
                     if (node) {
                         try {
                             // Read node data
@@ -137,11 +134,10 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                                 if (labels.contains(value)) {
                                     retrieveAttributes = true;
                                     nodeRecords.add();
-                                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename); 
+                                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
                                     nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
                                 }
-                            }
-                            else {
+                            } else {
                                 if (retrieveAttributes) {
                                     nodeRecords.set(GraphRecordStoreUtilities.SOURCE + key, value);
                                 }
@@ -149,7 +145,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                         } catch (ArrayIndexOutOfBoundsException ex) {
                         }
                     }
-                }  
+                }
             }
 
         } catch (FileNotFoundException ex) {
@@ -162,13 +158,13 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                     in.close();
                 } catch (IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                } 
+                }
             }
         }
-        
+
         final RecordStore result = new GraphRecordStore();
         result.add(nodeRecords);
-        
+
         interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }

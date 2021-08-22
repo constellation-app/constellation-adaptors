@@ -22,12 +22,12 @@ import processing.core.PImage;
 
 /**
  * OpenStreetMap map.
- * 
+ *
  * @author cygnus_x-1
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 2)
 public class OpenStreetMapProvider extends MapProvider {
-    
+
     @Override
     public String getName() {
         return "OpenStreetMap";
@@ -47,7 +47,7 @@ public class OpenStreetMapProvider extends MapProvider {
     public String[] getTileUrls(Coordinate coordinate) {
         // TODO: supply a special user agent string or this will be blocked
         final String url = String.format(
-                "https://tile.openstreetmap.org/%s.png", 
+                "https://tile.openstreetmap.org/%s.png",
                 getZoomString(coordinate));
         return new String[]{url};
     }

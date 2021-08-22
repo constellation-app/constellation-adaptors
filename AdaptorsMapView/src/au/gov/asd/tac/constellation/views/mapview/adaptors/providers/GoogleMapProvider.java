@@ -22,12 +22,12 @@ import processing.core.PImage;
 
 /**
  * Google Maps map.
- * 
+ *
  * @author cygnus_x-1
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 4)
 public class GoogleMapProvider extends MapProvider {
-    
+
     private static final String LAYER_ROADS_ONLY = "h";
     private static final String LAYER_STREETMAP = "m";
     private static final String LAYER_STREETMAP_TERRAIN = "p";
@@ -35,7 +35,7 @@ public class GoogleMapProvider extends MapProvider {
     private static final String LAYER_SATELLITE_ONLY = "s";
     private static final String LAYER_TERRAIN_ONLY = "t";
     private static final String LAYER_HYBRID = "y";
-    
+
     @Override
     public String getName() {
         return "Google Maps";
@@ -45,7 +45,7 @@ public class GoogleMapProvider extends MapProvider {
     public int zoomLevels() {
         return 20;
     }
-    
+
     @Override
     public String getZoomString(final Coordinate coordinate) {
         return "x=" + (int) coordinate.column
@@ -62,7 +62,7 @@ public class GoogleMapProvider extends MapProvider {
     public String[] getTileUrls(Coordinate coordinate) {
         // TODO: supply an api key or this will be blocked
         final String url = String.format(
-                "http://mt.google.com/vt/lyrs=%s&%s", 
+                "http://mt.google.com/vt/lyrs=%s&%s",
                 LAYER_STREETMAP, getZoomString(coordinate));
         return new String[]{url};
     }

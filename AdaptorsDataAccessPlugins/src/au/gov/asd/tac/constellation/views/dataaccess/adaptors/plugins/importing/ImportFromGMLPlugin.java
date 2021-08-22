@@ -93,7 +93,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         file.setName("GML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to grab transactions
          */
@@ -102,7 +102,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         edge.setDescription("Retrieve Transactions from GML File");
         edge.setBooleanValue(true);
         params.addParameter(edge);
-        
+
         return params;
     }
 
@@ -121,7 +121,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         String line;
         boolean node = false;
         boolean edge = false;
-        
+
         try {
             // Open file and loop through lines
             in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
@@ -130,23 +130,19 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                 if (line.startsWith(NODE_TAG)) {
                     node = true;
                     nodeRecords.add();
-                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);                    
-                }
-                else if (line.startsWith(EDGE_TAG)) {
+                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
+                } else if (line.startsWith(EDGE_TAG)) {
                     edge = true;
                     if (getEdges) {
                         edgeRecords.add();
                         edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
                     }
-                }
-                else if (line.startsWith(START_TAG)) {
+                } else if (line.startsWith(START_TAG)) {
                     //do nothing
-                }
-                else if (line.startsWith(END_TAG)) {
+                } else if (line.startsWith(END_TAG)) {
                     node = false;
                     edge = false;
-                }
-                else {
+                } else {
                     if (node) {
                         try {
                             // Read node data
@@ -154,32 +150,28 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                             final String value = line.split(" ")[1].trim().replace("\"", "");
                             if (key.equals("id")) {
                                 nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
-                            }
-                            else {
+                            } else {
                                 nodeRecords.set(GraphRecordStoreUtilities.SOURCE + key, value);
                             }
                         } catch (ArrayIndexOutOfBoundsException ex) {
                         }
-                    }
-                    else if (getEdges && edge) {
+                    } else if (getEdges && edge) {
                         try {
                             final String key = line.split(" ")[0].trim();
                             final String value = line.split(" ")[1].trim().replace("\"", "");
                             if (key.equals("source")) {
                                 edgeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
-                            }
-                            else if (key.equals("target")) {
+                            } else if (key.equals("target")) {
                                 edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, value);
-                            }
-                            else {
+                            } else {
                                 edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + key, value);
                             }
-                        }  catch (final ArrayIndexOutOfBoundsException ex) {
+                        } catch (final ArrayIndexOutOfBoundsException ex) {
                         }
                     }
-                }  
+                }
             }
-            
+
         } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
         } catch (final IOException ex) {
@@ -190,15 +182,15 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                     in.close();
                 } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                } 
+                }
             }
         }
-        
+
         final RecordStore result = new GraphRecordStore();
         result.add(nodeRecords);
         result.add(edgeRecords);
         result.add(nodeRecords);
-        
+
         interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }

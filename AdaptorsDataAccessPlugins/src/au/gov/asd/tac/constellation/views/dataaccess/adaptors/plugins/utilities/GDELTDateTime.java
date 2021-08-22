@@ -19,29 +19,29 @@ import java.time.ZonedDateTime;
 
 /**
  * This utility class assists formatting the GDELT timestamps for querying
- * 
+ *
  * @author canis_majoris
  */
 public class GDELTDateTime {
-    
+
     private static final String HEADER = "http://data.gdeltproject.org/gkg/";
     private static final String FOOTER = ".gkg.csv";
     private static final String ZIPPER = ".zip";
-    
+
     private final int h;
     private final int m;
     private final int d;
-    
+
     private final String day;
     public final String dt;
     public final String url;
     public final String file;
-    
+
     public GDELTDateTime(ZonedDateTime date) {
         this.h = date.getYear();
         this.m = date.getMonthValue();
         this.d = date.getDayOfMonth();
-        
+
         this.day = String.format("%04d%02d%02d", h, m, d);
         this.dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);
         this.url = HEADER + day + FOOTER + ZIPPER;

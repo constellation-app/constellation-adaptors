@@ -113,7 +113,7 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         file.setName("GraphML File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to grab transactions
          */
@@ -122,7 +122,7 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         edge.setDescription("Retrieve Transactions from GraphML File");
         edge.setBooleanValue(true);
         params.addParameter(edge);
-        
+
         return params;
     }
 
@@ -138,20 +138,20 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean getEdges = parameters.getParameters().get(EDGE_PARAMETER_ID).getBooleanValue();
         InputStream in = null;
-        HashMap<String,String> nodeAttributes = new HashMap<>();
-        HashMap<String,String> transactionAttributes = new HashMap<>();
-        HashMap<String,String> defaultAttributes = new HashMap<>();
-        
+        HashMap<String, String> nodeAttributes = new HashMap<>();
+        HashMap<String, String> transactionAttributes = new HashMap<>();
+        HashMap<String, String> defaultAttributes = new HashMap<>();
+
         boolean undirected = false;
-        
+
         try {
             // Open file and loop through lines
             in = new FileInputStream(filename);
-            
+
             final XmlUtilities xml = new XmlUtilities();
             final Document document = xml.read(in, true);
             final Element documentElement = document.getDocumentElement();
-            
+
             /**
              * Read attribute keys
              */
@@ -160,15 +160,14 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                 final Node key = keys.item(index);
                 final NamedNodeMap attributes = key.getAttributes();
                 final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
-                final String name = attributes.getNamedItem(KEY_NAME_TAG).getNodeValue() +
-                        NAME_TYPE_DELIMITER +
-                        attributes.getNamedItem(KEY_TYPE_TAG).getNodeValue();
+                final String name = attributes.getNamedItem(KEY_NAME_TAG).getNodeValue()
+                        + NAME_TYPE_DELIMITER
+                        + attributes.getNamedItem(KEY_TYPE_TAG).getNodeValue();
                 final String type = attributes.getNamedItem(KEY_FOR_TAG).getNodeValue();
-                
+
                 if (type.equals(NODE_TAG)) {
                     nodeAttributes.put(id, name);
-                }
-                else {
+                } else {
                     transactionAttributes.put(id, name);
                 }
                 /**
@@ -190,13 +189,13 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
              */
             NodeList graphs = documentElement.getElementsByTagName(GRAPH_TAG);
             for (int index = 0; index < graphs.getLength(); index++) {
-               final Node graph = graphs.item(index); 
-               final NamedNodeMap graph_attributes = graph.getAttributes();
-               final String direction = graph_attributes.getNamedItem(DIRECTION_TAG).getNodeValue();
-               if (direction.equals("undirected")) {
-                   undirected = true;
-               }
-               if (graph.hasChildNodes()) {
+                final Node graph = graphs.item(index);
+                final NamedNodeMap graph_attributes = graph.getAttributes();
+                final String direction = graph_attributes.getNamedItem(DIRECTION_TAG).getNodeValue();
+                if (direction.equals("undirected")) {
+                    undirected = true;
+                }
+                if (graph.hasChildNodes()) {
                     NodeList children = graph.getChildNodes();
                     /**
                      * Just edges first
@@ -205,66 +204,65 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         final Node childNode = children.item(childIndex);
                         if (childNode != null) {
                             switch (childNode.getNodeName()) {
-                                case NODE_TAG:
-                                    {
+                                case NODE_TAG: {
+                                    final NamedNodeMap attributes = childNode.getAttributes();
+                                    final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
+                                    nodeRecords.add();
+                                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, id);
+                                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
+                                    nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
+                                    for (String key : nodeAttributes.keySet()) {
+                                        if (defaultAttributes.containsKey(key)) {
+                                            final String value = defaultAttributes.get(key);
+                                            final String attr = nodeAttributes.get(key);
+                                            final String attr_name = attr.split(NAME_TYPE_DELIMITER)[0];
+                                            final String attr_type = attr.split(NAME_TYPE_DELIMITER)[1];
+                                            GraphMLUtilities.addAttribute(nodeRecords, GraphRecordStoreUtilities.SOURCE, attr_type, attr_name, value);
+                                        }
+                                    }
+                                    if (childNode.hasChildNodes()) {
+                                        GraphMLUtilities.addAttributes(childNode, nodeAttributes, nodeRecords, GraphRecordStoreUtilities.SOURCE);
+                                    }
+                                    break;
+                                }
+                                case EDGE_TAG: {
+                                    if (getEdges) {
                                         final NamedNodeMap attributes = childNode.getAttributes();
                                         final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
-                                        nodeRecords.add();
-                                        nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, id);
-                                        nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
-                                        nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                                        for (String key : nodeAttributes.keySet()) {
+                                        final String source = attributes.getNamedItem(EDGE_SRC_TAG).getNodeValue();
+                                        final String target = attributes.getNamedItem(EDGE_DST_TAG).getNodeValue();
+                                        edgeRecords.add();
+                                        edgeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, source);
+                                        edgeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
+                                        edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, target);
+                                        edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
+                                        edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, id);
+                                        edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
+                                        if (undirected) {
+                                            edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, false);
+                                        }
+                                        for (String key : transactionAttributes.keySet()) {
                                             if (defaultAttributes.containsKey(key)) {
                                                 final String value = defaultAttributes.get(key);
-                                                final String attr = nodeAttributes.get(key);
+                                                final String attr = transactionAttributes.get(key);
                                                 final String attr_name = attr.split(NAME_TYPE_DELIMITER)[0];
                                                 final String attr_type = attr.split(NAME_TYPE_DELIMITER)[1];
-                                                GraphMLUtilities.addAttribute(nodeRecords, GraphRecordStoreUtilities.SOURCE, attr_type, attr_name, value);
+                                                GraphMLUtilities.addAttribute(edgeRecords, GraphRecordStoreUtilities.TRANSACTION, attr_type, attr_name, value);
                                             }
-                                        }       
+                                        }
                                         if (childNode.hasChildNodes()) {
-                                            GraphMLUtilities.addAttributes(childNode, nodeAttributes, nodeRecords, GraphRecordStoreUtilities.SOURCE);
-                                        }       
-                                        break;
+                                            GraphMLUtilities.addAttributes(childNode, transactionAttributes, edgeRecords, GraphRecordStoreUtilities.TRANSACTION);
+                                        }
                                     }
-                                case EDGE_TAG:
-                                    {
-                                        if (getEdges) {
-                                            final NamedNodeMap attributes = childNode.getAttributes();
-                                            final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
-                                            final String source = attributes.getNamedItem(EDGE_SRC_TAG).getNodeValue();
-                                            final String target = attributes.getNamedItem(EDGE_DST_TAG).getNodeValue();
-                                            edgeRecords.add();
-                                            edgeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, source);
-                                            edgeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
-                                            edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, target);
-                                            edgeRecords.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
-                                            edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.IDENTIFIER, id);
-                                            edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
-                                            if (undirected) {
-                                                edgeRecords.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, false);
-                                            }       
-                                            for (String key : transactionAttributes.keySet()) { 
-                                                if (defaultAttributes.containsKey(key)) {
-                                                    final String value = defaultAttributes.get(key);
-                                                    final String attr = transactionAttributes.get(key);
-                                                    final String attr_name = attr.split(NAME_TYPE_DELIMITER)[0];
-                                                    final String attr_type = attr.split(NAME_TYPE_DELIMITER)[1];
-                                                    GraphMLUtilities.addAttribute(edgeRecords, GraphRecordStoreUtilities.TRANSACTION, attr_type, attr_name, value);
-                                                }
-                                            }      
-                                            if (childNode.hasChildNodes()) {
-                                                GraphMLUtilities.addAttributes(childNode, transactionAttributes, edgeRecords, GraphRecordStoreUtilities.TRANSACTION);
-                                            }       
-                                        } break;
-                                    }
+                                    break;
+                                }
                                 default:
-                                    break;            
+                                    break;
                             }
                         }
                     }
-                }   
-            }   
+                }
+            }
         } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
         } catch (final TransformerException ex) {
@@ -275,17 +273,16 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     in.close();
                 } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                } 
+                }
             }
         }
         final RecordStore result = new GraphRecordStore();
         result.add(nodeRecords);
         result.add(edgeRecords);
         result.add(nodeRecords);
-        
+
         interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         return result;
     }
-    
-    
+
 }

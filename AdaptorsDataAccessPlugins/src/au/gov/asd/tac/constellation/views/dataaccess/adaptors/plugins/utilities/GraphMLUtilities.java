@@ -28,16 +28,17 @@ import org.w3c.dom.NodeList;
  * @author canis_majoris
  */
 public class GraphMLUtilities {
-    
+
     /**
      * This method adds attributes to nodes or transactions
+     *
      * @param node
      * @param nodeAttributes
      * @param result
-     * @param element 
+     * @param element
      */
     public static void addAttributes(Node node, HashMap<String, String> nodeAttributes, RecordStore result, String element) {
-        
+
         NodeList children = node.getChildNodes();
         for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
             final Node childNode = children.item(childIndex);
@@ -51,14 +52,15 @@ public class GraphMLUtilities {
             }
         }
     }
-    
+
     /**
      * This method adds the attribute to the RecordStore depending on the type.
+     *
      * @param result
      * @param element
      * @param attr_type
      * @param attr_name
-     * @param value 
+     * @param value
      */
     public static void addAttribute(RecordStore result, String element, String attr_type, String attr_name, String value) {
         switch (attr_type) {
@@ -76,6 +78,5 @@ public class GraphMLUtilities {
                 result.set(element + attr_name, value);
         }
     }
-    
-    
+
 }

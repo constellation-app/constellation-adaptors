@@ -56,7 +56,6 @@ import org.openide.util.lookup.ServiceProviders;
 public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
     // plugin parameters
-
     @Override
     public String getType() {
         return DataAccessPluginCoreType.IMPORT;
@@ -66,14 +65,14 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
     public int getPosition() {
         return 500;
     }
-    
+
     public static final String CHOICE_PARAMETER_ID = PluginParameter.buildId(ImportRelationshipsFromGDELTPlugin.class, "choice");
     public static final String LIMIT_PARAMETER_ID = PluginParameter.buildId(ImportRelationshipsFromGDELTPlugin.class, "limit");
-    
+
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
-        
+
         final PluginParameter<MultiChoiceParameterValue> choices = MultiChoiceParameterType.build(CHOICE_PARAMETER_ID);
         choices.setName("Relationship Options");
         choices.setDescription("Choose which relationship types to be imported");
@@ -82,7 +81,7 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         checked.add(GDELTRelationshipTypes.Person_Theme.toString());
         MultiChoiceParameterType.setChoices(choices, checked);
         params.addParameter(choices);
-        
+
         final PluginParameter<IntegerParameterType.IntegerParameterValue> limit = IntegerParameterType.build(LIMIT_PARAMETER_ID);
         limit.setName("Limit");
         limit.setDescription("Maximum number of results to import");
@@ -90,11 +89,11 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         IntegerParameterType.setMaximum(limit, 50000);
         limit.setIntegerValue(20000);
         params.addParameter(limit);
-        
+
         return params;
-        
+
     }
-    
+
     @Override
     public String getDescription() {
         return "Import Relationships from GDELT";
@@ -110,11 +109,11 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
-        
+
         final ZonedDateTime[] startEnd = CoreGlobalParameters.DATETIME_RANGE_PARAMETER.getDateTimeRangeValue().getZonedStartEnd();
         final ZonedDateTime end = startEnd[1];
-        
-        if (end != null) {            
+
+        if (end != null) {
             try {
                 final GDELTDateTime gdt = new GDELTDateTime(end);
                 final RecordStore results = GDELTImportingUtilities.retrieveRelationships(gdt, options, limit);
@@ -124,7 +123,7 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
                 Exceptions.printStackTrace(ex);
             }
         }
-        
+
         return new GraphRecordStore();
     }
 }

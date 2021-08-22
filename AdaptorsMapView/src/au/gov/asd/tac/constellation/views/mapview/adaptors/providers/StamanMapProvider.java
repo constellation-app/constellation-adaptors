@@ -27,7 +27,7 @@ import processing.core.PImage;
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 1)
 public class StamanMapProvider extends MapProvider {
-    
+
     private static final String LAYER_TONER = "toner";
     private static final String LAYER_TONER_BACKGROUND = "toner-background";
     private static final String LAYER_TONER_LITE = "toner-lite";
@@ -42,7 +42,7 @@ public class StamanMapProvider extends MapProvider {
     public int zoomLevels() {
         return 16;
     }
-    
+
     @Override
     public PImage getTile(Coordinate coordinate) {
         return null;

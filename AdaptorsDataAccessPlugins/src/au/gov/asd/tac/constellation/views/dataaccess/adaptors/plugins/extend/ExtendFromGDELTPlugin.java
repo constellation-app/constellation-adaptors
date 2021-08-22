@@ -75,11 +75,11 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
     public String getDescription() {
         return "Extend on selected graph entities to import from GDELT";
     }
-    
+
     @Override
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
-        
+
         final PluginParameter<MultiChoiceParameterValue> choices = MultiChoiceParameterType.build(CHOICE_PARAMETER_ID);
         choices.setName("Relationship Options");
         choices.setDescription("Choose which relationship types to extend");
@@ -88,7 +88,7 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         checked.add(GDELTRelationshipTypes.Person_Theme.toString());
         MultiChoiceParameterType.setChoices(choices, checked);
         params.addParameter(choices);
-        
+
         final PluginParameter<IntegerParameterType.IntegerParameterValue> limit = IntegerParameterType.build(LIMIT_PARAMETER_ID);
         limit.setName("Limit");
         limit.setDescription("Maximum number of results to import");
@@ -96,13 +96,13 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         IntegerParameterType.setMaximum(limit, 50000);
         limit.setIntegerValue(20000);
         params.addParameter(limit);
-        
+
         return params;
     }
 
     @Override
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
-        
+
         interaction.setProgress(0, 0, "Hopping...", true);
         /**
          * Initialize variables
@@ -110,13 +110,13 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
-        
+
         final ZonedDateTime[] startEnd = CoreGlobalParameters.DATETIME_RANGE_PARAMETER.getDateTimeRangeValue().getZonedStartEnd();
         final ZonedDateTime end = startEnd[1];
-        
+
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL);
-        
-        if (end != null) {            
+
+        if (end != null) {
             try {
                 final GDELTDateTime gdt = new GDELTDateTime(end);
                 final RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
@@ -126,7 +126,7 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
                 Exceptions.printStackTrace(ex);
             }
         }
-        
+
         return new GraphRecordStore();
     }
 }

@@ -91,7 +91,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         file.setName("Pajek File");
         file.setDescription("File to extract graph from");
         params.addParameter(file);
-        
+
         /**
          * A boolean option for whether to grab transactions
          */
@@ -100,7 +100,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         edge.setDescription("Retrieve Transactions from Pajek File");
         edge.setBooleanValue(true);
         params.addParameter(edge);
-        
+
         return params;
     }
 
@@ -118,19 +118,17 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         String line;
         boolean processNodes = false;
         boolean processEdges = false;
-        
+
         try {
             // Open file and loop through lines
             in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
             while ((line = in.readLine()) != null) {
                 if (line.startsWith(VERTEX_HEADER)) {
                     processNodes = true;
-                }
-                else if (line.startsWith(EDGE_HEADER)) {
+                } else if (line.startsWith(EDGE_HEADER)) {
                     processNodes = false;
                     processEdges = true;
-                }
-                else {
+                } else {
                     if (processNodes) {
                         try {
                             // Read node data
@@ -143,8 +141,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                             result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
                         } catch (ArrayIndexOutOfBoundsException ex) {
                         }
-                    }
-                    else if (processEdges && getEdges) {
+                    } else if (processEdges && getEdges) {
                         try {
                             // Read edge data
                             String[] fields = line.split("\\s+");
@@ -159,10 +156,10 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                             result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.SOURCE, filename);
                             result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.COUNT, weight);
                             result.set(GraphRecordStoreUtilities.TRANSACTION + AnalyticConcept.TransactionAttribute.SOURCE, filename);
-                        }  catch (final ArrayIndexOutOfBoundsException ex) {
+                        } catch (final ArrayIndexOutOfBoundsException ex) {
                         }
                     }
-                }  
+                }
             }
             interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         } catch (final FileNotFoundException ex) {
@@ -175,7 +172,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                     in.close();
                 } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
-                } 
+                }
             }
         }
 

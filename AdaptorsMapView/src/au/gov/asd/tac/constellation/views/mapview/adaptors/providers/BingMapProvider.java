@@ -28,7 +28,7 @@ import processing.core.PImage;
  */
 @ServiceProvider(service = MapProvider.class, position = Integer.MAX_VALUE - 5)
 public class BingMapProvider extends MapProvider {
-    
+
     private static final String LAYER_ROADS = "r";
     private static final String LAYER_ARIAL = "a";
     private static final String LAYER_HYBRID = "h";

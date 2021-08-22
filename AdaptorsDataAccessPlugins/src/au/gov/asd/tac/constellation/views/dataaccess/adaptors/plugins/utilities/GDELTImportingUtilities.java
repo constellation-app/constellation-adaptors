@@ -32,54 +32,54 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * This class contains utilities functions for importing entities and relationships
- * from GDELT CSVs.
- * 
+ * This class contains utilities functions for importing entities and
+ * relationships from GDELT CSVs.
+ *
  * @author canis_majoris
  */
 public class GDELTImportingUtilities {
-    
+
     public static RecordStore retrieveEntities(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
-        
+
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
             zis = new ZipInputStream(new URL(gdt.url).openStream());
-            
+
             final ZipEntry ze = zis.getNextEntry();
             if (ze.getName().equals(gdt.file)) {
                 results = readEntities(limit, gdt.dt, options, ze, zis);
             }
-            
+
         } finally {
             if (zis != null) {
                 zis.close();
             }
         }
-        
+
         return results;
     }
-    
+
     public static RecordStore retrieveRelationships(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
-        
+
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
             zis = new ZipInputStream(new URL(gdt.url).openStream());
-            
+
             final ZipEntry ze = zis.getNextEntry();
             if (ze.getName().equals(gdt.file)) {
                 results = readRelationships(limit, gdt.dt, options, ze, zis);
             }
-            
+
         } finally {
             if (zis != null) {
                 zis.close();
             }
         }
-        
+
         return results;
-    } 
+    }
 
     public static RecordStore readEntities(int limit, String dt, List<String> options, ZipEntry ze, ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
@@ -88,7 +88,7 @@ public class GDELTImportingUtilities {
         try {
             br = new BufferedReader(new InputStreamReader(zis));
             String line = br.readLine();
-            while ((line =  br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 if (total >= limit) {
                     break;
                 }
@@ -98,13 +98,12 @@ public class GDELTImportingUtilities {
                 final String[] persons = fields[5].split(";");
                 final String[] organisations = fields[6].split(";");
                 final String[] themes = fields[3].split(";");
-                final String[] locations = fields[4].split(";"); 
+                final String[] locations = fields[4].split(";");
                 final String[] sources = fields[9].split(";");
-                final String[] sourceURLs = fields[10].split(";"); 
+                final String[] sourceURLs = fields[10].split(";");
 
                 final String tone = fields[7]; // 6 semi-colon delimited
                 final String cameoEventIds = fields[8]; // semi-colon delimited
-
 
                 if (options.contains("Person")) {
                     for (int j = 0; j < persons.length; j++) {
@@ -197,7 +196,7 @@ public class GDELTImportingUtilities {
         }
         return results;
     }
-    
+
     public static RecordStore readRelationships(int limit, String dt, List<String> options, ZipEntry ze, ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
@@ -205,7 +204,7 @@ public class GDELTImportingUtilities {
         try {
             br = new BufferedReader(new InputStreamReader(zis));
             String line = br.readLine();
-            while ((line =  br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 if (total >= limit) {
                     break;
                 }
@@ -215,9 +214,9 @@ public class GDELTImportingUtilities {
                 final String[] persons = fields[5].split(";");
                 final String[] organisations = fields[6].split(";");
                 final String[] themes = fields[3].split(";");
-                final String[] locations = fields[4].split(";"); 
+                final String[] locations = fields[4].split(";");
                 final String[] sources = fields[9].split(";");
-                final String[] sourceURLs = fields[10].split(";"); 
+                final String[] sourceURLs = fields[10].split(";");
 
                 final String tone = fields[7]; // 6 semi-colon delimited
                 final String cameoEventIds = fields[8]; // semi-colon delimited
@@ -227,7 +226,7 @@ public class GDELTImportingUtilities {
                         break;
                     }
                     if (options.contains("Person - Person")) {
-                        for (int j = i+1; j < persons.length; j++) {
+                        for (int j = i + 1; j < persons.length; j++) {
                             total++;
                             if (total >= limit) {
                                 break;
@@ -364,7 +363,7 @@ public class GDELTImportingUtilities {
                         break;
                     }
                     if (options.contains("Organisation - Organisation")) {
-                        for (int j = i+1; j < organisations.length; j++) {
+                        for (int j = i + 1; j < organisations.length; j++) {
                             total++;
                             if (total >= limit) {
                                 break;

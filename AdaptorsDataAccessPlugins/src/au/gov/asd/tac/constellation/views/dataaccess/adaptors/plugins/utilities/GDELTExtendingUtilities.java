@@ -32,34 +32,33 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * This class contains utilities functions for extending
- * from GDELT CSVs.
- * 
+ * This class contains utilities functions for extending from GDELT CSVs.
+ *
  * @author canis_majoris
  */
 public class GDELTExtendingUtilities {
-    
+
     public static RecordStore hopRelationships(GDELTDateTime gdt, List<String> options, int limit, List<String> labels) throws MalformedURLException, IOException {
 
         ZipInputStream zis = null;
         RecordStore results = null;
         try {
             zis = new ZipInputStream(new URL(gdt.url).openStream());
-            
+
             final ZipEntry ze = zis.getNextEntry();
             if (ze.getName().equals(gdt.file)) {
                 results = readRelationshipsToHop(limit, gdt.dt, options, ze, zis, labels);
             }
-            
+
         } finally {
             if (zis != null) {
                 zis.close();
             }
         }
-        
+
         return results;
     }
-    
+
     public static RecordStore readRelationshipsToHop(int limit, String dt, List<String> options, ZipEntry ze, ZipInputStream zis, List<String> labels) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
@@ -67,28 +66,28 @@ public class GDELTExtendingUtilities {
         try {
             br = new BufferedReader(new InputStreamReader(zis));
             String line = br.readLine();
-            while ((line =  br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 if (total >= limit) {
                     break;
                 }
-                
+
                 final String[] fields = line.split("\t");
                 // transaction attributes
 
                 final String[] persons = fields[5].split(";");
                 final String[] organisations = fields[6].split(";");
                 final String[] themes = fields[3].split(";");
-                final String[] locations = fields[4].split(";"); 
+                final String[] locations = fields[4].split(";");
                 final String[] sources = fields[9].split(";");
-                final String[] sourceURLs = fields[10].split(";"); 
-                
+                final String[] sourceURLs = fields[10].split(";");
+
                 final String tone = fields[7]; // 6 semi-colon delimited
                 final String cameoEventIds = fields[8]; // semi-colon delimited
-                
+
                 for (final String label : labels) {
                     final String identifier = label.split("<")[0];
                     final String type = label.split("<")[1].split(">")[0];
-                    
+
                     if (line.contains(identifier)) {
                         if (type.equals("Person")) {
                             for (int i = 0; i < persons.length; i++) {
@@ -233,8 +232,7 @@ public class GDELTExtendingUtilities {
                                     }
                                 }
                             }
-                        }
-                        else if (type.equals("Organisation")) {
+                        } else if (type.equals("Organisation")) {
                             for (int i = 0; i < organisations.length; i++) {
                                 if (!organisations[i].equals(identifier)) {
                                     continue;
@@ -250,7 +248,7 @@ public class GDELTExtendingUtilities {
                                         }
                                         final String one = organisations[i];
                                         final String two = organisations[j];
-                                        
+
                                         if (two.equals(identifier)) {
                                             continue;
                                         }
@@ -334,8 +332,7 @@ public class GDELTExtendingUtilities {
                                     }
                                 }
                             }
-                        }
-                        else if (type.equals("Word")) {
+                        } else if (type.equals("Word")) {
                             for (int i = 0; i < themes.length; i++) {
                                 if (!themes[i].equals(identifier)) {
                                     continue;
@@ -343,7 +340,7 @@ public class GDELTExtendingUtilities {
                                 if (total >= limit) {
                                     break;
                                 }
-                                
+
                                 if (options.contains("Person - Theme")) {
                                     for (int j = 0; j < persons.length; j++) {
                                         total++;
@@ -388,8 +385,7 @@ public class GDELTExtendingUtilities {
                                     }
                                 }
                             }
-                        }
-                        else if (type.equals("Document")) {
+                        } else if (type.equals("Document")) {
                             for (int i = 0; i < sources.length; i++) {
                                 if (!sources[i].equals(identifier)) {
                                     continue;
@@ -397,7 +393,7 @@ public class GDELTExtendingUtilities {
                                 if (total >= limit) {
                                     break;
                                 }
-                                
+
                                 if (options.contains("Person - Source")) {
                                     for (int j = 0; j < persons.length; j++) {
                                         total++;
@@ -441,8 +437,7 @@ public class GDELTExtendingUtilities {
                                     }
                                 }
                             }
-                        }
-                        else if (type.equals("URL")) {
+                        } else if (type.equals("URL")) {
                             for (int i = 0; i < sourceURLs.length; i++) {
                                 if (!sourceURLs[i].equals(identifier)) {
                                     continue;
@@ -450,7 +445,7 @@ public class GDELTExtendingUtilities {
                                 if (total >= limit) {
                                     break;
                                 }
-                                
+
                                 if (options.contains("Person - URL")) {
                                     for (int j = 0; j < persons.length; j++) {
                                         total++;
@@ -494,8 +489,7 @@ public class GDELTExtendingUtilities {
                                     }
                                 }
                             }
-                        }
-                        else if (type.equals("Location")) {
+                        } else if (type.equals("Location")) {
                             for (int i = 0; i < locations.length; i++) {
                                 if (!locations[i].split("#")[1].equals(identifier)) {
                                     continue;
@@ -503,7 +497,7 @@ public class GDELTExtendingUtilities {
                                 if (total >= limit) {
                                     break;
                                 }
-                                
+
                                 if (options.contains("Person - Location")) {
                                     for (int j = 0; j < persons.length; j++) {
                                         total++;
@@ -528,8 +522,7 @@ public class GDELTExtendingUtilities {
                                 }
                             }
                         }
-                        
-                        
+
                     }
                 }
             }

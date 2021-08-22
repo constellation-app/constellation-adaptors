@@ -20,25 +20,25 @@ import java.util.List;
 
 /**
  * A list of relationship types used for GDELT Importing
- * 
+ *
  * @author canis-majoris-42
  */
 public enum GDELTRelationshipTypes {
-    Person_Person, 
-    Person_Organisation, 
-    Person_Theme, 
+    Person_Person,
+    Person_Organisation,
+    Person_Theme,
     Person_Location,
-    Person_Source, 
-    Person_URL, 
-    Organisation_Organisation, 
-    Organisation_Theme, 
-    Organisation_Source, 
+    Person_Source,
+    Person_URL,
+    Organisation_Organisation,
+    Organisation_Theme,
+    Organisation_Source,
     Organisation_URL;
-    
+
     public static List<String> getValues() {
         return Arrays.asList(Arrays.stream(GDELTRelationshipTypes.values()) // create stream of enum values
-               .map(e -> e.toString())  // convert enum stream to String stream
-               .toArray(String[]::new)
+                .map(e -> e.toString()) // convert enum stream to String stream
+                .toArray(String[]::new)
         );
     }
 }
