@@ -15,7 +15,8 @@
  */
 package au.gov.asd.tac.constellation.views.dataaccess.adaptors;
 
-import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginType;
+import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginType;
+import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginType.PositionalDataAccessPluginType;
 import java.util.ArrayList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
@@ -25,7 +26,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author GCHQDeveloper601
  */
 @ServiceProvider(service = DataAccessPluginType.class)
-public class DataAccessPluginAdaptorType extends DataAccessPluginType {
+public class DataAccessPluginAdaptorType implements DataAccessPluginType {
 
     public static final String EXAMPLE = "Example";
 
