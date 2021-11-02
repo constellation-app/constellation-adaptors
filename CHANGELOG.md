@@ -1,5 +1,9 @@
 # Constellation Adaptors Changes
 
+## Changes in October 2021
+* Converted HTML help pages to Markdown for implementation of a new Offline and Online Help
+and remove JavaHelp Integration
+
 ## Changes in August 2021
 * Moved help pages for Data Access Plugins from `au.gov.asd.tac.constellation.functionality.adaptors` 
 to `au.gov.asd.tac.constellation.views.dataaccess.adaptors.docs`
