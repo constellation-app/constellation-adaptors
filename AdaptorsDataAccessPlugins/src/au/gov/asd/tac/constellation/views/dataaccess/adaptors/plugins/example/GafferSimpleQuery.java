@@ -20,7 +20,8 @@ import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.io.IOException;
 import java.util.List;
-import org.openide.util.Exceptions;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
@@ -36,11 +37,9 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
  */
 public class GafferSimpleQuery {
 
-    private GafferConnector connector;
+    private static final Logger LOGGER = Logger.getLogger(GafferSimpleQuery.class.getName());
 
-    public GafferSimpleQuery() {
-        //NOOP
-    }
+    private GafferConnector connector;
 
     public void setUrl(final String url) {
         connector = new GafferConnector(url);
@@ -90,8 +89,11 @@ public class GafferSimpleQuery {
         try {
             final List<Element> results = connector.sendQueryToGaffer(opChain);
             results.forEach(result -> addResultsToRecordStore(result, recordStore));
-        } catch (final IOException | InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
+        } catch (final InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            LOGGER.log(Level.SEVERE, "Thread was interrupted", ex);
+        } catch (final IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
         }
     }
 
