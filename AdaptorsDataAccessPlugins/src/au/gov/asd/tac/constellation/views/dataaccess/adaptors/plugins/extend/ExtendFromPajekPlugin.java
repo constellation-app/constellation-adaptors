@@ -42,6 +42,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -60,6 +63,8 @@ import org.openide.util.lookup.ServiceProviders;
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT", "EXTEND"})
 @Messages("ExtendFromPajekPlugin=Extend From Pajek File")
 public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(ExtendFromPajekPlugin.class.getName());
 
     // plugin parameters
     public static final String FILE_PARAMETER_ID = PluginParameter.buildId(ExtendFromPajekPlugin.class, "file");
@@ -87,9 +92,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The Pajek file to read from
-         */
+        // The Pajek file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("PAJEK files", "*.net"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -97,18 +100,14 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         file.setDescription("File to extract graph from");
         params.addParameter(file);
 
-        /**
-         * A boolean option for whether to hop on incoming transactions
-         */
+        // A boolean option for whether to hop on incoming transactions
         final PluginParameter<BooleanParameterValue> in = BooleanParameterType.build(INCOMING_PARAMETER_ID);
         in.setName("Hop On Incoming Transactions");
         in.setDescription("Returns nodes adjacent on Incoming Transactions");
         in.setBooleanValue(true);
         params.addParameter(in);
 
-        /**
-         * A boolean option for whether to hop on outgoing transactions
-         */
+        // A boolean option for whether to hop on outgoing transactions
         final PluginParameter<BooleanParameterValue> out = BooleanParameterType.build(OUTGOING_PARAMETER_ID);
         out.setName("Hop On Outgoing Transactions");
         out.setDescription("Returns nodes adjacent on Outgoing Transactions");
@@ -123,9 +122,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         final RecordStore result = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Hopping...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean incoming = parameters.getParameters().get(INCOMING_PARAMETER_ID).getBooleanValue();
         final boolean outgoing = parameters.getParameters().get(OUTGOING_PARAMETER_ID).getBooleanValue();
@@ -136,10 +133,11 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
         if (incoming || outgoing) {
             final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
-            final HashMap<String, String> ids = new HashMap<>();
+            final Map<String, String> ids = new HashMap<>();
 
             if (labels.isEmpty()) {
                 interaction.notify(PluginNotificationLevel.WARNING, "Please select nodes to query in Pajek file");
+                LOGGER.log(Level.WARNING, "Please select nodes to query in Pajek file");
             } else {
                 try {
                     // Open file and loop through lines
@@ -161,7 +159,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                                     if (labels.contains(nodeLabel)) {
                                         ids.put(nodeId, nodeLabel);
                                     }
-                                } catch (ArrayIndexOutOfBoundsException ex) {
+                                } catch (final ArrayIndexOutOfBoundsException ex) {
                                 }
                             } else if (processEdges) {
                                 try {
@@ -202,14 +200,17 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                     interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
                 } catch (final FileNotFoundException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
+                    LOGGER.log(Level.SEVERE, ex, () -> "File " + filename + " not found");
                 } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                    LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
                         } catch (final IOException ex) {
                             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                            LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                         }
                     }
                 }

@@ -40,6 +40,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -56,6 +58,8 @@ import org.openide.util.lookup.ServiceProviders;
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
 @Messages("ImportFromPajekPlugin=Import From Pajek File")
 public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(ImportFromPajekPlugin.class.getName());
 
     // plugin parameters
     public static final String FILE_PARAMETER_ID = PluginParameter.buildId(ImportFromPajekPlugin.class, "file");
@@ -82,9 +86,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The Pajek file to read from
-         */
+        // The Pajek file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("PAJEK files", "*.net"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -92,9 +94,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         file.setDescription("File to extract graph from");
         params.addParameter(file);
 
-        /**
-         * A boolean option for whether to grab transactions
-         */
+        // A boolean option for whether to grab transactions
         final PluginParameter<BooleanParameterValue> edge = BooleanParameterType.build(EDGE_PARAMETER_ID);
         edge.setName("Retrieve Transactions");
         edge.setDescription("Retrieve Transactions from Pajek File");
@@ -109,9 +109,7 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
         final RecordStore result = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Importing...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean getEdges = parameters.getParameters().get(EDGE_PARAMETER_ID).getBooleanValue();
         BufferedReader in = null;
@@ -139,12 +137,12 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
                             result.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, nodeLabel);
                             result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
                             result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                        } catch (ArrayIndexOutOfBoundsException ex) {
+                        } catch (final ArrayIndexOutOfBoundsException ex) {
                         }
                     } else if (processEdges && getEdges) {
                         try {
                             // Read edge data
-                            String[] fields = line.split("\\s+");
+                            final String[] fields = line.split("\\s+");
                             final String srcId = fields[1];
                             final String dstId = fields[2];
                             final String weight = fields[3];
@@ -164,14 +162,17 @@ public class ImportFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
             interaction.setProgress(1, 0, "Completed successfully - added " + result.size() + " entities.", true);
         } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
+            LOGGER.log(Level.SEVERE, ex, () -> "File " + filename + " not found");
         } catch (final IOException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+            LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                    LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                 }
             }
         }

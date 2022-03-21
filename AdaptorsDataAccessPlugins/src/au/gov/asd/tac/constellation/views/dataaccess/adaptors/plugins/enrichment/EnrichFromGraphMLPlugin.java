@@ -168,9 +168,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     }
                 }
 
-                /**
-                 * Look for graphs
-                 */
+                // Look for graphs
                 final NodeList nodes = documentElement.getElementsByTagName(NODE_TAG);
                 for (int index = 0; index < nodes.getLength(); index++) {
                     final Node n = nodes.item(index);
