@@ -132,9 +132,7 @@ public class ImportFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final RecordStore edgeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Importing...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean getEdges = parameters.getParameters().get(EDGE_PARAMETER_ID).getBooleanValue();
         InputStream in = null;

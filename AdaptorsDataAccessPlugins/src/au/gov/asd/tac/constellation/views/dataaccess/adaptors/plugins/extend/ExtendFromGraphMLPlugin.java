@@ -145,9 +145,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final RecordStore edgeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Hopping...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean incoming = parameters.getParameters().get(INCOMING_PARAMETER_ID).getBooleanValue();
         final boolean outgoing = parameters.getParameters().get(OUTGOING_PARAMETER_ID).getBooleanValue();
@@ -203,9 +201,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         }
                     }
 
-                    /**
-                     * Look for graphs
-                     */
+                    // Look for graphs
                     final NodeList graphs = documentElement.getElementsByTagName(GRAPH_TAG);
                     for (int index = 0; index < graphs.getLength(); index++) {
                         final Node graph = graphs.item(index);

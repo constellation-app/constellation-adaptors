@@ -108,9 +108,7 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
 
         interaction.setProgress(0, 0, "Hopping...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);

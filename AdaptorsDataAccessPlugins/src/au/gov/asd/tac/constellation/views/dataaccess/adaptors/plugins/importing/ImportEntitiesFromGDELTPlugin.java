@@ -107,9 +107,7 @@ public class ImportEntitiesFromGDELTPlugin extends RecordStoreQueryPlugin implem
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
 
         interaction.setProgress(0, 0, "Importing...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);

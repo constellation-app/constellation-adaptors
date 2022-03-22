@@ -88,9 +88,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The GML file to read from
-         */
+        // The GML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GML files", "*.gml"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -98,9 +96,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         file.setDescription("File to extract graph from");
         params.addParameter(file);
 
-        /**
-         * A boolean option for whether to grab transactions
-         */
+        // A boolean option for whether to grab transactions
         final PluginParameter<BooleanParameterValue> edge = BooleanParameterType.build(EDGE_PARAMETER_ID);
         edge.setName("Retrieve Transactions");
         edge.setDescription("Retrieve Transactions from GML File");
@@ -116,9 +112,7 @@ public class ImportFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         final RecordStore edgeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Importing...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean getEdges = parameters.getParameters().get(EDGE_PARAMETER_ID).getBooleanValue();
         BufferedReader in = null;

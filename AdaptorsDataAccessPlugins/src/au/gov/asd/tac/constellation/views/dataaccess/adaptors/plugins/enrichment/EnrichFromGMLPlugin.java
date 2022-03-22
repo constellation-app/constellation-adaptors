@@ -102,9 +102,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         final RecordStore nodeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Enriching...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
 
         BufferedReader in = null;
