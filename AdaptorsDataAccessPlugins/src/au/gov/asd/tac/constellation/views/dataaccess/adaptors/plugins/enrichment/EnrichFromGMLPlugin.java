@@ -39,6 +39,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -55,6 +57,8 @@ import org.openide.util.lookup.ServiceProviders;
 @PluginInfo(pluginType = PluginType.SEARCH, tags = {"ENRICH"})
 @Messages("EnrichFromGMLPlugin=Enrich From GML File")
 public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(EnrichFromGMLPlugin.class.getName());
 
     // plugin parameters
     public static final String FILE_PARAMETER_ID = PluginParameter.buildId(EnrichFromGMLPlugin.class, "file");
@@ -82,9 +86,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The GML file to read from
-         */
+        // The GML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GML files", "*.gml"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -100,9 +102,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
         final RecordStore nodeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Enriching...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
 
         BufferedReader in = null;
@@ -142,22 +142,25 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                                     nodeRecords.set(GraphRecordStoreUtilities.SOURCE + key, value);
                                 }
                             }
-                        } catch (ArrayIndexOutOfBoundsException ex) {
+                        } catch (final ArrayIndexOutOfBoundsException ex) {
                         }
                     }
                 }
             }
 
-        } catch (FileNotFoundException ex) {
+        } catch (final FileNotFoundException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex, () -> "File " + filename + " not found");
+        } catch (final IOException ex) {
             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+            LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                    LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                 }
             }
         }

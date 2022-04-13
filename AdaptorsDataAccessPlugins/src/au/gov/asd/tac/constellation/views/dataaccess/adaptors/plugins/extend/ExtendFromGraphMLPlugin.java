@@ -44,9 +44,12 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import javax.xml.transform.TransformerException;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
@@ -69,6 +72,8 @@ import org.w3c.dom.NodeList;
 @PluginInfo(pluginType = PluginType.SEARCH, tags = {"EXTEND"})
 @Messages("ExtendFromGraphMLPlugin=Extend From GraphML File")
 public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(ExtendFromGraphMLPlugin.class.getName());
 
     // plugin parameters
     public static final String FILE_PARAMETER_ID = PluginParameter.buildId(ExtendFromGraphMLPlugin.class, "file");
@@ -109,9 +114,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The GraphML file to read from
-         */
+        // The GraphML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GraphML files", "*.graphml"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -119,18 +122,14 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         file.setDescription("File to extract graph from");
         params.addParameter(file);
 
-        /**
-         * A boolean option for whether to hop on incoming transactions
-         */
+        // A boolean option for whether to hop on incoming transactions
         final PluginParameter<BooleanParameterValue> in = BooleanParameterType.build(INCOMING_PARAMETER_ID);
         in.setName("Hop On Incoming Transactions");
         in.setDescription("Returns nodes adjacent on Incoming Transactions");
         in.setBooleanValue(true);
         params.addParameter(in);
 
-        /**
-         * A boolean option for whether to hop on outgoing transactions
-         */
+        // A boolean option for whether to hop on outgoing transactions
         final PluginParameter<BooleanParameterValue> out = BooleanParameterType.build(OUTGOING_PARAMETER_ID);
         out.setName("Hop On Outgoing Transactions");
         out.setDescription("Returns nodes adjacent on Outgoing Transactions");
@@ -146,17 +145,15 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final RecordStore edgeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Hopping...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
         final boolean incoming = parameters.getParameters().get(INCOMING_PARAMETER_ID).getBooleanValue();
         final boolean outgoing = parameters.getParameters().get(OUTGOING_PARAMETER_ID).getBooleanValue();
 
         InputStream in = null;
-        final HashMap<String, String> nodeAttributes = new HashMap<>();
-        final HashMap<String, String> transactionAttributes = new HashMap<>();
-        final HashMap<String, String> defaultAttributes = new HashMap<>();
+        final Map<String, String> nodeAttributes = new HashMap<>();
+        final Map<String, String> transactionAttributes = new HashMap<>();
+        final Map<String, String> defaultAttributes = new HashMap<>();
 
         boolean undirected = false;
 
@@ -165,6 +162,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
 
             if (labels.isEmpty()) {
                 interaction.notify(PluginNotificationLevel.WARNING, "Please select nodes to query in GraphML file");
+                LOGGER.log(Level.WARNING, "Please select nodes to query in GraphML file");
             } else {
                 try {
                     // Open file and loop through lines
@@ -174,10 +172,8 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     final Document document = xml.read(in, true);
                     final Element documentElement = document.getDocumentElement();
 
-                    /**
-                     * Read attribute keys
-                     */
-                    NodeList keys = documentElement.getElementsByTagName(KEY_TAG);
+                    // Read attribute keys
+                    final NodeList keys = documentElement.getElementsByTagName(KEY_TAG);
                     for (int index = 0; index < keys.getLength(); index++) {
                         final Node key = keys.item(index);
                         final NamedNodeMap attributes = key.getAttributes();
@@ -192,11 +188,10 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         } else {
                             transactionAttributes.put(id, name);
                         }
-                        /**
-                         * Check for default values
-                         */
+
+                        // Check for default values
                         if (key.hasChildNodes()) {
-                            NodeList children = key.getChildNodes();
+                            final NodeList children = key.getChildNodes();
                             for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null && childNode.getNodeName().equals(DEFAULT_TAG)) {
@@ -206,15 +201,13 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         }
                     }
 
-                    /**
-                     * Look for graphs
-                     */
+                    // Look for graphs
                     final NodeList graphs = documentElement.getElementsByTagName(GRAPH_TAG);
                     for (int index = 0; index < graphs.getLength(); index++) {
                         final Node graph = graphs.item(index);
                         final NamedNodeMap graph_attributes = graph.getAttributes();
                         final String direction = graph_attributes.getNamedItem(DIRECTION_TAG).getNodeValue();
-                        final HashSet<String> toComplete = new HashSet<>();
+                        final Set<String> toComplete = new HashSet<>();
                         if (direction.equals("undirected")) {
                             undirected = true;
                         }
@@ -224,9 +217,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null) {
                                     switch (childNode.getNodeName()) {
-                                        /**
-                                         * Find all edges that are relevant
-                                         */
+                                        // Find all edges that are relevant
                                         case EDGE_TAG: {
                                             final NamedNodeMap attributes = childNode.getAttributes();
                                             final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
@@ -265,9 +256,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                     }
                                 }
                             }
-                            /**
-                             * Now go back to enrich the nodes
-                             */
+                            // Now go back to enrich the nodes
                             for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null) {
@@ -304,14 +293,16 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     }
                 } catch (final FileNotFoundException ex) {
                     interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
+                    LOGGER.log(Level.SEVERE, ex, () -> "File " + filename + " not found");
                 } catch (final TransformerException ex) {
-                    Exceptions.printStackTrace(ex);
+                    LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
                         } catch (final IOException ex) {
                             interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                            LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                         }
                     }
                 }

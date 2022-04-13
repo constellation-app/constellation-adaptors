@@ -41,9 +41,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.FileChooser;
 import javax.xml.transform.TransformerException;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
@@ -67,6 +69,8 @@ import org.w3c.dom.NodeList;
 @Messages("EnrichFromGraphMLPlugin=Enrich From GraphML File")
 public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
 
+    private static final Logger LOGGER = Logger.getLogger(EnrichFromGraphMLPlugin.class.getName());
+    
     // plugin parameters
     public static final String FILE_PARAMETER_ID = PluginParameter.buildId(EnrichFromGraphMLPlugin.class, "file");
     public static final String GRAPHML_TAG = "graphml";
@@ -99,9 +103,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
     public PluginParameters createParameters() {
         final PluginParameters params = new PluginParameters();
 
-        /**
-         * The GraphML file to read from
-         */
+        // The GraphML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
         FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GraphML files", "*.graphml"));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
@@ -117,19 +119,19 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
         final RecordStore nodeRecords = new GraphRecordStore();
 
         interaction.setProgress(0, 0, "Enriching...", true);
-        /**
-         * Initialize variables
-         */
+        
+        // Initialize variables
         final String filename = parameters.getParameters().get(FILE_PARAMETER_ID).getStringValue();
 
         InputStream in = null;
-        HashMap<String, String> nodeAttributes = new HashMap<>();
-        HashMap<String, String> defaultAttributes = new HashMap<>();
+        final Map<String, String> nodeAttributes = new HashMap<>();
+        final Map<String, String> defaultAttributes = new HashMap<>();
 
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER);
 
         if (labels.isEmpty()) {
             interaction.notify(PluginNotificationLevel.WARNING, "Please select nodes to query in GraphML file");
+            LOGGER.log(Level.WARNING, "Please select nodes to query in GraphML file");
         } else {
             try {
                 // Open file and loop through lines
@@ -139,10 +141,8 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                 final Document document = xml.read(in, true);
                 final Element documentElement = document.getDocumentElement();
 
-                /**
-                 * Read attribute keys
-                 */
-                NodeList keys = documentElement.getElementsByTagName(KEY_TAG);
+                // Read attribute keys
+                final NodeList keys = documentElement.getElementsByTagName(KEY_TAG);
                 for (int index = 0; index < keys.getLength(); index++) {
                     final Node key = keys.item(index);
                     final NamedNodeMap attributes = key.getAttributes();
@@ -155,11 +155,10 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     if (type.equals(NODE_TAG)) {
                         nodeAttributes.put(id, name);
                     }
-                    /**
-                     * Check for default values
-                     */
+
+                    // Check for default values
                     if (key.hasChildNodes()) {
-                        NodeList children = key.getChildNodes();
+                        final NodeList children = key.getChildNodes();
                         for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
                             final Node childNode = children.item(childIndex);
                             if (childNode != null && childNode.getNodeName().equals(DEFAULT_TAG)) {
@@ -169,10 +168,8 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     }
                 }
 
-                /**
-                 * Look for graphs
-                 */
-                NodeList nodes = documentElement.getElementsByTagName(NODE_TAG);
+                // Look for graphs
+                final NodeList nodes = documentElement.getElementsByTagName(NODE_TAG);
                 for (int index = 0; index < nodes.getLength(); index++) {
                     final Node n = nodes.item(index);
                     final NamedNodeMap attributes = n.getAttributes();
@@ -182,7 +179,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         nodeRecords.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, id);
                         nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, "Unknown");
                         nodeRecords.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.SOURCE, filename);
-                        for (String key : nodeAttributes.keySet()) {
+                        for (final String key : nodeAttributes.keySet()) {
                             if (defaultAttributes.containsKey(key)) {
                                 final String value = defaultAttributes.get(key);
                                 final String attr = nodeAttributes.get(key);
@@ -196,16 +193,18 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                         }
                     }
                 }
-            } catch (FileNotFoundException ex) {
+            } catch (final FileNotFoundException ex) {
                 interaction.notify(PluginNotificationLevel.ERROR, "File " + filename + " not found");
-            } catch (TransformerException ex) {
-                Exceptions.printStackTrace(ex);
+                LOGGER.log(Level.SEVERE, ex, () -> "File " + filename + " not found");
+            } catch (final TransformerException ex) {
+                LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             } finally {
                 if (in != null) {
                     try {
                         in.close();
-                    } catch (IOException ex) {
+                    } catch (final IOException ex) {
                         interaction.notify(PluginNotificationLevel.ERROR, "Error reading file: " + filename);
+                        LOGGER.log(Level.SEVERE, ex, () -> "Error reading file: " + filename);
                     }
                 }
             }

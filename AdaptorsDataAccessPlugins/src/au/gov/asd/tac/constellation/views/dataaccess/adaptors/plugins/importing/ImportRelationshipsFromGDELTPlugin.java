@@ -25,6 +25,7 @@ import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType;
+import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
@@ -38,7 +39,8 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.openide.util.Exceptions;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
@@ -54,6 +56,8 @@ import org.openide.util.lookup.ServiceProviders;
 @PluginInfo(pluginType = PluginType.IMPORT, tags = {"IMPORT"})
 @Messages("ImportRelationshipsFromGDELTPlugin=Import Relationships From GDELT Knowledge Graph")
 public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin implements DataAccessPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(ImportRelationshipsFromGDELTPlugin.class.getName());
 
     // plugin parameters
     @Override
@@ -82,7 +86,7 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
         MultiChoiceParameterType.setChoices(choices, checked);
         params.addParameter(choices);
 
-        final PluginParameter<IntegerParameterType.IntegerParameterValue> limit = IntegerParameterType.build(LIMIT_PARAMETER_ID);
+        final PluginParameter<IntegerParameterValue> limit = IntegerParameterType.build(LIMIT_PARAMETER_ID);
         limit.setName("Limit");
         limit.setDescription("Maximum number of results to import");
         IntegerParameterType.setMinimum(limit, 1);
@@ -103,9 +107,7 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
     protected RecordStore query(final RecordStore query, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
 
         interaction.setProgress(0, 0, "Importing...", true);
-        /**
-         * Initialize variables
-         */
+        // Initialize variables
         final MultiChoiceParameterValue choices = parameters.getMultiChoiceValue(CHOICE_PARAMETER_ID);
         final List<String> options = choices.getChoices();
         final int limit = parameters.getIntegerValue(LIMIT_PARAMETER_ID);
@@ -119,8 +121,8 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
                 final RecordStore results = GDELTImportingUtilities.retrieveRelationships(gdt, options, limit);
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+            } catch (final IOException ex) {
+                LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             }
         }
 

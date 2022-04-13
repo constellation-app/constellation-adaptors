@@ -28,6 +28,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.DataAccessPluginAdaptorType;
@@ -81,7 +82,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         gafferUrlLocation.setDescription("Gaffer instance Url");
         gafferUrlLocation.setStringValue(DEFAULT_GAFFER_URL);
 
-        final PluginParameter queryOptions = SingleChoiceParameterType.build(GAFFER_QUERY_TYPE_PARAMETER_ID);
+        final PluginParameter<SingleChoiceParameterValue> queryOptions = SingleChoiceParameterType.build(GAFFER_QUERY_TYPE_PARAMETER_ID);
         queryOptions.setName("Queries");
         queryOptions.setDescription("Simple query type");
         //Add all GafferSimpleQueryTypes to perform the query

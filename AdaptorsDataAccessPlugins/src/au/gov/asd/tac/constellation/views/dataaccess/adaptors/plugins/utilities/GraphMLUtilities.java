@@ -19,7 +19,7 @@ import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.DATA_TAG;
 import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.KEY_TAG;
 import static au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin.NAME_TYPE_DELIMITER;
-import java.util.HashMap;
+import java.util.Map;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -37,9 +37,9 @@ public class GraphMLUtilities {
      * @param result
      * @param element
      */
-    public static void addAttributes(Node node, HashMap<String, String> nodeAttributes, RecordStore result, String element) {
+    public static void addAttributes(final Node node, final Map<String, String> nodeAttributes, final RecordStore result, final String element) {
 
-        NodeList children = node.getChildNodes();
+        final NodeList children = node.getChildNodes();
         for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
             final Node childNode = children.item(childIndex);
             if (childNode != null && childNode.getNodeName().equals(DATA_TAG)) {
@@ -62,7 +62,7 @@ public class GraphMLUtilities {
      * @param attr_name
      * @param value
      */
-    public static void addAttribute(RecordStore result, String element, String attr_type, String attr_name, String value) {
+    public static void addAttribute(final RecordStore result, final String element, final String attr_type, final String attr_name, final String value) {
         switch (attr_type) {
             case "boolean":
                 result.set(element + attr_name, Boolean.parseBoolean(value));
