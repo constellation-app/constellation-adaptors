@@ -39,9 +39,6 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
         final String adaptorsModulePath = ".." + sep + CODEBASE_NAME + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
                 + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "docs" + sep;
 
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromPajekPlugin", adaptorsModulePath + "import-from-pajek-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGraphMLPlugin", adaptorsModulePath + "import-from-graphml-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportFromGMLPlugin", adaptorsModulePath + "import-from-gml-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", adaptorsModulePath + "extend-from-graphml-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGMLPlugin", adaptorsModulePath + "extend-from-gml-file.md");

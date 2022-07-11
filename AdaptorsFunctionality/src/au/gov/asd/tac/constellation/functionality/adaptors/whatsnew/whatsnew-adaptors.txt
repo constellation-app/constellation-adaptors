@@ -1,3 +1,7 @@
+== 2022-07-11 Data Access Plugins
+<p>Import From GraphML, GML, and Pajek plugins no longer exist. Instead, these 
+file types can be imported via the new "Import Graph File" plugin.</p>
+
 == 2020-08-18 Example Gaffer Queries
 <p>
  In the Data Access View there is 1 plugin that can be used to query a Gaffer
