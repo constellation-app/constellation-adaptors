@@ -1,5 +1,10 @@
 # Constellation Adaptors Changes
 
+## Changes in July 2022
+* Moved `GraphMLUtilities` to Core
+* Removed `ImportFromGMLPlugin`, `ImportFromGraphMLPlugin`, and `ImportFromPajekPlugin` as they have 
+now been consolidated into the `ImportGraphFilePlugin` in Core
+
 ## Changes in October 2021
 * Converted HTML help pages to Markdown for implementation of a new Offline and Online Help
 and remove JavaHelp Integration
