@@ -16,7 +16,6 @@
 package au.gov.asd.tac.constellation.views.dataaccess.adaptors;
 
 import au.gov.asd.tac.constellation.help.HelpPageProvider;
-import au.gov.asd.tac.constellation.help.utilities.Generator;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +31,12 @@ import org.openide.util.lookup.ServiceProvider;
 public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
 
     private static final String CODEBASE_NAME = "constellation-adaptors";
-    private static final String sep = File.separator;
-    private static String frontPath = ".." + sep + ".." + sep + ".." + sep + ".." + sep + CODEBASE_NAME + "\\build\\cluster\\modules\\";
 
     @Override
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
-        if (Generator.getBaseDirectory().contains("\\AppData\\Local")) {
-            frontPath = "";
-        }
-        
-        final String adaptorsModulePath = ".." + sep + frontPath + sep + "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
+        final String sep = File.separator;
+        final String adaptorsModulePath = ".." + sep + "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
                 + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep;
 
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
@@ -56,7 +50,8 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
 
     @Override
     public String getHelpTOC() {
-        final String adaptorsModulePath = frontPath + "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
+        final String sep = File.separator;
+        final String adaptorsModulePath = "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
                 + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "adaptors-toc.xml";
 
         return adaptorsModulePath;
