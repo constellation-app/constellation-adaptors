@@ -36,8 +36,8 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
         final String sep = File.separator;
-        final String adaptorsModulePath = ".." + sep + CODEBASE_NAME + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
-                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "docs" + sep;
+        final String adaptorsModulePath = ".." + sep + "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
+                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep;
 
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", adaptorsModulePath + "extend-from-graphml-file.md");
@@ -51,8 +51,8 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
     @Override
     public String getHelpTOC() {
         final String sep = File.separator;
-        final String adaptorsModulePath = CODEBASE_NAME + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
-                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "docs" + sep + "adaptors-toc.xml";
+        final String adaptorsModulePath = "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
+                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "adaptors-toc.xml";
 
         return adaptorsModulePath;
     }
