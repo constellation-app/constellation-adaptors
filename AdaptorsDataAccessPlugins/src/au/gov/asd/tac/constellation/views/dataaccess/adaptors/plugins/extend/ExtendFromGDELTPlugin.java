@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
+import au.gov.asd.tac.constellation.plugins.PluginNotificationLevel;
 import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
@@ -30,6 +31,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterTyp
 import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
+import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTExtendingUtilities;
@@ -37,6 +39,7 @@ import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -124,8 +127,18 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
                 final RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
+            } catch (final FileNotFoundException ex) {
+                final String errorMsg = "File not found: " + ex.getLocalizedMessage();
+                interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
+                final Throwable fnfEx = new FileNotFoundException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
+                fnfEx.setStackTrace(ex.getStackTrace());
+                LOGGER.log(Level.SEVERE, fnfEx, () -> errorMsg);
             } catch (final IOException ex) {
-                LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+                final String errorMsg = "Error reading file: " + ex.getLocalizedMessage();
+                interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
+                final Throwable ioEx = new IOException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
+                ioEx.setStackTrace(ex.getStackTrace());
+                LOGGER.log(Level.SEVERE, ioEx, () -> errorMsg);
             }
         }
 
