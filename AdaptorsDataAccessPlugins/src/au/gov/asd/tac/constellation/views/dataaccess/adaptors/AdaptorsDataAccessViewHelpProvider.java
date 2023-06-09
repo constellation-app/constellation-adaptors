@@ -16,6 +16,7 @@
 package au.gov.asd.tac.constellation.views.dataaccess.adaptors;
 
 import au.gov.asd.tac.constellation.help.HelpPageProvider;
+import au.gov.asd.tac.constellation.help.utilities.Generator;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,14 +31,15 @@ import org.openide.util.lookup.ServiceProvider;
 @NbBundle.Messages("AdaptorsDataAccessViewHelpProvider=Adaptors Data Access View Help Provider")
 public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
 
-    private static final String CODEBASE_NAME = "constellation-adaptors";
+    private static final String SEP = File.separator;
 
     @Override
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
-        final String sep = File.separator;
-        final String adaptorsModulePath = ".." + sep + "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
-                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep;
+        
+        
+        final String adaptorsModulePath = ".." + SEP + getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
+                + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP;
 
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", adaptorsModulePath + "extend-from-graphml-file.md");
@@ -50,10 +52,28 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
 
     @Override
     public String getHelpTOC() {
-        final String sep = File.separator;
-        final String adaptorsModulePath = "ext" + sep + "docs" + sep + "AdaptorsDataAccessPlugins" + sep + "src" + sep + "au" + sep
-                + "gov" + sep + "asd" + sep + "tac" + sep + "constellation" + sep + "views" + sep + "dataaccess" + sep + "adaptors" + sep + "adaptors-toc.xml";
+        final String adaptorsModulePath = getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
+                + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP + "adaptors-toc.xml";
 
         return adaptorsModulePath;
+    }
+    
+    private String getFrontPath() {
+        // check where the application is being run from as the location of help pages is slightly between running from a release zip and running locally from netbeans
+        final boolean isRunningLocally = Generator.getBaseDirectory().contains("build" + SEP + "cluster");
+        
+        final String codebaseName = "constellation-adaptors";
+        
+        final StringBuilder frontPathBuilder = new StringBuilder("..").append(SEP).append("..").append(SEP);
+        if (isRunningLocally) {
+            frontPathBuilder.append("..").append(SEP).append("..").append(SEP);
+        }
+        frontPathBuilder.append(codebaseName).append(SEP);
+        if (isRunningLocally) {
+            frontPathBuilder.append("build").append(SEP).append("cluster").append(SEP);
+        }
+        frontPathBuilder.append("modules").append(SEP);
+        
+        return frontPathBuilder.toString();
     }
 }
