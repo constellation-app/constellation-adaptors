@@ -36,8 +36,7 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
     @Override
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
-        
-        
+              
         final String adaptorsModulePath = ".." + SEP + getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
                 + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP;
 
