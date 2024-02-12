@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,10 @@ import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginCor
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -124,7 +127,16 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         if (end != null) {
             try {
                 final GDELTDateTime gdt = new GDELTDateTime(end);
-                final RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
+                RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
+                
+                LocalDate date = LocalDate.parse(gdt.day, DateTimeFormatter.ISO_DATE);
+                while (results == null) {
+                    date = date.minusDays(1);
+                    final ZonedDateTime dateTime = date.atStartOfDay(ZoneId.systemDefault());
+                    final GDELTDateTime newGdt = new GDELTDateTime(dateTime);
+                    results = GDELTExtendingUtilities.hopRelationships(newGdt, options, limit, labels);
+                }
+                
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
             } catch (final FileNotFoundException ex) {

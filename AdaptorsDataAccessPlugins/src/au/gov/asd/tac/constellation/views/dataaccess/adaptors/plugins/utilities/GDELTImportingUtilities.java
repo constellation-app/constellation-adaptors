@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,13 @@ import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept
 import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -39,49 +41,45 @@ import java.util.zip.ZipInputStream;
  */
 public class GDELTImportingUtilities {
 
-    public static RecordStore retrieveEntities(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
+    private static final Logger LOGGER = Logger.getLogger(GDELTImportingUtilities.class.getName());
 
-        ZipInputStream zis = null;
+    public static RecordStore retrieveEntities(final GDELTDateTime gdt, final List<String> options, final int limit) throws IOException {
+
         RecordStore results = null;
-        try {
-            zis = new ZipInputStream(new URL(gdt.url).openStream());
-
+        try (final ZipInputStream zis = new ZipInputStream(new URL(gdt.url).openStream())) {
+            
             final ZipEntry ze = zis.getNextEntry();
             if (ze.getName().equals(gdt.file)) {
                 results = readEntities(limit, gdt.dt, options, ze, zis);
             }
 
-        } finally {
-            if (zis != null) {
-                zis.close();
-            }
+        } catch (final FileNotFoundException ex) {
+            final String errorMsg = "File not found " + ex.getLocalizedMessage();
+            LOGGER.log(Level.WARNING, errorMsg);
         }
 
         return results;
     }
 
-    public static RecordStore retrieveRelationships(GDELTDateTime gdt, List<String> options, int limit) throws MalformedURLException, IOException {
+    public static RecordStore retrieveRelationships(final GDELTDateTime gdt, final List<String> options, final int limit) throws IOException {
 
-        ZipInputStream zis = null;
         RecordStore results = null;
-        try {
-            zis = new ZipInputStream(new URL(gdt.url).openStream());
-
+        try (final ZipInputStream zis = new ZipInputStream(new URL(gdt.url).openStream())) {
+            
             final ZipEntry ze = zis.getNextEntry();
             if (ze.getName().equals(gdt.file)) {
                 results = readRelationships(limit, gdt.dt, options, ze, zis);
             }
 
-        } finally {
-            if (zis != null) {
-                zis.close();
-            }
+        } catch (final FileNotFoundException ex) {
+            final String errorMsg = "File not found " + ex.getLocalizedMessage();
+            LOGGER.log(Level.WARNING, errorMsg);
         }
 
         return results;
     }
 
-    public static RecordStore readEntities(int limit, String dt, List<String> options, ZipEntry ze, ZipInputStream zis) throws IOException {
+    public static RecordStore readEntities(final int limit, final String dt, final List<String> options, final ZipEntry ze, final ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
         BufferedReader br = null;
@@ -197,7 +195,7 @@ public class GDELTImportingUtilities {
         return results;
     }
 
-    public static RecordStore readRelationships(int limit, String dt, List<String> options, ZipEntry ze, ZipInputStream zis) throws IOException {
+    public static RecordStore readRelationships(final int limit, final String dt, final List<String> options, final ZipEntry ze, final ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
         BufferedReader br = null;
@@ -225,7 +223,7 @@ public class GDELTImportingUtilities {
                     if (total >= limit) {
                         break;
                     }
-                    if (options.contains("Person - Person")) {
+                    if (options.contains("Person_Person")) {
                         for (int j = i + 1; j < persons.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -247,7 +245,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Person - Organisation")) {
+                    if (options.contains("Person_Organisation")) {
                         for (int j = 0; j < organisations.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -268,7 +266,7 @@ public class GDELTImportingUtilities {
                             results.set(GraphRecordStoreUtilities.TRANSACTION + "Tone", tone);
                         }
                     }
-                    if (options.contains("Person - Theme")) {
+                    if (options.contains("Person_Theme")) {
                         for (int j = 0; j < themes.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -290,7 +288,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Person - Location")) {
+                    if (options.contains("Person_Location")) {
                         for (int j = 0; j < locations.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -313,7 +311,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Person - Source")) {
+                    if (options.contains("Person_Source")) {
                         for (int j = 0; j < sources.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -335,7 +333,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Person - URL")) {
+                    if (options.contains("Person_URL")) {
                         for (int j = 0; j < sourceURLs.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -362,7 +360,7 @@ public class GDELTImportingUtilities {
                     if (total >= limit) {
                         break;
                     }
-                    if (options.contains("Organisation - Organisation")) {
+                    if (options.contains("Organisation_Organisation")) {
                         for (int j = i + 1; j < organisations.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -384,7 +382,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Organisation - Theme")) {
+                    if (options.contains("Organisation_Theme")) {
                         for (int j = 0; j < themes.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -406,7 +404,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Organisation - Source")) {
+                    if (options.contains("Organisation_Source")) {
                         for (int j = 0; j < sources.length; j++) {
                             total++;
                             if (total >= limit) {
@@ -428,7 +426,7 @@ public class GDELTImportingUtilities {
                         }
                     }
 
-                    if (options.contains("Organisation - URL")) {
+                    if (options.contains("Organisation_URL")) {
                         for (int j = 0; j < sourceURLs.length; j++) {
                             total++;
                             if (total >= limit) {
