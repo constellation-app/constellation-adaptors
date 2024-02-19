@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,23 +28,25 @@ public class GDELTDateTime {
     private static final String FOOTER = ".gkg.csv";
     private static final String ZIPPER = ".zip";
 
-    private final int h;
+    private final int y;
     private final int m;
     private final int d;
 
-    private final String day;
+    public final String day;
+    public final String date;
     public final String dt;
     public final String url;
     public final String file;
 
-    public GDELTDateTime(ZonedDateTime date) {
-        this.h = date.getYear();
-        this.m = date.getMonthValue();
-        this.d = date.getDayOfMonth();
+    public GDELTDateTime(final ZonedDateTime dateTime) {
+        this.y = dateTime.getYear();
+        this.m = dateTime.getMonthValue();
+        this.d = dateTime.getDayOfMonth();
 
-        this.day = String.format("%04d%02d%02d", h, m, d);
-        this.dt = String.format("%04d-%02d-%02d 00:00:00.000Z", h, m, d);
-        this.url = HEADER + day + FOOTER + ZIPPER;
-        this.file = day + FOOTER;
+        this.day = String.format("%04d-%02d-%02d", y, m, d);
+        this.date = String.format("%04d%02d%02d", y, m, d);
+        this.dt = String.format("%04d-%02d-%02d 00:00:00.000Z", y, m, d);
+        this.url = HEADER + date + FOOTER + ZIPPER;
+        this.file = date + FOOTER;
     }
 }
