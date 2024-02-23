@@ -24,11 +24,7 @@
             <artifact name="koryphe" type="pom" ext="pom"/>
         </dependency>        
         
-        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>
-        
-        <!--Test Dependancies -->     
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-        <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
+        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>    
   
         <!-- Excludes -->
         <exclude org="com.google.code.findbugs" module="annotations" />

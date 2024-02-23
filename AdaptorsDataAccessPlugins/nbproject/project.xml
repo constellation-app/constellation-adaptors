@@ -7,6 +7,14 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>au.gov.asd.tac.constellation.dependencies</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>au.gov.asd.tac.constellation.dependencies.adaptors</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -75,7 +83,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>9.15</specification-version>
+                        <specification-version>9.30</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -83,7 +91,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>8.41</specification-version>
+                        <specification-version>8.56</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>
