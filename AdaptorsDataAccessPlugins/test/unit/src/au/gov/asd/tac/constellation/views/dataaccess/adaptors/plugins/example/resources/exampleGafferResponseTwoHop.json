@@ -7,8 +7,7 @@
             "hllp": {
                 "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus": {
                     "hyperLogLogPlus": {
-                        "hyperLogLogPlusSketchBytes": "/////gUFAQp7ggeAA36AA/wBhAKAAv4BgAQ=",
-                        "cardinality": 12
+                        "hyperLogLogPlusSketchBytes": "/////gUFAQp7ggeAA36AA/wBhAKAAv4BgAQ="
                     }
                 }
             },
@@ -48,8 +47,7 @@
             "hllp": {
                 "com.clearspring.analytics.stream.cardinality.HyperLogLogPlus": {
                     "hyperLogLogPlus": {
-                        "hyperLogLogPlusSketchBytes": "/////gUFAQH9Eg==",
-                        "cardinality": 1
+                        "hyperLogLogPlusSketchBytes": "/////gUFAQH9Eg=="
                     }
                 }
             },
