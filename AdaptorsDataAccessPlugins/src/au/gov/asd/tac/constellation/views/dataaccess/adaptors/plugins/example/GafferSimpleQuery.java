@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
@@ -59,7 +58,7 @@ public class GafferSimpleQuery {
     public void queryForDetails(final List<String> queryIds, final RecordStore recordStore) {
         //This query is not quite right yet so is not yet enabled.
         final GetElements elms = new GetElements.Builder().input(queryIds).build();
-        final OperationChain<CloseableIterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
+        final OperationChain<Iterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
         fetchResults(opChain, recordStore);
     }
 
