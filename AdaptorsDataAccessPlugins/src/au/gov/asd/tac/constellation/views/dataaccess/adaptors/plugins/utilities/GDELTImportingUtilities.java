@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,11 +47,11 @@ public class GDELTImportingUtilities {
     public static RecordStore retrieveEntities(final GDELTDateTime gdt, final List<String> options, final int limit) throws IOException {
 
         RecordStore results = null;
-        try (final ZipInputStream zis = new ZipInputStream(new URL(gdt.url).openStream())) {
+        try (final ZipInputStream zis = new ZipInputStream(URI.create(gdt.getUrl()).toURL().openStream())) {
             
             final ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(gdt.file)) {
-                results = readEntities(limit, gdt.dt, options, ze, zis);
+            if (ze.getName().equals(gdt.getFile())) {
+                results = readEntities(limit, gdt.getDt(), options, ze, zis);
             }
 
         } catch (final FileNotFoundException ex) {
@@ -64,11 +65,11 @@ public class GDELTImportingUtilities {
     public static RecordStore retrieveRelationships(final GDELTDateTime gdt, final List<String> options, final int limit) throws IOException {
 
         RecordStore results = null;
-        try (final ZipInputStream zis = new ZipInputStream(new URL(gdt.url).openStream())) {
+        try (final ZipInputStream zis = new ZipInputStream(URI.create(gdt.getUrl()).toURL().openStream())) {
             
             final ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(gdt.file)) {
-                results = readRelationships(limit, gdt.dt, options, ze, zis);
+            if (ze.getName().equals(gdt.getFile())) {
+                results = readRelationships(limit, gdt.getDt(), options, ze, zis);
             }
 
         } catch (final FileNotFoundException ex) {

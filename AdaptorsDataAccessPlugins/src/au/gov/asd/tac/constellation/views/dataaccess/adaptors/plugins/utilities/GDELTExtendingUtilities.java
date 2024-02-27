@@ -26,7 +26,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,11 +45,11 @@ public class GDELTExtendingUtilities {
     public static RecordStore hopRelationships(final GDELTDateTime gdt, final List<String> options, final int limit, final List<String> labels) throws IOException {
 
         RecordStore results = null;
-        try (final ZipInputStream zis = new ZipInputStream(new URL(gdt.url).openStream())) {
+        try (final ZipInputStream zis = new ZipInputStream(URI.create(gdt.getUrl()).toURL().openStream())) {
 
             final ZipEntry ze = zis.getNextEntry();
-            if (ze.getName().equals(gdt.file)) {
-                results = readRelationshipsToHop(limit, gdt.dt, options, ze, zis, labels);
+            if (ze.getName().equals(gdt.getFile())) {
+                results = readRelationshipsToHop(limit, gdt.getDt(), options, ze, zis, labels);
             }
 
         } catch (final FileNotFoundException ex) {
