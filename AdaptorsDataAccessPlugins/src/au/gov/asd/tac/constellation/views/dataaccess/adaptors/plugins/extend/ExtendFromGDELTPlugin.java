@@ -129,7 +129,7 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
                 final GDELTDateTime gdt = new GDELTDateTime(end);
                 RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
                 
-                LocalDate date = LocalDate.parse(gdt.day, DateTimeFormatter.ISO_DATE);
+                LocalDate date = LocalDate.parse(gdt.getDay(), DateTimeFormatter.ISO_DATE);
                 while (results == null) {
                     date = date.minusDays(1);
                     final ZonedDateTime dateTime = date.atStartOfDay(ZoneId.systemDefault());

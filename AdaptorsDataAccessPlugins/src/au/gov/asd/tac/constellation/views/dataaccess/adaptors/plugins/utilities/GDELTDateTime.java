@@ -32,11 +32,11 @@ public class GDELTDateTime {
     private final int m;
     private final int d;
 
-    public final String day;
-    public final String date;
-    public final String dt;
-    public final String url;
-    public final String file;
+    private final String day;
+    private final String date;
+    private final String dt;
+    private final String url;
+    private final String file;
 
     public GDELTDateTime(final ZonedDateTime dateTime) {
         this.y = dateTime.getYear();
@@ -48,5 +48,25 @@ public class GDELTDateTime {
         this.dt = String.format("%04d-%02d-%02d 00:00:00.000Z", y, m, d);
         this.url = HEADER + date + FOOTER + ZIPPER;
         this.file = date + FOOTER;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getDt() {
+        return dt;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getFile() {
+        return file;
     }
 }

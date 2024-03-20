@@ -1,5 +1,8 @@
 # Constellation Adaptors Changes
 
+## Changes in February 2024
+* Modified public fields in `GDELTDateTime` to be private with getter functions.
+
 ## Changes in July 2022
 * Moved `GraphMLUtilities` to Core
 * Removed `ImportFromGMLPlugin`, `ImportFromGraphMLPlugin`, and `ImportFromPajekPlugin` as they have 

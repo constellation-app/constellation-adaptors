@@ -11,31 +11,36 @@
     
     <dependencies defaultconf="runtime">
         <!-- GAFFER Dependencies -->
-        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="1.12.0">
-            <exclude org="org.apache.hadoop" module="hadoop-common" />
-        </dependency>
-        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="type" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="data" rev="1.12.0" />
-        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="1.12.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="2.1.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="2.1.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="serialisation" rev="2.1.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="type" rev="2.1.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="data" rev="2.1.0" />
+        <dependency org="uk.gov.gchq.gaffer" name="operation" rev="2.1.0" />
         
-        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="1.10.0">
+        <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="2.5.2">
             <artifact name="koryphe" type="pom" ext="pom"/>
         </dependency>        
         
-        <dependency org="uk.gov.gchq.koryphe" name="core" rev="1.10.0"/>
-        
-        <!--Test Dependancies -->     
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-        <dependency org="org.mockito" name="mockito-all" rev="1.10.19" conf="test->default"/>
+        <dependency org="uk.gov.gchq.koryphe" name="core" rev="2.5.2"/>    
   
         <!-- Excludes -->
+        <exclude org="org.apache.commons" module="commons-collections4" />
+        <exclude org="org.apache.commons" module="commons-compress" />
+        <exclude org="org.apache.commons" module="commons-csv" />
+        <exclude org="org.apache.commons" module="commons-lang3" />
+        <exclude org="commons-codec" module="commons-codec" />
+        <exclude org="commons-io" module="commons-io" />
         <exclude org="com.google.code.findbugs" module="annotations" />
         <exclude org="com.google.code.findbugs" module="jsr305" />
         <exclude org="com.google.guava" module="guava" />
         <exclude org="com.fasterxml.jackson.core" module="jackson-annotations" />
+        <exclude org="com.fasterxml.jackson.core" module="jackson-core" />
+        <exclude org="com.fasterxml.jackson.core" module="jackson-databind" />
+        <exclude org="org.json" module="json" />
+        <exclude org="org.slf4j" module="slf4j-api" />
         <exclude org="org.slf4j" module="slf4j-log4j12" />
+
         
         <exclude type="source" ext="jar" conf="*"/>
         <exclude type="javadoc" ext="jar" conf="*"/>

@@ -126,7 +126,7 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
                 final GDELTDateTime gdt = new GDELTDateTime(end);
                 RecordStore results = GDELTImportingUtilities.retrieveRelationships(gdt, options, limit);
                 
-                LocalDate date = LocalDate.parse(gdt.day, DateTimeFormatter.ISO_DATE);
+                LocalDate date = LocalDate.parse(gdt.getDay(), DateTimeFormatter.ISO_DATE);
                 while (results == null) {
                     date = date.minusDays(1);
                     final ZonedDateTime dateTime = date.atStartOfDay(ZoneId.systemDefault());
