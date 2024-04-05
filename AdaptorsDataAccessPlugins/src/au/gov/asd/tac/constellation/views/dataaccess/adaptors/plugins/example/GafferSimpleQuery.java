@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,13 +98,11 @@ public class GafferSimpleQuery {
 
     public void addResultsToRecordStore(final Element element, final RecordStore recordStore) {
         recordStore.add();
-        if (element instanceof Edge) {
-            final Edge e = (Edge) element;
+        if (element instanceof Edge e) {
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getSource());
             recordStore.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, e.getDestination());
             recordStore.set(GraphRecordStoreUtilities.TRANSACTION + VisualConcept.TransactionAttribute.DIRECTED, e.getDirectedType());
-        } else if (element instanceof Entity) {
-            final Entity e = (Entity) element;
+        } else if (element instanceof Entity e) {
             recordStore.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, e.getVertex());
             recordStore.set(GraphRecordStoreUtilities.SOURCE + "COUNT", e.getProperty("count"));
             e.getProperties().keySet().forEach(key -> recordStore.set(GraphRecordStoreUtilities.SOURCE + key.toUpperCase(), e.getProperties().get(key)));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
     @Override
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
-              
         final String adaptorsModulePath = ".." + SEP + getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
                 + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP;
 
@@ -60,7 +59,6 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
     private String getFrontPath() {
         // check where the application is being run from as the location of help pages is slightly between running from a release zip and running locally from netbeans
         final boolean isRunningLocally = Generator.getBaseDirectory().contains("build" + SEP + "cluster");
-        
         final String codebaseName = "constellation-adaptors";
         
         final StringBuilder frontPathBuilder = new StringBuilder("..").append(SEP).append("..").append(SEP);

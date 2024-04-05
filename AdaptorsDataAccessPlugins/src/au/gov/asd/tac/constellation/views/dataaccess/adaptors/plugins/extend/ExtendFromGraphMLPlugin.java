@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,8 +219,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null) {
                                     switch (childNode.getNodeName()) {
-                                        // Find all edges that are relevant
-                                        case EDGE_TAG: {
+                                        case EDGE_TAG ->  {
                                             final NamedNodeMap attributes = childNode.getAttributes();
                                             final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
                                             final String source = attributes.getNamedItem(EDGE_SRC_TAG).getNodeValue();
@@ -251,19 +250,19 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                     GraphMLUtilities.addAttributes(childNode, transactionAttributes, edgeRecords, GraphRecordStoreUtilities.TRANSACTION);
                                                 }
                                             }
-                                            break;
                                         }
-                                        default:
-                                            break;
+                                        default -> {
+                                        }
                                     }
-                                }
+                                    // Find all edges that are relevant
+                                                                    }
                             }
                             // Now go back to enrich the nodes
                             for (int childIndex = 0; childIndex < children.getLength(); childIndex++) {
                                 final Node childNode = children.item(childIndex);
                                 if (childNode != null) {
                                     switch (childNode.getNodeName()) {
-                                        case NODE_TAG: {
+                                        case NODE_TAG ->  {
                                             final NamedNodeMap attributes = childNode.getAttributes();
                                             final String id = attributes.getNamedItem(ID_TAG).getNodeValue();
                                             if (toComplete.contains(id)) {
@@ -284,10 +283,9 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                                     GraphMLUtilities.addAttributes(childNode, nodeAttributes, nodeRecords, GraphRecordStoreUtilities.SOURCE);
                                                 }
                                             }
-                                            break;
                                         }
-                                        default:
-                                            break;
+                                        default -> {
+                                        }
                                     }
                                 }
                             }

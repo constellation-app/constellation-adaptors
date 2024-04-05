@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,9 +82,7 @@ public class GDELTImportingUtilities {
     public static RecordStore readEntities(final int limit, final String dt, final List<String> options, final ZipEntry ze, final ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(zis));
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 if (total >= limit) {
@@ -188,10 +185,6 @@ public class GDELTImportingUtilities {
                     }
                 }
             }
-        } finally {
-            if (br != null) {
-                br.close();
-            }
         }
         return results;
     }
@@ -199,9 +192,7 @@ public class GDELTImportingUtilities {
     public static RecordStore readRelationships(final int limit, final String dt, final List<String> options, final ZipEntry ze, final ZipInputStream zis) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(zis));
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 if (total >= limit) {
@@ -449,10 +440,6 @@ public class GDELTImportingUtilities {
                         }
                     }
                 }
-            }
-        } finally {
-            if (br != null) {
-                br.close();
             }
         }
         return results;

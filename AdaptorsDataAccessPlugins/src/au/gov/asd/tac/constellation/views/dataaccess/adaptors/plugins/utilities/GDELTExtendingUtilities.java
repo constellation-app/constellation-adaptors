@@ -63,9 +63,7 @@ public class GDELTExtendingUtilities {
     public static RecordStore readRelationshipsToHop(final int limit, final String dt, final List<String> options, final ZipEntry ze, final ZipInputStream zis, final List<String> labels) throws IOException {
         final RecordStore results = new GraphRecordStore();
         int total = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(zis));
+        try (final BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 if (total >= limit) {
@@ -526,10 +524,6 @@ public class GDELTExtendingUtilities {
 
                     }
                 }
-            }
-        } finally {
-            if (br != null) {
-                br.close();
             }
         }
         return results;
