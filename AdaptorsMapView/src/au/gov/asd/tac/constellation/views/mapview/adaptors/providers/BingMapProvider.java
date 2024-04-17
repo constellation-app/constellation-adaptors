@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,12 +55,12 @@ public class BingMapProvider extends MapProvider {
     }
 
     @Override
-    public PImage getTile(Coordinate coordinate) {
+    public PImage getTile(final Coordinate coordinate) {
         return null;
     }
 
     @Override
-    public String[] getTileUrls(Coordinate coordinate) {
+    public String[] getTileUrls(final Coordinate coordinate) {
         final String url = String.format(
                 "http://%s%d.ortho.tiles.virtualearth.net/tiles/r%s.png?g=90&shading=hill",
                 LAYER_ROADS, (int) random(0, 4), getZoomString(coordinate));

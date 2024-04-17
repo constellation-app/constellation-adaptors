@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 Australian Signals Directorate
+ * Copyright 2010-2024 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,15 +162,12 @@ public class ExtendFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
                             final String key = line.split(" ")[0].trim();
                             final String value = line.split(" ")[1].trim().replace("\"", "");
                             switch (key) {
-                                case "source":
+                                case "source" -> 
                                     edgeKV.put(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, value);
-                                    break;
-                                case "target":
+                                case "target" -> 
                                     edgeKV.put(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, value);
-                                    break;
-                                default:
+                                default -> 
                                     edgeKV.put(GraphRecordStoreUtilities.TRANSACTION + key, value);
-                                    break;
                             }
                         } catch (final ArrayIndexOutOfBoundsException ex) {
                         }
