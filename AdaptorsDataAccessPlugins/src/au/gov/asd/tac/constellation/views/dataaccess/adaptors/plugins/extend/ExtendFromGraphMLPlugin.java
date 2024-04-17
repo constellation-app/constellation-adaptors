@@ -252,6 +252,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                             }
                                         }
                                         default -> {
+                                            // Do nothing
                                         }
                                     }
                                     // Find all edges that are relevant
@@ -285,6 +286,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                                             }
                                         }
                                         default -> {
+                                            // Do nothing
                                         }
                                     }
                                 }
