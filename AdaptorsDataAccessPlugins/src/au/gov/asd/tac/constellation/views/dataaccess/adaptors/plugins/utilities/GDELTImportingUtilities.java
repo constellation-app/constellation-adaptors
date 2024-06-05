@@ -107,6 +107,7 @@ public class GDELTImportingUtilities {
                         if (total >= limit) {
                             break;
                         }
+                        
                         final String one = persons[j];
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, one);
@@ -148,7 +149,7 @@ public class GDELTImportingUtilities {
                             break;
                         }
                         final String[] locationInfo = locations[j].split("#");
-                        
+
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, locationInfo[1]);
                         results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.LOCATION);
