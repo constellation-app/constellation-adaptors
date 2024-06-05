@@ -107,8 +107,8 @@ public class GDELTImportingUtilities {
                         if (total >= limit) {
                             break;
                         }
-                        
                         final String one = persons[j];
+
                         results.add();
                         results.set(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER, one);
                         results.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, AnalyticConcept.VertexType.PERSON);
