@@ -85,7 +85,7 @@ public class GDELTImportingUtilities {
         try (final BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
-                if (total >= limit) {
+                if (total > limit) {
                     break;
                 }
                 final String[] fields = line.split("\t");
