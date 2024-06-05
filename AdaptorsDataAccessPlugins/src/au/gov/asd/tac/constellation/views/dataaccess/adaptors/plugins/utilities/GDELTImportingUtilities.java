@@ -104,7 +104,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("Person")) {
                     for (int j = 0; j < persons.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String one = persons[j];
@@ -118,7 +118,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("Organisation")) {
                     for (int j = 0; j < organisations.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String one = organisations[j];
@@ -131,7 +131,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("Theme")) {
                     for (int j = 0; j < themes.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String one = themes[j];
@@ -145,7 +145,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("Location")) {
                     for (int j = 0; j < locations.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String[] locationInfo = locations[j].split("#");
@@ -162,7 +162,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("Source")) {
                     for (int j = 0; j < sources.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String one = sources[j];
@@ -176,7 +176,7 @@ public class GDELTImportingUtilities {
                 if (options.contains("URL")) {
                     for (int j = 0; j < sourceURLs.length; j++) {
                         total++;
-                        if (total >= limit) {
+                        if (total > limit) {
                             break;
                         }
                         final String one = sourceURLs[j];
@@ -197,7 +197,7 @@ public class GDELTImportingUtilities {
         try (final BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
-                if (total >= limit) {
+                if (total > limit) {
                     break;
                 }
                 final String[] fields = line.split("\t");
@@ -214,13 +214,13 @@ public class GDELTImportingUtilities {
                 final String cameoEventIds = fields[8]; // semi-colon delimited
 
                 for (int i = 0; i < persons.length; i++) {
-                    if (total >= limit) {
+                    if (total > limit) {
                         break;
                     }
                     if (options.contains("Person_Person")) {
                         for (int j = i + 1; j < persons.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -242,7 +242,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Person_Organisation")) {
                         for (int j = 0; j < organisations.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -263,7 +263,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Person_Theme")) {
                         for (int j = 0; j < themes.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -285,7 +285,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Person_Location")) {
                         for (int j = 0; j < locations.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -308,7 +308,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Person_Source")) {
                         for (int j = 0; j < sources.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -330,7 +330,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Person_URL")) {
                         for (int j = 0; j < sourceURLs.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = persons[i];
@@ -351,13 +351,13 @@ public class GDELTImportingUtilities {
                 }
 
                 for (int i = 0; i < organisations.length; i++) {
-                    if (total >= limit) {
+                    if (total > limit) {
                         break;
                     }
                     if (options.contains("Organisation_Organisation")) {
                         for (int j = i + 1; j < organisations.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = organisations[i];
@@ -379,7 +379,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Organisation_Theme")) {
                         for (int j = 0; j < themes.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = organisations[i];
@@ -401,7 +401,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Organisation_Source")) {
                         for (int j = 0; j < sources.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = organisations[i];
@@ -423,7 +423,7 @@ public class GDELTImportingUtilities {
                     if (options.contains("Organisation_URL")) {
                         for (int j = 0; j < sourceURLs.length; j++) {
                             total++;
-                            if (total >= limit) {
+                            if (total > limit) {
                                 break;
                             }
                             final String one = organisations[i];
