@@ -42,8 +42,11 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", adaptorsModulePath + "extend-from-graphml-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGMLPlugin", adaptorsModulePath + "extend-from-gml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGDELTPlugin", adaptorsModulePath + "extend-from-gdelt.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGraphMLPlugin", adaptorsModulePath + "enrich-from-graphml-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGMLPlugin", adaptorsModulePath + "enrich-from-gml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportEntitiesFromGDELTPlugin", adaptorsModulePath + "import-entities-from-gdelt.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportRelationshipsFromGDELTPlugin", adaptorsModulePath + "import-relationships-from-gdelt.md");
 
         return map;
     }
