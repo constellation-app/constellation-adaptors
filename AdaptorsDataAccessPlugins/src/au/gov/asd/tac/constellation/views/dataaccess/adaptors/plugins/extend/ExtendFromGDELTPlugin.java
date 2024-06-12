@@ -123,8 +123,10 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
         final ZonedDateTime end = startEnd[1];
 
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL);
-
-        if (end != null) {
+        
+        if (labels.isEmpty()){
+            interaction.setProgress(0, 0, "Skipped as no nodes were slected", true);
+        } else if (end != null) {
             try {
                 final GDELTDateTime gdt = new GDELTDateTime(end);
                 RecordStore results = GDELTExtendingUtilities.hopRelationships(gdt, options, limit, labels);
