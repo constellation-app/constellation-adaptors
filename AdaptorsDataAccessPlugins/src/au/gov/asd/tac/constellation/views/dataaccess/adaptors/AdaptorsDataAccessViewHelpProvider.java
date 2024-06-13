@@ -47,7 +47,7 @@ public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGMLPlugin", adaptorsModulePath + "enrich-from-gml-file.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportEntitiesFromGDELTPlugin", adaptorsModulePath + "import-entities-from-gdelt.md");
         map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportRelationshipsFromGDELTPlugin", adaptorsModulePath + "import-relationships-from-gdelt.md");
-
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.example.SimpleGafferProviderPlugin", adaptorsModulePath + "query-from-gaffer.md");
         return map;
     }
 
