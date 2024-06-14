@@ -14,7 +14,7 @@ A range of different entity types can be imported using this plugin. These entit
 
 **Organisation** - An entity that represents a collection of people. Typically, a business, government, or charity. Contains the attribute:
 
--   Identifier: *Organisation’s Name*
+-   Identifier: *Organisation's Name*
 
 **Theme** - An entity that represents a theme in a source. There are currently over 300 themes recognised by GDELT. Contains the attributes:
 
@@ -31,7 +31,7 @@ A range of different entity types can be imported using this plugin. These entit
 
 -   Identifier: *Source's Name*
 
-**URL** - A specific point of origin that entity information has been extracted from. Typically, an online publication, forum or site Typically. Contains the attribute:
+**URL** - A specific point of origin that entity information has been extracted from. Typically, an online publication, forum or site. Contains the attribute:
 
 -   Identifier: *The Entire URL*
 
