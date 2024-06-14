@@ -124,8 +124,8 @@ public class ExtendFromGDELTPlugin extends RecordStoreQueryPlugin implements Dat
 
         final List<String> labels = query.getAll(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.LABEL);
         
-        if (labels.isEmpty()){
-            interaction.setProgress(0, 0, "Skipped as no nodes were slected", true);
+        if (labels.isEmpty()) {
+            interaction.setProgress(0, 0, "Skipped as no nodes were selected", true);
         } else if (end != null) {
             try {
                 final GDELTDateTime gdt = new GDELTDateTime(end);
