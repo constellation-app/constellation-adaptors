@@ -7,7 +7,7 @@
                 <tocitem text="Extend From Pajek File" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin"/>
                 <tocitem text="Extend From GraphML File" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin"/>
                 <tocitem text="Extend From GML File" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGMLPlugin"/>
-                <tocitem text="Extend From GDELT" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGDELTPlugin"/>
+                <tocitem text="Extend From GDELT Knowledge Graph" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGDELTPlugin"/>
             </tocitem>
             <tocitem text="Enrichment" mergetype="javax.help.SortMerge">
                 <tocitem text="Enrich From GraphML File" target="au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGraphMLPlugin"/>
