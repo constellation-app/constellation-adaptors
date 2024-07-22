@@ -1,3 +1,7 @@
+== 2024-07-22 Map View Providers
+<p>Open Street and Staman have been removed as options for map providers as had 
+stopped working and now required either an account and/or paying.</p>
+
 == 2022-07-19 Data Access Plugins
 <p>Import From GraphML, GML, and Pajek plugins no longer exist. Instead, these 
 file types can be imported via the new "Import Graph File" plugin.</p>
