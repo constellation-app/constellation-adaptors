@@ -30,6 +30,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
+import au.gov.asd.tac.constellation.utilities.file.FileExtensionConstants;
 import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginCoreType;
@@ -90,7 +91,7 @@ public class EnrichFromGMLPlugin extends RecordStoreQueryPlugin implements DataA
 
         // The GML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
-        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GML files", "*.gml"));
+        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GML files", FileExtensionConstants.GML));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
         file.setName("GML File");
         file.setDescription("File to extract graph from");

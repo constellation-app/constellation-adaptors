@@ -32,6 +32,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterTyp
 import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
+import au.gov.asd.tac.constellation.utilities.file.FileExtensionConstants;
 import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.utilities.xml.XmlUtilities;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
@@ -118,7 +119,7 @@ public class ExtendFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
 
         // The GraphML file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
-        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GraphML files", "*.graphml"));
+        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("GraphML files", FileExtensionConstants.GRAPHML));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
         file.setName("GraphML File");
         file.setDescription("File to extract graph from");

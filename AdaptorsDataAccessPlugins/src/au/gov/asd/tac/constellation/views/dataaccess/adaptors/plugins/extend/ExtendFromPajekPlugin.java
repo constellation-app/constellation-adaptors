@@ -32,6 +32,7 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterTyp
 import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
+import au.gov.asd.tac.constellation.utilities.file.FileExtensionConstants;
 import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginCoreType;
@@ -96,7 +97,7 @@ public class ExtendFromPajekPlugin extends RecordStoreQueryPlugin implements Dat
 
         // The Pajek file to read from
         final PluginParameter<FileParameterValue> file = FileParameterType.build(FILE_PARAMETER_ID);
-        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("PAJEK files", "*.net"));
+        FileParameterType.setFileFilters(file, new FileChooser.ExtensionFilter("PAJEK files", FileExtensionConstants.PAJEK));
         FileParameterType.setKind(file, FileParameterType.FileParameterKind.OPEN);
         file.setName("Pajek File");
         file.setDescription("File to extract graph from");
