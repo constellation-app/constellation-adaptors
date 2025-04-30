@@ -2,14 +2,12 @@
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
     <info organisation="au.gov.asd.tac" module="third-party-dependencies"/>
     
-    <configurations defaultconfmapping="*->default,master">
-        <conf name="compile" description="Compile-time dependencies" visibility="public"/>
-        <conf name="runtime" description="Runtime dependencies" visibility="public" extends="compile"/>
-        <conf name="test" description="Test dependencies" visibility="public" extends="runtime"/>
-        <conf name="provided" description="Provided dependencies" visibility="public"/>
+    <configurations defaultconfmapping="*->default,master">        
+        <conf name="defaultconf" description="default location, including common dependencies" /> 
+        <conf name="languagetoolconf" description="Configuration for languagetool" />
     </configurations>
     
-    <dependencies defaultconf="runtime">
+    <dependencies defaultconf="defaultconf">
         <!-- GAFFER Dependencies -->
         <dependency org="uk.gov.gchq.gaffer" name="common-util" rev="2.1.0" />
         <dependency org="uk.gov.gchq.gaffer" name="sketches-library" rev="2.1.0" />
