@@ -6,5 +6,4 @@ stage it does not search graphs nested within nodes.
 
 ## Parameters
 
--   **GraphML File** - The GraphML File from which to retrieve
-    attributes.
+-   **GraphML File** - The GraphML File from which to retrieve attributes.
