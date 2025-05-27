@@ -2,7 +2,7 @@
 
 This plugin imports entities from the <a href="https://www.gdeltproject.org/">Global Database of Events, Language, and Tone</a>.
 <div style="text-align: center">
-    <img src="../ext/docs/AdaptorsDataAccessPlugins/src/au/gov/asd/tac/constellation/views/dataaccess/adaptors/resources/GDELTEntityImport.png" width="80%" alt="GDELT Entity import Example"/>
+    <img src="../ext/docs/AdaptorsDataAccessPlugins/resources/GDELTEntityImport.png" width="80%" alt="GDELT Entity import Example"/>
 </div>
 Entities are imported based on their position in the incoming data. Elements that are received first will be included in the import. 
 
