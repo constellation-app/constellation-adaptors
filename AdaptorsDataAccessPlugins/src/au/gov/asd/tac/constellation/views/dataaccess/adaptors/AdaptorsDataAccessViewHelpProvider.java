@@ -17,7 +17,6 @@ package au.gov.asd.tac.constellation.views.dataaccess.adaptors;
 
 import au.gov.asd.tac.constellation.help.HelpPageProvider;
 import au.gov.asd.tac.constellation.help.utilities.Generator;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.openide.util.NbBundle;
@@ -30,36 +29,31 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = HelpPageProvider.class, position = 1005)
 @NbBundle.Messages("AdaptorsDataAccessViewHelpProvider=Adaptors Data Access View Help Provider")
 public class AdaptorsDataAccessViewHelpProvider extends HelpPageProvider {
-
-    private static final String SEP = File.separator;
+    
+    private static final String MODULE_PATH = getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP;
 
     @Override
     public Map<String, String> getHelpMap() {
         final Map<String, String> map = new HashMap<>();
-        final String adaptorsModulePath = ".." + SEP + getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
-                + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP;
-
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", adaptorsModulePath + "extend-from-pajek-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", adaptorsModulePath + "extend-from-graphml-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGMLPlugin", adaptorsModulePath + "extend-from-gml-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGDELTPlugin", adaptorsModulePath + "extend-from-gdelt.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGraphMLPlugin", adaptorsModulePath + "enrich-from-graphml-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGMLPlugin", adaptorsModulePath + "enrich-from-gml-file.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportEntitiesFromGDELTPlugin", adaptorsModulePath + "import-entities-from-gdelt.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportRelationshipsFromGDELTPlugin", adaptorsModulePath + "import-relationships-from-gdelt.md");
-        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.example.SimpleGafferProviderPlugin", adaptorsModulePath + "query-from-gaffer.md");
+        
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromPajekPlugin", MODULE_PATH + "extend-from-pajek-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGraphMLPlugin", MODULE_PATH + "extend-from-graphml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGMLPlugin", MODULE_PATH + "extend-from-gml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.extend.ExtendFromGDELTPlugin", MODULE_PATH + "extend-from-gdelt.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGraphMLPlugin", MODULE_PATH + "enrich-from-graphml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.enrichment.EnrichFromGMLPlugin", MODULE_PATH + "enrich-from-gml-file.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportEntitiesFromGDELTPlugin", MODULE_PATH + "import-entities-from-gdelt.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.importing.ImportRelationshipsFromGDELTPlugin", MODULE_PATH + "import-relationships-from-gdelt.md");
+        map.put("au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.example.SimpleGafferProviderPlugin", MODULE_PATH + "query-from-gaffer.md");
         return map;
     }
 
     @Override
     public String getHelpTOC() {
-        final String adaptorsModulePath = getFrontPath() + "ext" + SEP + "docs" + SEP + "AdaptorsDataAccessPlugins" + SEP + "src" + SEP + "au" + SEP
-                + "gov" + SEP + "asd" + SEP + "tac" + SEP + "constellation" + SEP + "views" + SEP + "dataaccess" + SEP + "adaptors" + SEP + "adaptors-toc.xml";
-
-        return adaptorsModulePath;
+        return MODULE_PATH + "adaptors-toc.xml";
     }
     
-    private String getFrontPath() {
+    private static String getFrontPath() {
         // check where the application is being run from as the location of help pages is slightly between running from a release zip and running locally from netbeans
         final boolean isRunningLocally = Generator.getBaseDirectory().contains("build" + SEP + "cluster");
         final String codebaseName = "constellation-adaptors";

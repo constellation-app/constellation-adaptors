@@ -7,7 +7,5 @@ at this stage it does not collect attributes.
 ## Parameters
 
 -   **Pajek File** - The Pajek File from which to retrieve neighbours.
--   **Hop On Incoming Transactions** - Toggles whether the plugin will
-    hop out incoming transactions.
--   **Hop On Outgoing Transactions** - Toggles whether the plugin will
-    hop out outgoing transactions.
+-   **Hop On Incoming Transactions** - Toggles whether the plugin will hop out incoming transactions.
+-   **Hop On Outgoing Transactions** - Toggles whether the plugin will hop out outgoing transactions.
