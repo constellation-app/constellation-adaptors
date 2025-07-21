@@ -16,9 +16,7 @@
         
         <dependency org="uk.gov.gchq.koryphe" name="koryphe" rev="2.6.0">
             <artifact name="koryphe" type="pom" ext="pom"/>
-        </dependency>        
-        
-        <dependency org="uk.gov.gchq.koryphe" name="core" rev="2.6.0"/>    
+        </dependency>
   
         <!-- Excludes -->
         <exclude org="org.apache.commons" module="commons-collections4" />

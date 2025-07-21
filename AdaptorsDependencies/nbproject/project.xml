@@ -388,25 +388,6 @@
                 <package>uk.gov.gchq.gaffer.types.binaryoperator</package>
                 <package>uk.gov.gchq.gaffer.types.function</package>
                 <package>uk.gov.gchq.gaffer.user</package>
-                <package>uk.gov.gchq.koryphe</package>
-                <package>uk.gov.gchq.koryphe.adapted</package>
-                <package>uk.gov.gchq.koryphe.binaryoperator</package>
-                <package>uk.gov.gchq.koryphe.composite</package>
-                <package>uk.gov.gchq.koryphe.function</package>
-                <package>uk.gov.gchq.koryphe.impl.binaryoperator</package>
-                <package>uk.gov.gchq.koryphe.impl.function</package>
-                <package>uk.gov.gchq.koryphe.impl.predicate</package>
-                <package>uk.gov.gchq.koryphe.impl.predicate.range</package>
-                <package>uk.gov.gchq.koryphe.iterable</package>
-                <package>uk.gov.gchq.koryphe.predicate</package>
-                <package>uk.gov.gchq.koryphe.serialisation.json</package>
-                <package>uk.gov.gchq.koryphe.signature</package>
-                <package>uk.gov.gchq.koryphe.tuple</package>
-                <package>uk.gov.gchq.koryphe.tuple.binaryoperator</package>
-                <package>uk.gov.gchq.koryphe.tuple.function</package>
-                <package>uk.gov.gchq.koryphe.tuple.n</package>
-                <package>uk.gov.gchq.koryphe.tuple.predicate</package>
-                <package>uk.gov.gchq.koryphe.util</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/access-2.3.2.jar</runtime-relative-path>
@@ -423,10 +404,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/common-util-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/common-util-2.3.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/core-2.6.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/core-2.6.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/data-2.3.2.jar</runtime-relative-path>
