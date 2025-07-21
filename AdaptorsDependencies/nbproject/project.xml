@@ -34,6 +34,82 @@
                 <package>io.github.lukehutch.fastclasspathscanner.scanner</package>
                 <package>io.github.lukehutch.fastclasspathscanner.scanner.matchers</package>
                 <package>io.github.lukehutch.fastclasspathscanner.utils</package>
+                <package>io.opentelemetry.api.events</package>
+                <package>io.opentelemetry.exporter.internal</package>
+                <package>io.opentelemetry.exporter.internal.auth</package>
+                <package>io.opentelemetry.exporter.internal.compression</package>
+                <package>io.opentelemetry.exporter.internal.grpc</package>
+                <package>io.opentelemetry.exporter.internal.http</package>
+                <package>io.opentelemetry.exporter.internal.marshal</package>
+                <package>io.opentelemetry.exporter.internal.otlp</package>
+                <package>io.opentelemetry.exporter.internal.otlp.logs</package>
+                <package>io.opentelemetry.exporter.internal.otlp.metrics</package>
+                <package>io.opentelemetry.exporter.internal.otlp.traces</package>
+                <package>io.opentelemetry.exporter.logging</package>
+                <package>io.opentelemetry.exporter.logging.internal</package>
+                <package>io.opentelemetry.exporter.otlp.all.internal</package>
+                <package>io.opentelemetry.exporter.otlp.http.logs</package>
+                <package>io.opentelemetry.exporter.otlp.http.metrics</package>
+                <package>io.opentelemetry.exporter.otlp.http.trace</package>
+                <package>io.opentelemetry.exporter.otlp.internal</package>
+                <package>io.opentelemetry.exporter.otlp.logs</package>
+                <package>io.opentelemetry.exporter.otlp.metrics</package>
+                <package>io.opentelemetry.exporter.otlp.trace</package>
+                <package>io.opentelemetry.exporter.sender.okhttp.internal</package>
+                <package>io.opentelemetry.extension.incubator.logs</package>
+                <package>io.opentelemetry.extension.incubator.metrics</package>
+                <package>io.opentelemetry.extension.incubator.propagation</package>
+                <package>io.opentelemetry.extension.incubator.trace</package>
+                <package>io.opentelemetry.internal.shaded.jctools.counters</package>
+                <package>io.opentelemetry.internal.shaded.jctools.maps</package>
+                <package>io.opentelemetry.internal.shaded.jctools.queues</package>
+                <package>io.opentelemetry.internal.shaded.jctools.queues.atomic</package>
+                <package>io.opentelemetry.internal.shaded.jctools.queues.unpadded</package>
+                <package>io.opentelemetry.internal.shaded.jctools.util</package>
+                <package>io.opentelemetry.proto.collector.logs.v1.internal</package>
+                <package>io.opentelemetry.proto.collector.metrics.v1.internal</package>
+                <package>io.opentelemetry.proto.collector.trace.v1.internal</package>
+                <package>io.opentelemetry.proto.common.v1.internal</package>
+                <package>io.opentelemetry.proto.logs.v1.internal</package>
+                <package>io.opentelemetry.proto.metrics.v1.internal</package>
+                <package>io.opentelemetry.proto.resource.v1.internal</package>
+                <package>io.opentelemetry.proto.trace.v1.internal</package>
+                <package>io.opentelemetry.sdk</package>
+                <package>io.opentelemetry.sdk.autoconfigure</package>
+                <package>io.opentelemetry.sdk.autoconfigure.internal</package>
+                <package>io.opentelemetry.sdk.autoconfigure.spi</package>
+                <package>io.opentelemetry.sdk.autoconfigure.spi.internal</package>
+                <package>io.opentelemetry.sdk.autoconfigure.spi.logs</package>
+                <package>io.opentelemetry.sdk.autoconfigure.spi.metrics</package>
+                <package>io.opentelemetry.sdk.autoconfigure.spi.traces</package>
+                <package>io.opentelemetry.sdk.common</package>
+                <package>io.opentelemetry.sdk.common.export</package>
+                <package>io.opentelemetry.sdk.common.internal</package>
+                <package>io.opentelemetry.sdk.internal</package>
+                <package>io.opentelemetry.sdk.logs</package>
+                <package>io.opentelemetry.sdk.logs.data</package>
+                <package>io.opentelemetry.sdk.logs.export</package>
+                <package>io.opentelemetry.sdk.logs.internal</package>
+                <package>io.opentelemetry.sdk.metrics</package>
+                <package>io.opentelemetry.sdk.metrics.data</package>
+                <package>io.opentelemetry.sdk.metrics.export</package>
+                <package>io.opentelemetry.sdk.metrics.internal</package>
+                <package>io.opentelemetry.sdk.metrics.internal.aggregator</package>
+                <package>io.opentelemetry.sdk.metrics.internal.concurrent</package>
+                <package>io.opentelemetry.sdk.metrics.internal.data</package>
+                <package>io.opentelemetry.sdk.metrics.internal.debug</package>
+                <package>io.opentelemetry.sdk.metrics.internal.descriptor</package>
+                <package>io.opentelemetry.sdk.metrics.internal.exemplar</package>
+                <package>io.opentelemetry.sdk.metrics.internal.export</package>
+                <package>io.opentelemetry.sdk.metrics.internal.state</package>
+                <package>io.opentelemetry.sdk.metrics.internal.view</package>
+                <package>io.opentelemetry.sdk.resources</package>
+                <package>io.opentelemetry.sdk.trace</package>
+                <package>io.opentelemetry.sdk.trace.data</package>
+                <package>io.opentelemetry.sdk.trace.export</package>
+                <package>io.opentelemetry.sdk.trace.internal</package>
+                <package>io.opentelemetry.sdk.trace.internal.data</package>
+                <package>io.opentelemetry.sdk.trace.samplers</package>
                 <package>it.unimi.dsi.fastutil</package>
                 <package>it.unimi.dsi.fastutil.booleans</package>
                 <package>it.unimi.dsi.fastutil.bytes</package>
@@ -62,6 +138,68 @@
                 <package>javassist.tools.web</package>
                 <package>javassist.util</package>
                 <package>javassist.util.proxy</package>
+                <package>kotlin</package>
+                <package>kotlin.annotation</package>
+                <package>kotlin.collections</package>
+                <package>kotlin.collections.builders</package>
+                <package>kotlin.collections.jdk8</package>
+                <package>kotlin.collections.unsigned</package>
+                <package>kotlin.comparisons</package>
+                <package>kotlin.concurrent</package>
+                <package>kotlin.contracts</package>
+                <package>kotlin.coroutines</package>
+                <package>kotlin.coroutines.cancellation</package>
+                <package>kotlin.coroutines.intrinsics</package>
+                <package>kotlin.coroutines.jvm.internal</package>
+                <package>kotlin.enums</package>
+                <package>kotlin.experimental</package>
+                <package>kotlin.internal</package>
+                <package>kotlin.internal.jdk7</package>
+                <package>kotlin.internal.jdk8</package>
+                <package>kotlin.io</package>
+                <package>kotlin.io.encoding</package>
+                <package>kotlin.io.path</package>
+                <package>kotlin.jdk7</package>
+                <package>kotlin.js</package>
+                <package>kotlin.jvm</package>
+                <package>kotlin.jvm.functions</package>
+                <package>kotlin.jvm.internal</package>
+                <package>kotlin.jvm.internal.markers</package>
+                <package>kotlin.jvm.internal.unsafe</package>
+                <package>kotlin.jvm.jdk8</package>
+                <package>kotlin.jvm.optionals</package>
+                <package>kotlin.math</package>
+                <package>kotlin.properties</package>
+                <package>kotlin.random</package>
+                <package>kotlin.random.jdk8</package>
+                <package>kotlin.ranges</package>
+                <package>kotlin.reflect</package>
+                <package>kotlin.sequences</package>
+                <package>kotlin.streams.jdk8</package>
+                <package>kotlin.system</package>
+                <package>kotlin.text</package>
+                <package>kotlin.text.jdk8</package>
+                <package>kotlin.time</package>
+                <package>kotlin.time.jdk8</package>
+                <package>okhttp3</package>
+                <package>okhttp3.internal</package>
+                <package>okhttp3.internal.authenticator</package>
+                <package>okhttp3.internal.cache</package>
+                <package>okhttp3.internal.cache2</package>
+                <package>okhttp3.internal.concurrent</package>
+                <package>okhttp3.internal.connection</package>
+                <package>okhttp3.internal.http</package>
+                <package>okhttp3.internal.http1</package>
+                <package>okhttp3.internal.http2</package>
+                <package>okhttp3.internal.io</package>
+                <package>okhttp3.internal.platform</package>
+                <package>okhttp3.internal.platform.android</package>
+                <package>okhttp3.internal.proxy</package>
+                <package>okhttp3.internal.publicsuffix</package>
+                <package>okhttp3.internal.tls</package>
+                <package>okhttp3.internal.ws</package>
+                <package>okio</package>
+                <package>okio.internal</package>
                 <package>org.apache.avro</package>
                 <package>org.apache.avro.data</package>
                 <package>org.apache.avro.file</package>
@@ -165,6 +303,7 @@
                 <package>uk.gov.gchq.gaffer.commonutil.elementvisibilityutil.exception</package>
                 <package>uk.gov.gchq.gaffer.commonutil.exception</package>
                 <package>uk.gov.gchq.gaffer.commonutil.iterable</package>
+                <package>uk.gov.gchq.gaffer.commonutil.otel</package>
                 <package>uk.gov.gchq.gaffer.commonutil.pair</package>
                 <package>uk.gov.gchq.gaffer.commonutil.stream</package>
                 <package>uk.gov.gchq.gaffer.core.exception</package>
@@ -201,6 +340,7 @@
                 <package>uk.gov.gchq.gaffer.operation.impl</package>
                 <package>uk.gov.gchq.gaffer.operation.impl.add</package>
                 <package>uk.gov.gchq.gaffer.operation.impl.compare</package>
+                <package>uk.gov.gchq.gaffer.operation.impl.delete</package>
                 <package>uk.gov.gchq.gaffer.operation.impl.export</package>
                 <package>uk.gov.gchq.gaffer.operation.impl.export.localfile</package>
                 <package>uk.gov.gchq.gaffer.operation.impl.export.resultcache</package>
@@ -269,28 +409,28 @@
                 <package>uk.gov.gchq.koryphe.util</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/access-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/access-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/access-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/access-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/avro-1.8.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/avro-1.8.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/cache-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/cache-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/cache-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/cache-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/common-util-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/common-util-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/common-util-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/common-util-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/core-2.5.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/core-2.5.2.jar</binary-origin>
+                <runtime-relative-path>ext/core-2.6.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/core-2.6.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/data-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/data-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/data-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/data-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/datasketches-java-4.0.0.jar</runtime-relative-path>
@@ -301,8 +441,8 @@
                 <binary-origin>release/modules/ext/datasketches-memory-2.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/exception-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/exception-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/exception-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/exception-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/fast-classpath-scanner-2.10.0.jar</runtime-relative-path>
@@ -329,8 +469,92 @@
                 <binary-origin>release/modules/ext/javassist-3.29.2-GA.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/operation-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/operation-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/kotlin-stdlib-1.8.21.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/kotlin-stdlib-1.8.21.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/kotlin-stdlib-common-1.9.10.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/kotlin-stdlib-common-1.9.10.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/kotlin-stdlib-jdk7-1.8.21.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/kotlin-stdlib-jdk7-1.8.21.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/kotlin-stdlib-jdk8-1.8.21.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/kotlin-stdlib-jdk8-1.8.21.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/okhttp-4.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/okhttp-4.12.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/okio-3.6.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/okio-3.6.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/okio-jvm-3.6.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/okio-jvm-3.6.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-api-events-1.36.0-alpha.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-api-events-1.36.0-alpha.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-exporter-common-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-exporter-common-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-exporter-logging-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-exporter-logging-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-exporter-otlp-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-exporter-otlp-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-exporter-otlp-common-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-exporter-otlp-common-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-exporter-sender-okhttp-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-exporter-sender-okhttp-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-extension-incubator-1.36.0-alpha.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-extension-incubator-1.36.0-alpha.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-common-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-common-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-extension-autoconfigure-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-extension-autoconfigure-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-extension-autoconfigure-spi-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-extension-autoconfigure-spi-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-logs-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-logs-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-metrics-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-metrics-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/opentelemetry-sdk-trace-1.36.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/opentelemetry-sdk-trace-1.36.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/operation-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/operation-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/paranamer-2.8.jar</runtime-relative-path>
@@ -345,12 +569,12 @@
                 <binary-origin>release/modules/ext/reload4j-1.2.18.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/serialisation-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/serialisation-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/serialisation-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/serialisation-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/sketches-library-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sketches-library-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/sketches-library-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sketches-library-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-reload4j-1.7.36.jar</runtime-relative-path>
@@ -369,8 +593,8 @@
                 <binary-origin>release/modules/ext/stream-2.7.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/type-2.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/type-2.1.0.jar</binary-origin>
+                <runtime-relative-path>ext/type-2.3.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/type-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/xz-1.5.jar</runtime-relative-path>
