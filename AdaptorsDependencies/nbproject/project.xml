@@ -20,12 +20,69 @@
                 <package>com.clearspring.analytics.stream.membership</package>
                 <package>com.clearspring.analytics.stream.quantile</package>
                 <package>com.clearspring.analytics.util</package>
+                <package>com.fasterxml.jackson.annotation</package>
+                <package>com.fasterxml.jackson.core</package>
+                <package>com.fasterxml.jackson.core.async</package>
+                <package>com.fasterxml.jackson.core.base</package>
+                <package>com.fasterxml.jackson.core.exc</package>
+                <package>com.fasterxml.jackson.core.filter</package>
+                <package>com.fasterxml.jackson.core.format</package>
+                <package>com.fasterxml.jackson.core.io</package>
+                <package>com.fasterxml.jackson.core.json</package>
+                <package>com.fasterxml.jackson.core.json.async</package>
+                <package>com.fasterxml.jackson.core.sym</package>
+                <package>com.fasterxml.jackson.core.type</package>
+                <package>com.fasterxml.jackson.core.util</package>
+                <package>com.fasterxml.jackson.databind</package>
+                <package>com.fasterxml.jackson.databind.annotation</package>
+                <package>com.fasterxml.jackson.databind.cfg</package>
+                <package>com.fasterxml.jackson.databind.deser</package>
+                <package>com.fasterxml.jackson.databind.deser.impl</package>
+                <package>com.fasterxml.jackson.databind.deser.std</package>
+                <package>com.fasterxml.jackson.databind.exc</package>
+                <package>com.fasterxml.jackson.databind.ext</package>
+                <package>com.fasterxml.jackson.databind.introspect</package>
+                <package>com.fasterxml.jackson.databind.jdk14</package>
+                <package>com.fasterxml.jackson.databind.json</package>
+                <package>com.fasterxml.jackson.databind.jsonFormatVisitors</package>
+                <package>com.fasterxml.jackson.databind.jsonschema</package>
+                <package>com.fasterxml.jackson.databind.jsontype</package>
+                <package>com.fasterxml.jackson.databind.jsontype.impl</package>
+                <package>com.fasterxml.jackson.databind.module</package>
+                <package>com.fasterxml.jackson.databind.node</package>
+                <package>com.fasterxml.jackson.databind.ser</package>
+                <package>com.fasterxml.jackson.databind.ser.impl</package>
+                <package>com.fasterxml.jackson.databind.ser.std</package>
+                <package>com.fasterxml.jackson.databind.type</package>
+                <package>com.fasterxml.jackson.databind.util</package>
                 <package>com.fasterxml.jackson.datatype.jsr310</package>
                 <package>com.fasterxml.jackson.datatype.jsr310.deser</package>
                 <package>com.fasterxml.jackson.datatype.jsr310.deser.key</package>
                 <package>com.fasterxml.jackson.datatype.jsr310.ser</package>
                 <package>com.fasterxml.jackson.datatype.jsr310.ser.key</package>
                 <package>com.fasterxml.jackson.datatype.jsr310.util</package>
+                <package>com.google.common.annotations</package>
+                <package>com.google.common.base</package>
+                <package>com.google.common.base.internal</package>
+                <package>com.google.common.cache</package>
+                <package>com.google.common.collect</package>
+                <package>com.google.common.escape</package>
+                <package>com.google.common.eventbus</package>
+                <package>com.google.common.graph</package>
+                <package>com.google.common.hash</package>
+                <package>com.google.common.html</package>
+                <package>com.google.common.io</package>
+                <package>com.google.common.math</package>
+                <package>com.google.common.net</package>
+                <package>com.google.common.primitives</package>
+                <package>com.google.common.reflect</package>
+                <package>com.google.common.util.concurrent</package>
+                <package>com.google.common.util.concurrent.internal</package>
+                <package>com.google.common.xml</package>
+                <package>com.google.errorprone.annotations</package>
+                <package>com.google.errorprone.annotations.concurrent</package>
+                <package>com.google.j2objc.annotations</package>
+                <package>com.google.thirdparty.publicsuffix</package>
                 <package>com.thoughtworks.paranamer</package>
                 <package>edu.umd.cs.findbugs.annotations</package>
                 <package>io.github.lukehutch.fastclasspathscanner</package>
@@ -34,7 +91,20 @@
                 <package>io.github.lukehutch.fastclasspathscanner.scanner</package>
                 <package>io.github.lukehutch.fastclasspathscanner.scanner.matchers</package>
                 <package>io.github.lukehutch.fastclasspathscanner.utils</package>
+                <package>io.opentelemetry.api</package>
+                <package>io.opentelemetry.api.baggage</package>
+                <package>io.opentelemetry.api.baggage.propagation</package>
+                <package>io.opentelemetry.api.common</package>
                 <package>io.opentelemetry.api.events</package>
+                <package>io.opentelemetry.api.internal</package>
+                <package>io.opentelemetry.api.logs</package>
+                <package>io.opentelemetry.api.metrics</package>
+                <package>io.opentelemetry.api.trace</package>
+                <package>io.opentelemetry.api.trace.propagation</package>
+                <package>io.opentelemetry.api.trace.propagation.internal</package>
+                <package>io.opentelemetry.context</package>
+                <package>io.opentelemetry.context.internal.shaded</package>
+                <package>io.opentelemetry.context.propagation</package>
                 <package>io.opentelemetry.exporter.internal</package>
                 <package>io.opentelemetry.exporter.internal.auth</package>
                 <package>io.opentelemetry.exporter.internal.compression</package>
@@ -138,6 +208,9 @@
                 <package>javassist.tools.web</package>
                 <package>javassist.util</package>
                 <package>javassist.util.proxy</package>
+                <package>javax.annotation</package>
+                <package>javax.annotation.concurrent</package>
+                <package>javax.annotation.meta</package>
                 <package>kotlin</package>
                 <package>kotlin.annotation</package>
                 <package>kotlin.collections</package>
@@ -211,6 +284,84 @@
                 <package>org.apache.avro.specific</package>
                 <package>org.apache.avro.util</package>
                 <package>org.apache.avro.util.internal</package>
+                <package>org.apache.commons.codec</package>
+                <package>org.apache.commons.codec.binary</package>
+                <package>org.apache.commons.codec.cli</package>
+                <package>org.apache.commons.codec.digest</package>
+                <package>org.apache.commons.codec.language</package>
+                <package>org.apache.commons.codec.language.bm</package>
+                <package>org.apache.commons.codec.net</package>
+                <package>org.apache.commons.collections4</package>
+                <package>org.apache.commons.collections4.bag</package>
+                <package>org.apache.commons.collections4.bidimap</package>
+                <package>org.apache.commons.collections4.collection</package>
+                <package>org.apache.commons.collections4.comparators</package>
+                <package>org.apache.commons.collections4.functors</package>
+                <package>org.apache.commons.collections4.iterators</package>
+                <package>org.apache.commons.collections4.keyvalue</package>
+                <package>org.apache.commons.collections4.list</package>
+                <package>org.apache.commons.collections4.map</package>
+                <package>org.apache.commons.collections4.multimap</package>
+                <package>org.apache.commons.collections4.multiset</package>
+                <package>org.apache.commons.collections4.properties</package>
+                <package>org.apache.commons.collections4.queue</package>
+                <package>org.apache.commons.collections4.sequence</package>
+                <package>org.apache.commons.collections4.set</package>
+                <package>org.apache.commons.collections4.splitmap</package>
+                <package>org.apache.commons.collections4.trie</package>
+                <package>org.apache.commons.collections4.trie.analyzer</package>
+                <package>org.apache.commons.compress.archivers</package>
+                <package>org.apache.commons.compress.archivers.ar</package>
+                <package>org.apache.commons.compress.archivers.arj</package>
+                <package>org.apache.commons.compress.archivers.cpio</package>
+                <package>org.apache.commons.compress.archivers.dump</package>
+                <package>org.apache.commons.compress.archivers.jar</package>
+                <package>org.apache.commons.compress.archivers.sevenz</package>
+                <package>org.apache.commons.compress.archivers.tar</package>
+                <package>org.apache.commons.compress.archivers.zip</package>
+                <package>org.apache.commons.compress.changes</package>
+                <package>org.apache.commons.compress.compressors</package>
+                <package>org.apache.commons.compress.compressors.bzip2</package>
+                <package>org.apache.commons.compress.compressors.gzip</package>
+                <package>org.apache.commons.compress.compressors.lzma</package>
+                <package>org.apache.commons.compress.compressors.pack200</package>
+                <package>org.apache.commons.compress.compressors.snappy</package>
+                <package>org.apache.commons.compress.compressors.xz</package>
+                <package>org.apache.commons.compress.compressors.z</package>
+                <package>org.apache.commons.compress.compressors.z._internal_</package>
+                <package>org.apache.commons.compress.utils</package>
+                <package>org.apache.commons.csv</package>
+                <package>org.apache.commons.io</package>
+                <package>org.apache.commons.io.build</package>
+                <package>org.apache.commons.io.charset</package>
+                <package>org.apache.commons.io.comparator</package>
+                <package>org.apache.commons.io.file</package>
+                <package>org.apache.commons.io.file.attribute</package>
+                <package>org.apache.commons.io.file.spi</package>
+                <package>org.apache.commons.io.filefilter</package>
+                <package>org.apache.commons.io.function</package>
+                <package>org.apache.commons.io.input</package>
+                <package>org.apache.commons.io.input.buffer</package>
+                <package>org.apache.commons.io.monitor</package>
+                <package>org.apache.commons.io.output</package>
+                <package>org.apache.commons.io.serialization</package>
+                <package>org.apache.commons.lang3</package>
+                <package>org.apache.commons.lang3.arch</package>
+                <package>org.apache.commons.lang3.builder</package>
+                <package>org.apache.commons.lang3.compare</package>
+                <package>org.apache.commons.lang3.concurrent</package>
+                <package>org.apache.commons.lang3.concurrent.locks</package>
+                <package>org.apache.commons.lang3.event</package>
+                <package>org.apache.commons.lang3.exception</package>
+                <package>org.apache.commons.lang3.function</package>
+                <package>org.apache.commons.lang3.math</package>
+                <package>org.apache.commons.lang3.mutable</package>
+                <package>org.apache.commons.lang3.reflect</package>
+                <package>org.apache.commons.lang3.stream</package>
+                <package>org.apache.commons.lang3.text</package>
+                <package>org.apache.commons.lang3.text.translate</package>
+                <package>org.apache.commons.lang3.time</package>
+                <package>org.apache.commons.lang3.tuple</package>
                 <package>org.apache.datasketches</package>
                 <package>org.apache.datasketches.common</package>
                 <package>org.apache.datasketches.cpc</package>
@@ -248,6 +399,42 @@
                 <package>org.apache.log4j.spi</package>
                 <package>org.apache.log4j.varia</package>
                 <package>org.apache.log4j.xml</package>
+                <package>org.checkerframework.checker.builder.qual</package>
+                <package>org.checkerframework.checker.calledmethods.qual</package>
+                <package>org.checkerframework.checker.compilermsgs.qual</package>
+                <package>org.checkerframework.checker.fenum.qual</package>
+                <package>org.checkerframework.checker.formatter</package>
+                <package>org.checkerframework.checker.formatter.qual</package>
+                <package>org.checkerframework.checker.guieffect.qual</package>
+                <package>org.checkerframework.checker.i18n.qual</package>
+                <package>org.checkerframework.checker.i18nformatter</package>
+                <package>org.checkerframework.checker.i18nformatter.qual</package>
+                <package>org.checkerframework.checker.index.qual</package>
+                <package>org.checkerframework.checker.initialization.qual</package>
+                <package>org.checkerframework.checker.interning.qual</package>
+                <package>org.checkerframework.checker.lock.qual</package>
+                <package>org.checkerframework.checker.nullness</package>
+                <package>org.checkerframework.checker.nullness.qual</package>
+                <package>org.checkerframework.checker.optional.qual</package>
+                <package>org.checkerframework.checker.propkey.qual</package>
+                <package>org.checkerframework.checker.regex</package>
+                <package>org.checkerframework.checker.regex.qual</package>
+                <package>org.checkerframework.checker.signature.qual</package>
+                <package>org.checkerframework.checker.signedness</package>
+                <package>org.checkerframework.checker.signedness.qual</package>
+                <package>org.checkerframework.checker.tainting.qual</package>
+                <package>org.checkerframework.checker.units</package>
+                <package>org.checkerframework.checker.units.qual</package>
+                <package>org.checkerframework.common.aliasing.qual</package>
+                <package>org.checkerframework.common.initializedfields.qual</package>
+                <package>org.checkerframework.common.reflection.qual</package>
+                <package>org.checkerframework.common.returnsreceiver.qual</package>
+                <package>org.checkerframework.common.subtyping.qual</package>
+                <package>org.checkerframework.common.util.report.qual</package>
+                <package>org.checkerframework.common.value.qual</package>
+                <package>org.checkerframework.dataflow.qual</package>
+                <package>org.checkerframework.framework.qual</package>
+                <package>org.checkerframework.framework.util</package>
                 <package>org.codehaus.jackson</package>
                 <package>org.codehaus.jackson.annotate</package>
                 <package>org.codehaus.jackson.format</package>
@@ -274,13 +461,20 @@
                 <package>org.codehaus.jackson.sym</package>
                 <package>org.codehaus.jackson.type</package>
                 <package>org.codehaus.jackson.util</package>
+                <package>org.intellij.lang.annotations</package>
+                <package>org.jetbrains.annotations</package>
+                <package>org.json</package>
                 <package>org.reflections</package>
                 <package>org.reflections.adapters</package>
                 <package>org.reflections.scanners</package>
                 <package>org.reflections.serializers</package>
                 <package>org.reflections.util</package>
                 <package>org.reflections.vfs</package>
+                <package>org.slf4j</package>
+                <package>org.slf4j.event</package>
+                <package>org.slf4j.helpers</package>
                 <package>org.slf4j.impl</package>
+                <package>org.slf4j.spi</package>
                 <package>org.tukaani.xz</package>
                 <package>org.tukaani.xz.check</package>
                 <package>org.tukaani.xz.common</package>
@@ -388,6 +582,25 @@
                 <package>uk.gov.gchq.gaffer.types.binaryoperator</package>
                 <package>uk.gov.gchq.gaffer.types.function</package>
                 <package>uk.gov.gchq.gaffer.user</package>
+                <package>uk.gov.gchq.koryphe</package>
+                <package>uk.gov.gchq.koryphe.adapted</package>
+                <package>uk.gov.gchq.koryphe.binaryoperator</package>
+                <package>uk.gov.gchq.koryphe.composite</package>
+                <package>uk.gov.gchq.koryphe.function</package>
+                <package>uk.gov.gchq.koryphe.impl.binaryoperator</package>
+                <package>uk.gov.gchq.koryphe.impl.function</package>
+                <package>uk.gov.gchq.koryphe.impl.predicate</package>
+                <package>uk.gov.gchq.koryphe.impl.predicate.range</package>
+                <package>uk.gov.gchq.koryphe.iterable</package>
+                <package>uk.gov.gchq.koryphe.predicate</package>
+                <package>uk.gov.gchq.koryphe.serialisation.json</package>
+                <package>uk.gov.gchq.koryphe.signature</package>
+                <package>uk.gov.gchq.koryphe.tuple</package>
+                <package>uk.gov.gchq.koryphe.tuple.binaryoperator</package>
+                <package>uk.gov.gchq.koryphe.tuple.function</package>
+                <package>uk.gov.gchq.koryphe.tuple.n</package>
+                <package>uk.gov.gchq.koryphe.tuple.predicate</package>
+                <package>uk.gov.gchq.koryphe.util</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/access-2.3.2.jar</runtime-relative-path>
@@ -402,8 +615,40 @@
                 <binary-origin>release/modules/ext/cache-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/checker-qual-3.8.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/checker-qual-3.8.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/common-util-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/common-util-2.3.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-codec-1.15.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-codec-1.15.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-collections4-4.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-collections4-4.4.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-compress-1.8.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-compress-1.8.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-csv-1.9.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-csv-1.9.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-io-2.14.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-io-2.14.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-lang3-3.12.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-lang3-3.12.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/core-2.6.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/core-2.6.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/data-2.3.2.jar</runtime-relative-path>
@@ -418,8 +663,16 @@
                 <binary-origin>release/modules/ext/datasketches-memory-2.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/error_prone_annotations-2.5.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/error_prone_annotations-2.5.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/exception-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/exception-2.3.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/failureaccess-1.0.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/failureaccess-1.0.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/fast-classpath-scanner-2.10.0.jar</runtime-relative-path>
@@ -430,8 +683,28 @@
                 <binary-origin>release/modules/ext/fastutil-6.5.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/guava-30.1.1-jre.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/guava-30.1.1-jre.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/j2objc-annotations-1.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/j2objc-annotations-1.3.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-annotations-2.13.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-annotations-2.13.5.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-core-2.13.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-core-2.13.5.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/jackson-core-asl-1.9.13.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jackson-core-asl-1.9.13.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jackson-databind-2.13.5.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jackson-databind-2.13.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jackson-datatype-jsr310-2.13.5.jar</runtime-relative-path>
@@ -444,6 +717,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/javassist-3.29.2-GA.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/javassist-3.29.2-GA.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/json-20231013.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/json-20231013.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/kotlin-stdlib-1.8.21.jar</runtime-relative-path>
@@ -460,6 +737,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/kotlin-stdlib-jdk8-1.8.21.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/kotlin-stdlib-jdk8-1.8.21.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/okhttp-4.12.0.jar</runtime-relative-path>
@@ -552,6 +833,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/sketches-library-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/sketches-library-2.3.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/slf4j-api-1.7.36.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/slf4j-api-1.7.36.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-reload4j-1.7.36.jar</runtime-relative-path>

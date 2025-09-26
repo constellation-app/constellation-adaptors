@@ -85,8 +85,11 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         final PluginParameter<SingleChoiceParameterValue> queryOptions = SingleChoiceParameterType.build(GAFFER_QUERY_TYPE_PARAMETER_ID);
         queryOptions.setName("Queries");
         queryOptions.setDescription("Simple query type");
+        queryOptions.setRequired(true);
         //Add all GafferSimpleQueryTypes to perform the query
-        SingleChoiceParameterType.setOptions(queryOptions, GafferSimpleQueryTypes.stream().map((GafferSimpleQueryTypes e) -> e.getLabel()).collect(Collectors.toList()));
+        List<String> gafferSimpleQueryTypes = GafferSimpleQueryTypes.stream().map(GafferSimpleQueryTypes::getLabel).collect(Collectors.toList());
+        SingleChoiceParameterType.setOptions(queryOptions, gafferSimpleQueryTypes);
+        SingleChoiceParameterType.setChoice(queryOptions, gafferSimpleQueryTypes.get(0));
 
         params.addParameter(gafferUrlLocation);
         params.addParameter(queryOptions);

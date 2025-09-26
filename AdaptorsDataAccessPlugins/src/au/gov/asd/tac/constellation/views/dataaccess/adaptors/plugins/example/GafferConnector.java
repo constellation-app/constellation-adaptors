@@ -44,18 +44,20 @@ public class GafferConnector {
 
     private String url;
 
-    private final HttpClient httpClient;
+    private static final HttpClient httpClient;
 
-    GafferConnector() {
+    static {
         JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
         httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2) // this is the default
+                .version(HttpClient.Version.HTTP_2)
                 .build();
     }
 
+
+    GafferConnector() {
+    }
+
     GafferConnector(final String url) {
-        this();
-        JSONSerialiser.update(DEFAULT_SERIALISER_CLASS_NAME, SketchesJsonModules.class.getCanonicalName(), Boolean.TRUE);
         this.url = url;
     }
 
@@ -67,7 +69,11 @@ public class GafferConnector {
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new IOException("Gaffer query failed with status code: " + response.statusCode()
+                    + "\nResponse body: " + response.body());
+        }
         return Arrays.asList(JSONSerialiser.deserialise(response.body().getBytes(), Element[].class));
     }
-
 }
