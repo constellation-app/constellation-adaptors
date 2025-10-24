@@ -15,6 +15,8 @@
  */
 package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.example;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -53,10 +55,6 @@ public class GafferConnector {
                 .build();
     }
 
-
-    GafferConnector() {
-    }
-
     GafferConnector(final String url) {
         this.url = url;
     }
@@ -74,6 +72,9 @@ public class GafferConnector {
             throw new IOException("Gaffer query failed with status code: " + response.statusCode()
                     + "\nResponse body: " + response.body());
         }
-        return Arrays.asList(JSONSerialiser.deserialise(response.body().getBytes(), Element[].class));
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return Arrays.asList(mapper.readValue(response.body(), Element[].class));
     }
 }

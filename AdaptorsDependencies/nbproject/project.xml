@@ -4,7 +4,16 @@
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
             <code-name-base>au.gov.asd.tac.constellation.dependencies.adaptors</code-name-base>
             <suite-component/>
-            <module-dependencies/>
+            <module-dependencies>
+                <dependency>
+                    <code-name-base>au.gov.asd.tac.constellation.dependencies</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+            </module-dependencies>
             <public-packages>
                 <package>avro.shaded.com.google.common.annotations</package>
                 <package>avro.shaded.com.google.common.base</package>
@@ -615,36 +624,8 @@
                 <binary-origin>release/modules/ext/cache-2.3.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/checker-qual-3.8.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/checker-qual-3.8.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/common-util-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/common-util-2.3.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-codec-1.15.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-codec-1.15.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-collections4-4.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections4-4.4.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-compress-1.8.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-compress-1.8.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-csv-1.9.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-csv-1.9.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-io-2.14.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-io-2.14.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-lang3-3.12.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang3-3.12.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/core-2.6.0.jar</runtime-relative-path>
@@ -663,16 +644,8 @@
                 <binary-origin>release/modules/ext/datasketches-memory-2.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/error_prone_annotations-2.5.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/error_prone_annotations-2.5.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/exception-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/exception-2.3.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/failureaccess-1.0.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/failureaccess-1.0.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/fast-classpath-scanner-2.10.0.jar</runtime-relative-path>
@@ -683,28 +656,8 @@
                 <binary-origin>release/modules/ext/fastutil-6.5.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/guava-30.1.1-jre.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/guava-30.1.1-jre.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/j2objc-annotations-1.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/j2objc-annotations-1.3.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-annotations-2.13.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-annotations-2.13.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-2.13.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-2.13.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jackson-core-asl-1.9.13.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jackson-core-asl-1.9.13.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-databind-2.13.5.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-databind-2.13.5.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jackson-datatype-jsr310-2.13.5.jar</runtime-relative-path>
@@ -717,10 +670,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/javassist-3.29.2-GA.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/javassist-3.29.2-GA.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/json-20231013.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/json-20231013.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/kotlin-stdlib-1.8.21.jar</runtime-relative-path>
@@ -737,10 +686,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/kotlin-stdlib-jdk8-1.8.21.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/kotlin-stdlib-jdk8-1.8.21.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/okhttp-4.12.0.jar</runtime-relative-path>
@@ -833,10 +778,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/sketches-library-2.3.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/sketches-library-2.3.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/slf4j-api-1.7.36.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/slf4j-api-1.7.36.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/slf4j-reload4j-1.7.36.jar</runtime-relative-path>
