@@ -73,7 +73,7 @@ public class GafferConnector {
                     + "\nResponse body: " + response.body());
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return Arrays.asList(mapper.readValue(response.body(), Element[].class));
     }
