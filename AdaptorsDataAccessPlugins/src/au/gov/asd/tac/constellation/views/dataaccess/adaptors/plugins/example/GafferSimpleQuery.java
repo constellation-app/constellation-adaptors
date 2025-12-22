@@ -20,8 +20,6 @@ import au.gov.asd.tac.constellation.graph.processing.RecordStore;
 import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
@@ -35,9 +33,6 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
  * @author GCHQDeveloper601
  */
 public class GafferSimpleQuery {
-
-    private static final Logger LOGGER = Logger.getLogger(GafferSimpleQuery.class.getName());
-
     private GafferConnector connector;
 
     public void setUrl(final String url) {
@@ -55,7 +50,7 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForDetails(final List<String> queryIds, final RecordStore recordStore) {
+    public void queryForDetails(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException {
         //This query is not quite right yet so is not yet enabled.
         final GetElements elms = new GetElements.Builder().input(queryIds).build();
         final OperationChain<Iterable<? extends Element>> opChain = new OperationChain.Builder().first(elms).build();
@@ -68,7 +63,7 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForOneHop(final List<String> queryIds, final RecordStore recordStore) {
+    public void queryForOneHop(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException {
         final OperationChain opChain = buildOneHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
@@ -79,21 +74,14 @@ public class GafferSimpleQuery {
      * @param queryIds The name value of {@link uk.gov.gchq.gaffer.data.element.Entity)
      * @param recordStore The record store to load the results into
      */
-    public void queryForTwoHop(final List<String> queryIds, final RecordStore recordStore) {
+    public void queryForTwoHop(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException {
         final OperationChain opChain = buildTwoHopChain(queryIds);
         fetchResults(opChain, recordStore);
     }
 
-    protected void fetchResults(final OperationChain opChain, final RecordStore recordStore) {
-        try {
-            final List<Element> results = connector.sendQueryToGaffer(opChain);
-            results.forEach(result -> addResultsToRecordStore(result, recordStore));
-        } catch (final InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            LOGGER.log(Level.SEVERE, "Thread was interrupted", ex);
-        } catch (final IOException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
+    protected void fetchResults(final OperationChain opChain, final RecordStore recordStore) throws IOException, InterruptedException {
+        final List<Element> results = connector.sendQueryToGaffer(opChain);
+        results.forEach(result -> addResultsToRecordStore(result, recordStore));
     }
 
     public void addResultsToRecordStore(final Element element, final RecordStore recordStore) {
