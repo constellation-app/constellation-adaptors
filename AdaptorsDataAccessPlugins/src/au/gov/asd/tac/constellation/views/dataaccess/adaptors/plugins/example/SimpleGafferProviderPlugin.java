@@ -23,6 +23,7 @@ import au.gov.asd.tac.constellation.plugins.Plugin;
 import au.gov.asd.tac.constellation.plugins.PluginException;
 import au.gov.asd.tac.constellation.plugins.PluginInfo;
 import au.gov.asd.tac.constellation.plugins.PluginInteraction;
+import au.gov.asd.tac.constellation.plugins.PluginNotificationLevel;
 import au.gov.asd.tac.constellation.plugins.PluginType;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
 import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
@@ -31,11 +32,15 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParamet
 import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
+import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -58,6 +63,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
     private static final String GAFFER_QUERY_TYPE_PARAMETER_ID = PluginParameter.buildId(SimpleGafferProviderPlugin.class, "QUERY_TYPE");
 
     private static final String DEFAULT_GAFFER_URL = "http://localhost:8080";
+    private static final Logger LOGGER = Logger.getLogger(SimpleGafferProviderPlugin.class.getName());
 
     public SimpleGafferProviderPlugin() {
 
@@ -102,15 +108,31 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
         query.reset();
         final String url = parameters.getStringValue(GAFFER_URL_LOCATION_PARAMETER_ID);
         final ParameterValue queryToRun = parameters.getSingleChoice(GAFFER_QUERY_TYPE_PARAMETER_ID);
-        //Get the GafferSimpleQueryTypes to get the method to execute
-        final GafferSimpleQueryTypes gafferSimpleQueryType = GafferSimpleQueryTypes.valueOfLabel((String) queryToRun.getObjectValue());
         final List<String> queryIds = new ArrayList<>();
-        while (query.next()) {
-            queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
-        }
         final RecordStore results = new GraphRecordStore();
-        gafferSimpleQueryType.setUrl(url);
-        gafferSimpleQueryType.performQuery(queryIds, results);
+
+        try {
+            //Get the GafferSimpleQueryTypes to get the method to execute
+            final GafferSimpleQueryTypes gafferSimpleQueryType = GafferSimpleQueryTypes.valueOfLabel((String) queryToRun.getObjectValue());
+
+            while (query.next()) {
+                queryIds.add(query.get(GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.IDENTIFIER));
+            }
+            gafferSimpleQueryType.setUrl(url);
+            gafferSimpleQueryType.performQuery(queryIds, results);
+
+        } catch (final InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            LOGGER.log(Level.SEVERE, "Thread was interrupted", ex);
+
+        } catch (final IOException ex) {
+            final String errorMsg = "Unable to connect to Gaffer server. Please verify the URL and ensure the service is running.";
+            interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
+            final Throwable ioEx = new IOException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
+            ioEx.setStackTrace(ex.getStackTrace());
+            LOGGER.log(Level.SEVERE, ioEx, () -> errorMsg);
+        }
+
         return results;
     }
 }

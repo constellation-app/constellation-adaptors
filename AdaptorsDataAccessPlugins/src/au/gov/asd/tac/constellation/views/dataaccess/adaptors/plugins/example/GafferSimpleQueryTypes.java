@@ -16,6 +16,7 @@
 package au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.example;
 
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,12 @@ public enum GafferSimpleQueryTypes {
 
     GetOneHop("Get One Hop") {
         @Override
-        public void performQuery(final List<String> queryIds, final RecordStore recordStore) {
+        public void performQuery(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException {
             gafferSimpleQuery.queryForOneHop(queryIds, recordStore);
         }
     }, GetTwoHop("Get Two Hop") {
         @Override
-        public void performQuery(final List<String> queryIds, final RecordStore recordStore) {
+            public void performQuery(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException {
             gafferSimpleQuery.queryForTwoHop(queryIds, recordStore);
         }
     };
@@ -68,7 +69,7 @@ public enum GafferSimpleQueryTypes {
         return BY_LABEL.get(label);
     }
 
-    abstract void performQuery(final List<String> queryIds, final RecordStore recordStore);
+    abstract void performQuery(final List<String> queryIds, final RecordStore recordStore) throws IOException, InterruptedException;
 
     void setUrl(final String url) {
         gafferSimpleQuery.setUrl(url);
