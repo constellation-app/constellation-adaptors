@@ -32,7 +32,6 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParamet
 import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
-import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.DataAccessPluginAdaptorType;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
@@ -126,11 +125,7 @@ public class SimpleGafferProviderPlugin extends RecordStoreQueryPlugin implement
             LOGGER.log(Level.SEVERE, "Thread was interrupted", ex);
 
         } catch (final IOException ex) {
-            final String errorMsg = "Unable to connect to Gaffer server. Please verify the URL and ensure the service is running.";
-            interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
-            final Throwable ioEx = new IOException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
-            ioEx.setStackTrace(ex.getStackTrace());
-            LOGGER.log(Level.SEVERE, ioEx, () -> errorMsg);
+            throw new PluginException(PluginNotificationLevel.ERROR, "Unable to connect to Gaffer server. Please verify the URL and ensure the service is running.");
         }
 
         return results;
