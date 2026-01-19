@@ -31,7 +31,6 @@ import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
 import au.gov.asd.tac.constellation.utilities.file.FileExtensionConstants;
-import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.utilities.xml.XmlUtilities;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.plugins.DataAccessPluginCoreType;
@@ -197,11 +196,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     }
                 }
             } catch (final FileNotFoundException ex) {
-                final String errorMsg = StringUtils.isEmpty(filename) ? "File not specified" : "File not found: " + filename;
-                interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
-                final Throwable fnfEx = new FileNotFoundException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
-                fnfEx.setStackTrace(ex.getStackTrace());
-                LOGGER.log(Level.SEVERE, fnfEx, () -> errorMsg);
+                throw new PluginException(PluginNotificationLevel.ERROR, StringUtils.isEmpty(filename) ? "File not specified" : "File not found: " + filename);
             } catch (final TransformerException ex) {
                 LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             } finally {
@@ -209,11 +204,7 @@ public class EnrichFromGraphMLPlugin extends RecordStoreQueryPlugin implements D
                     try {
                         in.close();
                     } catch (final IOException ex) {
-                        final String errorMsg = StringUtils.isEmpty(filename) ? "File not specified " : "Error reading file: " + filename;
-                        interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
-                        final Throwable ioEx = new IOException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
-                        ioEx.setStackTrace(ex.getStackTrace());            
-                        LOGGER.log(Level.SEVERE, ioEx, () -> errorMsg);
+                        throw new PluginException(PluginNotificationLevel.ERROR, StringUtils.isEmpty(filename) ? "File not specified " : "Error reading file: " + filename);
                     }
                 }
             }

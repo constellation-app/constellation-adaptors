@@ -29,7 +29,6 @@ import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterTyp
 import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
 import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
-import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTDateTime;
 import au.gov.asd.tac.constellation.views.dataaccess.adaptors.plugins.utilities.GDELTImportingUtilities;
@@ -45,7 +44,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -137,17 +135,9 @@ public class ImportRelationshipsFromGDELTPlugin extends RecordStoreQueryPlugin i
                 interaction.setProgress(1, 0, "Completed successfully - added " + results.size() + " entities.", true);
                 return results;
             } catch (final FileNotFoundException ex) {
-                final String errorMsg = "File not found: " + ex.getLocalizedMessage();
-                interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
-                final Throwable fnfEx = new FileNotFoundException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
-                fnfEx.setStackTrace(ex.getStackTrace());
-                LOGGER.log(Level.SEVERE, fnfEx, () -> errorMsg);
+                throw new PluginException(PluginNotificationLevel.ERROR, "File not found: " + ex.getLocalizedMessage());
             } catch (final IOException ex) {
-                final String errorMsg = "Error reading file: " + ex.getLocalizedMessage();
-                interaction.notify(PluginNotificationLevel.ERROR, errorMsg);
-                final Throwable ioEx = new IOException(NotifyDisplayer.BLOCK_POPUP_FLAG + errorMsg);
-                ioEx.setStackTrace(ex.getStackTrace());
-                LOGGER.log(Level.SEVERE, ioEx, () -> errorMsg);
+                throw new PluginException(PluginNotificationLevel.ERROR, "Error reading file: " + ex.getLocalizedMessage());
             }
         }
 
