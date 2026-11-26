@@ -24,7 +24,7 @@ import java.time.ZonedDateTime;
  */
 public class GDELTDateTime {
 
-    private static final String HEADER = "http://data.gdeltproject.org/gkg/";
+    private static final String HEADER = "https://data.gdeltproject.org/gkg/";
     private static final String FOOTER = ".gkg.csv";
     private static final String ZIPPER = ".zip";
 
